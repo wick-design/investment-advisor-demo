@@ -56,8 +56,16 @@
             font-size: 26px;
             font-weight: 600;
             text-align: center;
-            margin-bottom: 32px;
+            margin-bottom: 12px;
             letter-spacing: 0.5px;
+        }
+        
+        /* ✅ 生成时间在标题下方 */
+        .banner-subtitle {
+            text-align: center;
+            font-size: 13px;
+            opacity: 0.85;
+            margin-bottom: 28px;
         }
         
         .metrics-grid {
@@ -140,7 +148,6 @@
             margin-bottom: 20px;
         }
         
-        /* ✅ 彩色色块标题（与扇形图颜色统一） */
         .category-header {
             padding: 16px 20px;
             border-radius: 8px;
@@ -216,26 +223,41 @@
             display: inline-block;
         }
         
+        /* ✅ 份额/价格/金额加文字说明 */
         .product-stats {
             display: flex;
-            gap: 12px;
+            gap: 16px;
             align-items: center;
             font-size: 13px;
-            white-space: nowrap;
-            flex-shrink: 0;
+            flex-wrap: wrap;
         }
         
-        .product-price {
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .stat-label {
+            font-size: 11px;
+            color: var(--td-text-placeholder);
+            margin-bottom: 2px;
+        }
+        
+        .stat-value {
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .stat-value.price {
             color: #0052D9;
-            font-weight: 500;
         }
         
-        .product-shares {
+        .stat-value.shares {
             color: var(--td-text-secondary);
         }
         
-        .product-amount {
-            font-weight: 700;
+        .stat-value.amount {
             color: #00A870;
             font-size: 15px;
         }
@@ -329,13 +351,12 @@
             line-height: 1.6;
         }
         
-        /* ✅ 页面底部信息（精简版） */
+        /* ✅ 底部数据来源 */
         .footer-info {
             text-align: center;
             padding: 24px;
             color: var(--td-text-secondary);
             font-size: 13px;
-            line-height: 1.8;
             border-top: 1px solid var(--td-border-color);
             margin-top: 40px;
         }
@@ -344,7 +365,7 @@
             color: var(--td-text-primary);
         }
         
-        /* 响应式 - 移动端优化 */
+        /* 响应式 */
         @media (max-width: 768px) {
             body {
                 padding: 16px;
@@ -356,6 +377,10 @@
             
             .banner-title {
                 font-size: 20px;
+            }
+            
+            .banner-subtitle {
+                font-size: 12px;
             }
             
             .metrics-grid {
@@ -394,7 +419,6 @@
             
             .product-stats {
                 width: 100%;
-                flex-wrap: wrap;
             }
             
             .advice-grid {
@@ -437,6 +461,10 @@
         <!-- 顶部信息栏 -->
         <div class="top-banner">
             <h1 class="banner-title">🎯 您的专属投资配置方案</h1>
+            <!-- ✅ 生成时间在标题下方 -->
+            <div class="banner-subtitle">
+                生成时间：2026年3月13日 20:20 | 数据来源：Wind资讯、腾讯自选股、天天基金网
+            </div>
             <div class="metrics-grid">
                 <div class="metric-box">
                     <div class="metric-label">💰 投资金额</div>
@@ -494,9 +522,18 @@
                                 <span class="product-code">510300</span>
                             </div>
                             <div class="product-stats">
-                                <span class="product-price">¥4.69/份</span>
-                                <span class="product-shares">6,400份</span>
-                                <span class="product-amount">¥30,016</span>
+                                <div class="stat-item">
+                                    <div class="stat-label">当前价格</div>
+                                    <div class="stat-value price">¥4.69/份</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">购买份额</div>
+                                    <div class="stat-value shares">6,400份</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">投资金额</div>
+                                    <div class="stat-value amount">¥30,016</div>
+                                </div>
                             </div>
                         </div>
                         <div class="product-reason">
@@ -510,9 +547,18 @@
                                 <span class="product-code">510500</span>
                             </div>
                             <div class="product-stats">
-                                <span class="product-price">¥6.73/份</span>
-                                <span class="product-shares">4,450份</span>
-                                <span class="product-amount">¥29,949</span>
+                                <div class="stat-item">
+                                    <div class="stat-label">当前价格</div>
+                                    <div class="stat-value price">¥6.73/份</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">购买份额</div>
+                                    <div class="stat-value shares">4,450份</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">投资金额</div>
+                                    <div class="stat-value amount">¥29,949</div>
+                                </div>
                             </div>
                         </div>
                         <div class="product-reason">
@@ -536,9 +582,18 @@
                                 <span class="product-code">000198</span>
                             </div>
                             <div class="product-stats">
-                                <span class="product-price">7日年化 2.3%</span>
-                                <span class="product-shares">随时申赎</span>
-                                <span class="product-amount">¥60,000</span>
+                                <div class="stat-item">
+                                    <div class="stat-label">7日年化</div>
+                                    <div class="stat-value price">2.3%</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">申赎规则</div>
+                                    <div class="stat-value shares">随时申赎</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">投资金额</div>
+                                    <div class="stat-value amount">¥60,000</div>
+                                </div>
                             </div>
                         </div>
                         <div class="product-reason">
@@ -562,9 +617,18 @@
                                 <span class="product-code">110037</span>
                             </div>
                             <div class="product-stats">
-                                <span class="product-price">净值 1.085</span>
-                                <span class="product-shares">36,866份</span>
-                                <span class="product-amount">¥40,000</span>
+                                <div class="stat-item">
+                                    <div class="stat-label">基金净值</div>
+                                    <div class="stat-value price">1.085</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">购买份额</div>
+                                    <div class="stat-value shares">36,866份</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">投资金额</div>
+                                    <div class="stat-value amount">¥40,000</div>
+                                </div>
                             </div>
                         </div>
                         <div class="product-reason">
@@ -588,9 +652,18 @@
                                 <span class="product-code">113050</span>
                             </div>
                             <div class="product-stats">
-                                <span class="product-price">¥100.5/张</span>
-                                <span class="product-shares">200张</span>
-                                <span class="product-amount">¥20,100</span>
+                                <div class="stat-item">
+                                    <div class="stat-label">当前价格</div>
+                                    <div class="stat-value price">¥100.5/张</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">购买数量</div>
+                                    <div class="stat-value shares">200张</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">投资金额</div>
+                                    <div class="stat-value amount">¥20,100</div>
+                                </div>
                             </div>
                         </div>
                         <div class="product-reason">
@@ -614,9 +687,18 @@
                                 <span class="product-code">518880</span>
                             </div>
                             <div class="product-stats">
-                                <span class="product-price">¥4.85/份</span>
-                                <span class="product-shares">4,124份</span>
-                                <span class="product-amount">¥20,001</span>
+                                <div class="stat-item">
+                                    <div class="stat-label">当前价格</div>
+                                    <div class="stat-value price">¥4.85/份</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">购买份额</div>
+                                    <div class="stat-value shares">4,124份</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">投资金额</div>
+                                    <div class="stat-value amount">¥20,001</div>
+                                </div>
                             </div>
                         </div>
                         <div class="product-reason">
@@ -662,27 +744,17 @@
                 </div>
             </div>
         </div>
-        
-        <!-- ✅ 页面底部信息（精简版，去掉OpenClaw） -->
-        <div class="footer-info">
-            <div style="margin-bottom: 8px;">
-                <strong>生成时间：</strong>2026年3月13日 19:45
-            </div>
-            <div>
-                <strong>数据来源：</strong>Wind资讯、腾讯自选股、天天基金网
-            </div>
-        </div>
     </div>
     
     <script>
         Chart.register(ChartDataLabels);
         
         const chartColors = [
-            '#8B5CF6',  // 指数基金
-            '#EF4444',  // 货币基金
-            '#10B981',  // 债券基金
-            '#F59E0B',  // 可转债
-            '#3B82F6'   // 黄金ETF
+            '#8B5CF6',
+            '#EF4444',
+            '#10B981',
+            '#F59E0B',
+            '#3B82F6'
         ];
         
         const assetData = {
@@ -703,12 +775,16 @@
                         font: { size: 12, family: "'PingFang SC', sans-serif" },
                         usePointStyle: true,
                         pointStyle: 'circle',
-                        // ✅ 在图例中显示百分比
+                        // ✅ 去掉灰色描边
+                        boxWidth: 12,
+                        boxHeight: 12,
                         generateLabels: function(chart) {
                             const data = chart.data;
                             return data.labels.map((label, i) => ({
                                 text: label + ' ' + assetData.percentages[i],
                                 fillStyle: data.datasets[0].backgroundColor[i],
+                                strokeStyle: 'transparent',
+                                lineWidth: 0,
                                 hidden: false,
                                 index: i
                             }));
@@ -720,14 +796,12 @@
                     padding: 12,
                     cornerRadius: 6
                 },
-                // ✅ 禁用扇形图内的标签
                 datalabels: {
                     display: false
                 }
             }
         };
         
-        // ✅ 扇形图 - 百分比在图例中
         const pieCtx = document.getElementById('pieChart').getContext('2d');
         new Chart(pieCtx, {
             type: 'doughnut',
@@ -746,7 +820,6 @@
             }
         });
         
-        // ✅ 柱状图 - 调整Y轴范围确保标签显示
         const barCtx = document.getElementById('barChart').getContext('2d');
         new Chart(barCtx, {
             type: 'bar',
@@ -783,7 +856,6 @@
                 scales: {
                     y: {
                         beginAtZero: true,
-                        // ✅ 增加Y轴最大值确保标签不超出
                         max: 70000,
                         grid: { color: 'rgba(0, 0, 0, 0.05)' },
                         ticks: {
