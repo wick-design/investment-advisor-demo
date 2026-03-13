@@ -6,6 +6,23 @@
     <title>智能投资配置方案 - 20万元·3年·稳健型</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
+        /* TDesign 设计系统 */
+        :root {
+            --td-bg-color-page: #F3F3F3;
+            --td-bg-color-container: #FFFFFF;
+            --td-border-color: #E7E7E7;
+            --td-text-primary: #000000;
+            --td-text-secondary: #00000099;
+            --td-text-placeholder: #00000066;
+            
+            /* 资产类别配色 - 与图表完全一致 */
+            --color-fund: #8B5CF6;      /* 紫色 - 指数基金 */
+            --color-cash: #EF4444;      /* 红色 - 货币基金 */
+            --color-bond: #10B981;      /* 绿色 - 债券基金 */
+            --color-convertible: #F59E0B; /* 橙色 - 可转债 */
+            --color-gold: #3B82F6;      /* 蓝色 - 黄金ETF */
+        }
+        
         * {
             margin: 0;
             padding: 0;
@@ -13,35 +30,35 @@
         }
         
         body {
-            font-family: "PingFang SC", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: "PingFang SC", -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--td-bg-color-page);
             min-height: 100vh;
-            padding: 20px;
+            padding: 24px;
             line-height: 1.6;
-            color: #333;
+            color: var(--td-text-primary);
         }
         
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
-            overflow: hidden;
         }
         
-        /* 顶部信息栏 */
+        /* 顶部蓝色信息栏 */
         .top-banner {
-            background: linear-gradient(135deg, #0066cc 0%, #004c99 100%);
+            background: linear-gradient(135deg, #0052D9 0%, #003CAB 100%);
+            border-radius: 12px;
             padding: 40px 32px;
             color: white;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0, 82, 217, 0.15);
         }
         
         .banner-title {
-            font-size: 28px;
-            font-weight: 700;
+            font-size: 26px;
+            font-weight: 600;
             text-align: center;
             margin-bottom: 32px;
+            letter-spacing: 0.5px;
         }
         
         .metrics-grid {
@@ -63,49 +80,49 @@
             font-size: 13px;
             opacity: 0.9;
             margin-bottom: 8px;
+            font-weight: 400;
         }
         
         .metric-value {
-            font-size: 24px;
-            font-weight: 700;
+            font-size: 22px;
+            font-weight: 600;
             letter-spacing: -0.5px;
         }
         
-        /* 内容区域 */
-        .content-section {
-            padding: 40px 32px;
+        /* 内容卡片 */
+        .content-card {
+            background: var(--td-bg-color-container);
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
         }
         
         .section-title {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 600;
-            color: #333;
+            color: var(--td-text-primary);
             margin-bottom: 24px;
             padding-bottom: 12px;
-            border-bottom: 2px solid #f0f0f0;
+            border-bottom: 2px solid var(--td-border-color);
         }
         
-        /* 可视化区域 */
+        /* 图表区域 */
         .charts-row {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 24px;
-            margin-bottom: 40px;
         }
         
-        .chart-card {
-            background: #fafafa;
-            border-radius: 8px;
-            padding: 24px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-        }
-        
-        .chart-card-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 20px;
+        .chart-box {
             text-align: center;
+        }
+        
+        .chart-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--td-text-secondary);
+            margin-bottom: 20px;
         }
         
         .chart-container {
@@ -120,50 +137,67 @@
         }
         
         /* 产品推荐区 */
-        .products-section {
-            margin-top: 40px;
-        }
-        
         .product-category {
-            margin-bottom: 32px;
+            margin-bottom: 20px;
         }
         
-        .category-title-row {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        .category-header {
+            background: linear-gradient(135deg, #F8F9FA 0%, #E9ECEF 100%);
             padding: 16px 20px;
             border-radius: 8px;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: relative;
+            overflow: hidden;
         }
         
+        /* 左侧颜色条 - 与图表颜色一致 */
+        .category-header::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--category-color);
+        }
+        
+        .category-header.fund::before { background: var(--color-fund); }
+        .category-header.cash::before { background: var(--color-cash); }
+        .category-header.bond::before { background: var(--color-bond); }
+        .category-header.convertible::before { background: var(--color-convertible); }
+        .category-header.gold::before { background: var(--color-gold); }
+        
         .category-name {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 600;
-            color: #333;
+            color: var(--td-text-primary);
+            padding-left: 12px;
         }
         
         .category-total {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 600;
-            color: #0066cc;
+            color: #0052D9;
         }
         
         .product-list {
-            background: white;
+            display: grid;
+            gap: 12px;
         }
         
         .product-item {
-            padding: 20px;
-            border: 1px solid #e9ecef;
+            background: var(--td-bg-color-container);
+            padding: 18px;
+            border: 1px solid var(--td-border-color);
             border-radius: 8px;
-            margin-bottom: 12px;
             transition: all 0.3s;
         }
         
         .product-item:hover {
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             transform: translateY(-2px);
         }
         
@@ -171,7 +205,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
         
         .product-info {
@@ -179,17 +213,17 @@
         }
         
         .product-name {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 600;
-            color: #333;
+            color: var(--td-text-primary);
             margin-bottom: 6px;
         }
         
         .product-code {
-            font-size: 13px;
-            color: #666;
-            font-family: 'Monaco', 'Courier New', monospace;
-            background: #f5f5f5;
+            font-size: 12px;
+            color: var(--td-text-placeholder);
+            font-family: 'Monaco', monospace;
+            background: #F3F3F3;
             padding: 2px 8px;
             border-radius: 4px;
             display: inline-block;
@@ -197,119 +231,110 @@
         
         .product-stats {
             display: flex;
-            gap: 24px;
+            gap: 20px;
             align-items: center;
         }
         
         .product-price {
-            font-size: 15px;
-            color: #0066cc;
-            font-weight: 600;
+            font-size: 14px;
+            color: #0052D9;
+            font-weight: 500;
         }
         
         .product-amount {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 700;
-            color: #00a870;
+            color: #00A870;
         }
         
         .product-shares {
-            font-size: 14px;
-            color: #666;
+            font-size: 13px;
+            color: var(--td-text-secondary);
         }
         
         .product-reason {
-            font-size: 14px;
-            color: #666;
+            font-size: 13px;
+            color: var(--td-text-secondary);
             line-height: 1.6;
-            padding-top: 12px;
-            border-top: 1px dashed #e9ecef;
+            padding-top: 10px;
+            border-top: 1px dashed var(--td-border-color);
         }
         
         /* 建议卡片 */
-        .advice-section {
-            margin-top: 40px;
-        }
-        
         .advice-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            margin-bottom: 32px;
+            gap: 16px;
         }
         
         .advice-card {
-            background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);
-            border: 1px solid #e9ecef;
+            background: var(--td-bg-color-container);
+            border: 1px solid var(--td-border-color);
             border-radius: 8px;
-            padding: 24px;
+            padding: 20px;
             text-align: center;
             transition: all 0.3s;
         }
         
         .advice-card:hover {
-            box-shadow: 0 4px 12px rgba(0, 102, 204, 0.15);
+            box-shadow: 0 2px 12px rgba(0, 82, 217, 0.12);
             transform: translateY(-4px);
-            border-color: #0066cc;
+            border-color: #0052D9;
         }
         
         .advice-icon {
-            font-size: 36px;
+            font-size: 32px;
             margin-bottom: 12px;
         }
         
         .advice-title {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 600;
-            color: #333;
+            color: var(--td-text-primary);
             margin-bottom: 8px;
         }
         
         .advice-content {
-            font-size: 13px;
-            color: #666;
+            font-size: 12px;
+            color: var(--td-text-secondary);
             line-height: 1.6;
         }
         
-        /* 风险提示 */
-        .warning-box {
-            background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
-            border: 2px solid #ffa000;
+        /* 风险提示 - 更小巧美观 */
+        .warning-compact {
+            background: linear-gradient(135deg, #FFF8E1 0%, #FFECB3 100%);
+            border: 1px solid #FFA726;
+            border-left: 4px solid #FF9800;
             border-radius: 8px;
-            padding: 24px;
-        }
-        
-        .warning-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: #e65100;
-            margin-bottom: 16px;
+            padding: 16px 20px;
+            margin-top: 24px;
             display: flex;
-            align-items: center;
-            gap: 8px;
+            gap: 12px;
         }
         
-        .warning-list {
-            list-style: none;
-            padding: 0;
-        }
-        
-        .warning-list li {
-            padding: 8px 0;
-            color: #e65100;
-            font-size: 14px;
-            line-height: 1.6;
-            display: flex;
-            align-items: flex-start;
-            gap: 8px;
-        }
-        
-        .warning-list li:before {
-            content: "⚠️";
+        .warning-icon {
+            font-size: 20px;
             flex-shrink: 0;
         }
         
-        /* 响应式设计 */
+        .warning-content {
+            flex: 1;
+        }
+        
+        .warning-title-compact {
+            font-size: 14px;
+            font-weight: 600;
+            color: #E65100;
+            margin-bottom: 8px;
+        }
+        
+        .warning-text {
+            font-size: 12px;
+            color: #E65100;
+            line-height: 1.6;
+        }
+        
+        /* 响应式 */
         @media (max-width: 1024px) {
             .metrics-grid {
                 grid-template-columns: repeat(2, 1fr);
@@ -326,7 +351,7 @@
         
         @media (max-width: 768px) {
             body {
-                padding: 12px;
+                padding: 16px;
             }
             
             .top-banner {
@@ -334,7 +359,7 @@
             }
             
             .banner-title {
-                font-size: 22px;
+                font-size: 20px;
             }
             
             .metrics-grid {
@@ -342,12 +367,8 @@
                 gap: 12px;
             }
             
-            .metric-box {
-                padding: 16px;
-            }
-            
-            .content-section {
-                padding: 32px 20px;
+            .content-card {
+                padding: 24px 20px;
             }
             
             .chart-container {
@@ -357,7 +378,7 @@
             .product-header {
                 flex-direction: column;
                 align-items: flex-start;
-                gap: 12px;
+                gap: 10px;
             }
             
             .product-stats {
@@ -378,7 +399,7 @@
             .product-stats {
                 flex-direction: column;
                 align-items: flex-start;
-                gap: 8px;
+                gap: 6px;
             }
         }
     </style>
@@ -409,17 +430,17 @@
         </div>
         
         <!-- 资产配置可视化 -->
-        <div class="content-section">
+        <div class="content-card">
             <h2 class="section-title">📊 资产配置可视化</h2>
             <div class="charts-row">
-                <div class="chart-card">
-                    <h3 class="chart-card-title">资产配置比例</h3>
+                <div class="chart-box">
+                    <h3 class="chart-title">资产配置比例</h3>
                     <div class="chart-container">
                         <canvas id="pieChart"></canvas>
                     </div>
                 </div>
-                <div class="chart-card">
-                    <h3 class="chart-card-title">资产配置金额</h3>
+                <div class="chart-box">
+                    <h3 class="chart-title">资产配置金额</h3>
                     <div class="chart-container">
                         <canvas id="barChart"></canvas>
                     </div>
@@ -428,12 +449,12 @@
         </div>
         
         <!-- 详细产品推荐 -->
-        <div class="content-section products-section">
+        <div class="content-card">
             <h2 class="section-title">📋 详细产品推荐</h2>
             
             <!-- 指数基金 -->
             <div class="product-category">
-                <div class="category-title-row">
+                <div class="category-header fund">
                     <span class="category-name">📈 指数基金配置</span>
                     <span class="category-total">¥60,000 · 30%</span>
                 </div>
@@ -450,7 +471,7 @@
                                 <span class="product-amount">¥30,016</span>
                             </div>
                         </div>
-                        <div class="product-reason">💡 跟踪沪深300指数，覆盖A股最优质的300家上市公司，分散风险，长期稳健收益</div>
+                        <div class="product-reason">💡 跟踪沪深300指数，大盘蓝筹，分散风险，长期稳健</div>
                     </div>
                     <div class="product-item">
                         <div class="product-header">
@@ -464,14 +485,14 @@
                                 <span class="product-amount">¥29,949</span>
                             </div>
                         </div>
-                        <div class="product-reason">💡 中盘成长股指数，弹性更高，与沪深300形成互补配置，提升组合收益空间</div>
+                        <div class="product-reason">💡 中盘成长股，弹性更高，与沪深300互补</div>
                     </div>
                 </div>
             </div>
             
             <!-- 货币基金 -->
             <div class="product-category">
-                <div class="category-title-row">
+                <div class="category-header cash">
                     <span class="category-name">💵 货币基金配置</span>
                     <span class="category-total">¥60,000 · 30%</span>
                 </div>
@@ -488,14 +509,14 @@
                                 <span class="product-amount">¥60,000</span>
                             </div>
                         </div>
-                        <div class="product-reason">💡 T+0赎回到账，灵活性强，保持组合流动性，应对突发资金需求</div>
+                        <div class="product-reason">💡 T+0赎回，灵活存取，保持流动性</div>
                     </div>
                 </div>
             </div>
             
             <!-- 债券基金 -->
             <div class="product-category">
-                <div class="category-title-row">
+                <div class="category-header bond">
                     <span class="category-name">🏦 债券基金配置</span>
                     <span class="category-total">¥40,000 · 20%</span>
                 </div>
@@ -512,14 +533,14 @@
                                 <span class="product-amount">¥40,000</span>
                             </div>
                         </div>
-                        <div class="product-reason">💡 纯债基金，不投资股票，波动小，稳定收益5%左右，增强组合稳定性</div>
+                        <div class="product-reason">💡 纯债基金，波动小，稳定收益5%左右</div>
                     </div>
                 </div>
             </div>
             
             <!-- 可转债 -->
             <div class="product-category">
-                <div class="category-title-row">
+                <div class="category-header convertible">
                     <span class="category-name">🔄 可转债配置</span>
                     <span class="category-total">¥20,000 · 10%</span>
                 </div>
@@ -536,14 +557,14 @@
                                 <span class="product-amount">¥20,100</span>
                             </div>
                         </div>
-                        <div class="product-reason">💡 AAA评级银行转债，下有保底（到期还本付息），上不封顶（转股收益），攻守兼备</div>
+                        <div class="product-reason">💡 AAA评级，下有保底，上不封顶</div>
                     </div>
                 </div>
             </div>
             
             <!-- 黄金ETF -->
             <div class="product-category">
-                <div class="category-title-row">
+                <div class="category-header gold">
                     <span class="category-name">⚡ 黄金ETF配置</span>
                     <span class="category-total">¥20,000 · 10%</span>
                 </div>
@@ -560,56 +581,51 @@
                                 <span class="product-amount">¥20,001</span>
                             </div>
                         </div>
-                        <div class="product-reason">💡 避险工具，对冲市场风险，分散投资组合波动，长期保值增值</div>
+                        <div class="product-reason">💡 避险工具，对冲风险，分散波动</div>
                     </div>
                 </div>
             </div>
         </div>
         
         <!-- 投资建议 -->
-        <div class="content-section advice-section">
+        <div class="content-card">
             <h2 class="section-title">💡 投资建议</h2>
             <div class="advice-grid">
                 <div class="advice-card">
                     <div class="advice-icon">📅</div>
                     <div class="advice-title">分批建仓</div>
-                    <div class="advice-content">建议分2-3次建仓，每次间隔2-4周，降低择时风险</div>
+                    <div class="advice-content">分2-3次建仓，降低择时风险</div>
                 </div>
                 <div class="advice-card">
                     <div class="advice-icon">🔄</div>
                     <div class="advice-title">定期再平衡</div>
-                    <div class="advice-content">每季度检查一次，偏离±5%时适当调整恢复平衡</div>
+                    <div class="advice-content">每季度检查，偏离±5%时调整</div>
                 </div>
                 <div class="advice-card">
                     <div class="advice-icon">⏳</div>
                     <div class="advice-title">长期持有</div>
-                    <div class="advice-content">坚持3年持有计划，避免频繁交易，降低成本</div>
+                    <div class="advice-content">坚持3年，避免频繁交易</div>
                 </div>
                 <div class="advice-card">
                     <div class="advice-icon">📊</div>
                     <div class="advice-title">关注基本面</div>
-                    <div class="advice-content">定期查看持仓标的财报和行业动态</div>
+                    <div class="advice-content">定期查看财报和行业动态</div>
                 </div>
             </div>
             
-            <!-- 风险提示 -->
-            <div class="warning-box">
-                <div class="warning-title">
-                    <span>⚠️</span>
-                    <span>风险提示</span>
+            <!-- 风险提示 - 精简版 -->
+            <div class="warning-compact">
+                <div class="warning-icon">⚠️</div>
+                <div class="warning-content">
+                    <div class="warning-title-compact">风险提示</div>
+                    <div class="warning-text">本方案仅供参考，不构成投资建议。市场有风险，投资需谨慎，历史收益不代表未来表现。建议咨询专业理财顾问后再做决策。</div>
                 </div>
-                <ul class="warning-list">
-                    <li>本方案仅供参考，不构成投资建议，请根据自身实际情况调整配置</li>
-                    <li>市场有风险，投资需谨慎，历史收益不代表未来表现</li>
-                    <li>稳健型策略虽然风险较低，但仍可能出现短期亏损情况</li>
-                    <li>建议咨询专业理财顾问，充分了解产品风险后再做决策</li>
-                </ul>
             </div>
         </div>
     </div>
     
     <script>
-        // Chart.js 配置
+        // 图表配色 - 与产品模块完全一致
         const chartColors = [
             '#8B5CF6',  // 紫色 - 指数基金
             '#EF4444',  // 红色 - 货币基金
@@ -633,10 +649,7 @@
                     position: 'bottom',
                     labels: {
                         padding: 16,
-                        font: {
-                            size: 13,
-                            family: "'PingFang SC', sans-serif"
-                        },
+                        font: { size: 12, family: "'PingFang SC', sans-serif" },
                         usePointStyle: true,
                         pointStyle: 'circle'
                     }
@@ -644,14 +657,12 @@
                 tooltip: {
                     backgroundColor: 'rgba(0, 0, 0, 0.8)',
                     padding: 12,
-                    cornerRadius: 6,
-                    titleFont: { size: 14 },
-                    bodyFont: { size: 13 }
+                    cornerRadius: 6
                 }
             }
         };
         
-        // 环形图（饼图）
+        // 环形图
         const pieCtx = document.getElementById('pieChart').getContext('2d');
         new Chart(pieCtx, {
             type: 'doughnut',
@@ -724,9 +735,7 @@
                             }
                         }
                     },
-                    x: {
-                        grid: { display: false }
-                    }
+                    x: { grid: { display: false } }
                 }
             }
         });
