@@ -6,7 +6,6 @@
     <title>智能投资配置方案 - 20万元·3年·稳健型</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
-        /* TDesign 设计系统 */
         :root {
             --td-bg-color-page: #F3F3F3;
             --td-bg-color-container: #FFFFFF;
@@ -15,12 +14,11 @@
             --td-text-secondary: #00000099;
             --td-text-placeholder: #00000066;
             
-            /* 资产类别配色 - 与图表完全一致 */
-            --color-fund: #8B5CF6;      /* 紫色 - 指数基金 */
-            --color-cash: #EF4444;      /* 红色 - 货币基金 */
-            --color-bond: #10B981;      /* 绿色 - 债券基金 */
-            --color-convertible: #F59E0B; /* 橙色 - 可转债 */
-            --color-gold: #3B82F6;      /* 蓝色 - 黄金ETF */
+            --color-fund: #8B5CF6;
+            --color-cash: #EF4444;
+            --color-bond: #10B981;
+            --color-convertible: #F59E0B;
+            --color-gold: #3B82F6;
         }
         
         * {
@@ -153,7 +151,6 @@
             overflow: hidden;
         }
         
-        /* 左侧颜色条 - 与图表颜色一致 */
         .category-header::before {
             content: '';
             position: absolute;
@@ -252,13 +249,28 @@
             color: var(--td-text-secondary);
         }
         
+        /* 推荐理由 - 丰富版本 */
         .product-reason {
             font-size: 13px;
             color: var(--td-text-secondary);
-            line-height: 1.6;
-            padding-top: 10px;
-            border-top: 1px dashed var(--td-border-color);
+            line-height: 1.7;
+            padding: 12px;
+            background: #F8F9FA;
+            border-left: 3px solid #0052D9;
+            border-radius: 4px;
+            margin-top: 10px;
         }
+        
+        .product-reason strong {
+            color: var(--td-text-primary);
+            font-weight: 600;
+        }
+        
+        .product-category.fund .product-reason { border-left-color: var(--color-fund); }
+        .product-category.cash .product-reason { border-left-color: var(--color-cash); }
+        .product-category.bond .product-reason { border-left-color: var(--color-bond); }
+        .product-category.convertible .product-reason { border-left-color: var(--color-convertible); }
+        .product-category.gold .product-reason { border-left-color: var(--color-gold); }
         
         /* 建议卡片 */
         .advice-grid {
@@ -300,7 +312,7 @@
             line-height: 1.6;
         }
         
-        /* 风险提示 - 更小巧美观 */
+        /* 风险提示 - 精简版 */
         .warning-compact {
             background: linear-gradient(135deg, #FFF8E1 0%, #FFECB3 100%);
             border: 1px solid #FFA726;
@@ -334,21 +346,7 @@
             line-height: 1.6;
         }
         
-        /* 响应式 */
-        @media (max-width: 1024px) {
-            .metrics-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .charts-row {
-                grid-template-columns: 1fr;
-            }
-            
-            .advice-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-        
+        /* 响应式 - 移动端优化 */
         @media (max-width: 768px) {
             body {
                 padding: 16px;
@@ -362,13 +360,30 @@
                 font-size: 20px;
             }
             
+            /* ✅ 移动端指标卡片 2列2行 */
             .metrics-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(2, 1fr);
                 gap: 12px;
+            }
+            
+            .metric-box {
+                padding: 16px 12px;
+            }
+            
+            .metric-value {
+                font-size: 18px;
             }
             
             .content-card {
                 padding: 24px 20px;
+            }
+            
+            .section-title {
+                font-size: 16px;
+            }
+            
+            .charts-row {
+                grid-template-columns: 1fr;
             }
             
             .chart-container {
@@ -386,8 +401,27 @@
                 justify-content: space-between;
             }
             
+            /* ✅ 移动端投资建议 2列2行 */
             .advice-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+            
+            .advice-card {
+                padding: 16px 12px;
+            }
+            
+            .advice-icon {
+                font-size: 28px;
+                margin-bottom: 8px;
+            }
+            
+            .advice-title {
+                font-size: 13px;
+            }
+            
+            .advice-content {
+                font-size: 11px;
             }
         }
         
@@ -453,7 +487,7 @@
             <h2 class="section-title">📋 详细产品推荐</h2>
             
             <!-- 指数基金 -->
-            <div class="product-category">
+            <div class="product-category fund">
                 <div class="category-header fund">
                     <span class="category-name">📈 指数基金配置</span>
                     <span class="category-total">¥60,000 · 30%</span>
@@ -471,7 +505,9 @@
                                 <span class="product-amount">¥30,016</span>
                             </div>
                         </div>
-                        <div class="product-reason">💡 跟踪沪深300指数，大盘蓝筹，分散风险，长期稳健</div>
+                        <div class="product-reason">
+                            <strong>推荐理由：</strong>沪深300指数涵盖A股市场市值最大、流动性最好的300只股票，代表中国经济核心资产。费率极低（年管理费0.5%），适合长期持有。历史回测显示，3年以上持有期获得正收益的概率超过85%，是核心配置的首选标的。受益于中国经济转型升级，未来仍有稳健增长空间。
+                        </div>
                     </div>
                     <div class="product-item">
                         <div class="product-header">
@@ -485,13 +521,15 @@
                                 <span class="product-amount">¥29,949</span>
                             </div>
                         </div>
-                        <div class="product-reason">💡 中盘成长股，弹性更高，与沪深300互补</div>
+                        <div class="product-reason">
+                            <strong>推荐理由：</strong>中证500指数聚焦中盘成长型企业，行业分布均衡，涵盖新能源、医药、TMT等高成长赛道。与沪深300形成大小盘互补，提升组合弹性。历史数据显示，中证500在经济复苏期表现优异，弹性更高。费率低廉，适合分散配置，降低单一指数波动风险。
+                        </div>
                     </div>
                 </div>
             </div>
             
             <!-- 货币基金 -->
-            <div class="product-category">
+            <div class="product-category cash">
                 <div class="category-header cash">
                     <span class="category-name">💵 货币基金配置</span>
                     <span class="category-total">¥60,000 · 30%</span>
@@ -509,13 +547,15 @@
                                 <span class="product-amount">¥60,000</span>
                             </div>
                         </div>
-                        <div class="product-reason">💡 T+0赎回，灵活存取，保持流动性</div>
+                        <div class="product-reason">
+                            <strong>推荐理由：</strong>天弘余额宝是中国规模最大的货币基金，流动性极佳，支持T+0实时赎回到账。投资于银行存款、短期债券等低风险资产，年化收益稳定在2-3%，远超活期存款。适合作为现金管理工具，保持组合流动性，应对突发资金需求。同时可在市场调整时提供"子弹"，把握低位加仓机会。
+                        </div>
                     </div>
                 </div>
             </div>
             
             <!-- 债券基金 -->
-            <div class="product-category">
+            <div class="product-category bond">
                 <div class="category-header bond">
                     <span class="category-name">🏦 债券基金配置</span>
                     <span class="category-total">¥40,000 · 20%</span>
@@ -533,13 +573,15 @@
                                 <span class="product-amount">¥40,000</span>
                             </div>
                         </div>
-                        <div class="product-reason">💡 纯债基金，波动小，稳定收益5%左右</div>
+                        <div class="product-reason">
+                            <strong>推荐理由：</strong>易方达纯债债券A是业内知名的纯债基金，不投资股票，波动性小，适合稳健型投资者。主要投资国债、金融债、高等级信用债，信用风险低。近3年年化收益稳定在5%左右，回撤控制优秀。作为组合的"压舱石"，在股市波动时提供稳定收益，降低整体组合波动率。
+                        </div>
                     </div>
                 </div>
             </div>
             
             <!-- 可转债 -->
-            <div class="product-category">
+            <div class="product-category convertible">
                 <div class="category-header convertible">
                     <span class="category-name">🔄 可转债配置</span>
                     <span class="category-total">¥20,000 · 10%</span>
@@ -557,13 +599,15 @@
                                 <span class="product-amount">¥20,100</span>
                             </div>
                         </div>
-                        <div class="product-reason">💡 AAA评级，下有保底，上不封顶</div>
+                        <div class="product-reason">
+                            <strong>推荐理由：</strong>南银转债是南京银行发行的AAA评级可转债，信用风险极低。可转债具备"下有保底、上不封顶"的特性：若股价下跌，到期可按约定价格赎回本息；若股价上涨，可转股分享正股收益。当前价格接近面值，安全边际高。银行转债波动较小，适合稳健型投资者作为进攻型配置，增强组合收益。
+                        </div>
                     </div>
                 </div>
             </div>
             
             <!-- 黄金ETF -->
-            <div class="product-category">
+            <div class="product-category gold">
                 <div class="category-header gold">
                     <span class="category-name">⚡ 黄金ETF配置</span>
                     <span class="category-total">¥20,000 · 10%</span>
@@ -581,7 +625,9 @@
                                 <span class="product-amount">¥20,001</span>
                             </div>
                         </div>
-                        <div class="product-reason">💡 避险工具，对冲风险，分散波动</div>
+                        <div class="product-reason">
+                            <strong>推荐理由：</strong>黄金是传统避险资产，与股票、债券相关性低，可有效对冲市场风险。华安黄金ETF跟踪国际金价，交易便捷，费率低廉。在地缘政治风险、货币宽松预期、通胀上行等背景下，黄金往往表现优异。配置10%的黄金可分散投资组合波动，在极端市场环境下提供保护，长期看具备保值增值功能。
+                        </div>
                     </div>
                 </div>
             </div>
@@ -613,7 +659,7 @@
                 </div>
             </div>
             
-            <!-- 风险提示 - 精简版 -->
+            <!-- 风险提示 -->
             <div class="warning-compact">
                 <div class="warning-icon">⚠️</div>
                 <div class="warning-content">
@@ -625,13 +671,12 @@
     </div>
     
     <script>
-        // 图表配色 - 与产品模块完全一致
         const chartColors = [
-            '#8B5CF6',  // 紫色 - 指数基金
-            '#EF4444',  // 红色 - 货币基金
-            '#10B981',  // 绿色 - 债券基金
-            '#F59E0B',  // 橙色 - 可转债
-            '#3B82F6'   // 蓝色 - 黄金ETF
+            '#8B5CF6',
+            '#EF4444',
+            '#10B981',
+            '#F59E0B',
+            '#3B82F6'
         ];
         
         const assetData = {
@@ -640,7 +685,6 @@
             colors: chartColors
         };
         
-        // 通用配置
         const commonOptions = {
             responsive: true,
             maintainAspectRatio: false,
@@ -662,7 +706,6 @@
             }
         };
         
-        // 环形图
         const pieCtx = document.getElementById('pieChart').getContext('2d');
         new Chart(pieCtx, {
             type: 'doughnut',
@@ -695,7 +738,6 @@
             }
         });
         
-        // 柱状图
         const barCtx = document.getElementById('barChart').getContext('2d');
         new Chart(barCtx, {
             type: 'bar',
