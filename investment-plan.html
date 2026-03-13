@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <!-- Version: 2.0.0 Mobile Optimized - 2026-03-13 19:23 -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>智能投资配置方案 - 20万元·3年·稳健型</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
     <style>
         :root {
             --td-bg-color-page: #F3F3F3;
@@ -202,8 +202,9 @@
         .product-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
             margin-bottom: 10px;
+            gap: 12px;
         }
         
         .product-info {
@@ -227,39 +228,40 @@
             display: inline-block;
         }
         
+        /* ✅ 份额/数量/金额同一行 */
         .product-stats {
             display: flex;
-            gap: 20px;
+            gap: 12px;
             align-items: center;
+            flex-wrap: wrap;
+            font-size: 13px;
         }
         
         .product-price {
-            font-size: 14px;
             color: #0052D9;
             font-weight: 500;
         }
         
+        .product-shares {
+            color: var(--td-text-secondary);
+        }
+        
         .product-amount {
-            font-size: 16px;
             font-weight: 700;
             color: #00A870;
+            font-size: 15px;
         }
         
-        .product-shares {
-            font-size: 13px;
-            color: var(--td-text-secondary);
-        }
-        
-        /* 推荐理由 - 丰富版本 */
+        /* ✅ 推荐理由精简版 - 去掉顶部线 */
         .product-reason {
-            font-size: 13px;
+            font-size: 12px;
             color: var(--td-text-secondary);
-            line-height: 1.7;
-            padding: 12px;
+            line-height: 1.6;
+            padding: 10px 12px;
             background: #F8F9FA;
             border-left: 3px solid #0052D9;
             border-radius: 4px;
-            margin-top: 10px;
+            margin-top: 8px;
         }
         
         .product-reason strong {
@@ -313,7 +315,7 @@
             line-height: 1.6;
         }
         
-        /* 风险提示 - 精简版 */
+        /* 风险提示 */
         .warning-compact {
             background: linear-gradient(135deg, #FFF8E1 0%, #FFECB3 100%);
             border: 1px solid #FFA726;
@@ -394,12 +396,10 @@
             .product-header {
                 flex-direction: column;
                 align-items: flex-start;
-                gap: 10px;
             }
             
             .product-stats {
                 width: 100%;
-                justify-content: space-between;
             }
             
             /* ✅ 移动端投资建议 2列2行 */
@@ -429,12 +429,6 @@
         @media (max-width: 480px) {
             .chart-container {
                 height: 250px;
-            }
-            
-            .product-stats {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 6px;
             }
         }
     </style>
@@ -507,7 +501,7 @@
                             </div>
                         </div>
                         <div class="product-reason">
-                            <strong>推荐理由：</strong>沪深300指数涵盖A股市场市值最大、流动性最好的300只股票，代表中国经济核心资产。费率极低（年管理费0.5%），适合长期持有。历史回测显示，3年以上持有期获得正收益的概率超过85%，是核心配置的首选标的。受益于中国经济转型升级，未来仍有稳健增长空间。
+                            <strong>推荐理由：</strong>涵盖A股市值最大的300只核心资产，费率低（0.5%/年），3年持有正收益率超85%，适合长期配置。
                         </div>
                     </div>
                     <div class="product-item">
@@ -523,7 +517,7 @@
                             </div>
                         </div>
                         <div class="product-reason">
-                            <strong>推荐理由：</strong>中证500指数聚焦中盘成长型企业，行业分布均衡，涵盖新能源、医药、TMT等高成长赛道。与沪深300形成大小盘互补，提升组合弹性。历史数据显示，中证500在经济复苏期表现优异，弹性更高。费率低廉，适合分散配置，降低单一指数波动风险。
+                            <strong>推荐理由：</strong>聚焦中盘成长股，覆盖新能源、医药、TMT等高成长赛道，与沪深300互补，提升组合弹性。
                         </div>
                     </div>
                 </div>
@@ -549,7 +543,7 @@
                             </div>
                         </div>
                         <div class="product-reason">
-                            <strong>推荐理由：</strong>天弘余额宝是中国规模最大的货币基金，流动性极佳，支持T+0实时赎回到账。投资于银行存款、短期债券等低风险资产，年化收益稳定在2-3%，远超活期存款。适合作为现金管理工具，保持组合流动性，应对突发资金需求。同时可在市场调整时提供"子弹"，把握低位加仓机会。
+                            <strong>推荐理由：</strong>T+0实时赎回，流动性极佳，年化收益2-3%，保持组合灵活性，可在市场低位时提供"子弹"。
                         </div>
                     </div>
                 </div>
@@ -575,7 +569,7 @@
                             </div>
                         </div>
                         <div class="product-reason">
-                            <strong>推荐理由：</strong>易方达纯债债券A是业内知名的纯债基金，不投资股票，波动性小，适合稳健型投资者。主要投资国债、金融债、高等级信用债，信用风险低。近3年年化收益稳定在5%左右，回撤控制优秀。作为组合的"压舱石"，在股市波动时提供稳定收益，降低整体组合波动率。
+                            <strong>推荐理由：</strong>纯债基金，波动小，近3年年化收益5%左右，作为组合"压舱石"，降低整体波动率。
                         </div>
                     </div>
                 </div>
@@ -601,7 +595,7 @@
                             </div>
                         </div>
                         <div class="product-reason">
-                            <strong>推荐理由：</strong>南银转债是南京银行发行的AAA评级可转债，信用风险极低。可转债具备"下有保底、上不封顶"的特性：若股价下跌，到期可按约定价格赎回本息；若股价上涨，可转股分享正股收益。当前价格接近面值，安全边际高。银行转债波动较小，适合稳健型投资者作为进攻型配置，增强组合收益。
+                            <strong>推荐理由：</strong>AAA评级，"下有保底、上不封顶"，价格接近面值，安全边际高，适合稳健型投资者增强收益。
                         </div>
                     </div>
                 </div>
@@ -627,7 +621,7 @@
                             </div>
                         </div>
                         <div class="product-reason">
-                            <strong>推荐理由：</strong>黄金是传统避险资产，与股票、债券相关性低，可有效对冲市场风险。华安黄金ETF跟踪国际金价，交易便捷，费率低廉。在地缘政治风险、货币宽松预期、通胀上行等背景下，黄金往往表现优异。配置10%的黄金可分散投资组合波动，在极端市场环境下提供保护，长期看具备保值增值功能。
+                            <strong>推荐理由：</strong>避险资产，与股债相关性低，对冲市场风险，长期保值增值，配置10%可有效分散波动。
                         </div>
                     </div>
                 </div>
@@ -651,7 +645,7 @@
                 <div class="advice-card">
                     <div class="advice-icon">⏳</div>
                     <div class="advice-title">长期持有</div>
-                    <div class="advice-content">坚持3年，避免频繁交易</div>
+                    <div class="advice-content">坚持3年,避免频繁交易</div>
                 </div>
                 <div class="advice-card">
                     <div class="advice-icon">📊</div>
@@ -665,7 +659,7 @@
                 <div class="warning-icon">⚠️</div>
                 <div class="warning-content">
                     <div class="warning-title-compact">风险提示</div>
-                    <div class="warning-text">本方案仅供参考，不构成投资建议。市场有风险，投资需谨慎，历史收益不代表未来表现。建议咨询专业理财顾问后再做决策。</div>
+                    <div class="warning-text">本方案仅供参考，不构成投资建议。市场有风险，投资需谨慎，历史收益不代表未来表现。</div>
                 </div>
             </div>
         </div>
@@ -673,11 +667,11 @@
     
     <script>
         const chartColors = [
-            '#8B5CF6',
-            '#EF4444',
-            '#10B981',
-            '#F59E0B',
-            '#3B82F6'
+            '#8B5CF6',  // 指数基金
+            '#EF4444',  // 货币基金
+            '#10B981',  // 债券基金
+            '#F59E0B',  // 可转债
+            '#3B82F6'   // 黄金ETF
         ];
         
         const assetData = {
@@ -707,6 +701,7 @@
             }
         };
         
+        // ✅ 扇形图 - 显示百分比
         const pieCtx = document.getElementById('pieChart').getContext('2d');
         new Chart(pieCtx, {
             type: 'doughnut',
@@ -731,14 +726,28 @@
                                 const label = context.label || '';
                                 const value = context.parsed;
                                 const percentage = ((value / 200000) * 100).toFixed(1);
-                                return `${label}: ¥${value.toLocaleString()} (${percentage}%)`;
+                                return `${label}: ${percentage}%`;
                             }
+                        }
+                    },
+                    // ✅ 在扇形图上显示百分比标签
+                    datalabels: {
+                        display: true,
+                        color: '#fff',
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        },
+                        formatter: function(value) {
+                            const percentage = ((value / 200000) * 100).toFixed(0);
+                            return percentage + '%';
                         }
                     }
                 }
             }
         });
         
+        // ✅ 柱状图 - 显示金额
         const barCtx = document.getElementById('barChart').getContext('2d');
         new Chart(barCtx, {
             type: 'bar',
@@ -762,9 +771,22 @@
                         callbacks: {
                             label: function(context) {
                                 const value = context.parsed.y;
-                                const percentage = ((value / 200000) * 100).toFixed(1);
-                                return `¥${value.toLocaleString()} (${percentage}%)`;
+                                return `¥${value.toLocaleString()}`;
                             }
+                        }
+                    },
+                    // ✅ 在柱状图上显示金额标签
+                    datalabels: {
+                        display: true,
+                        anchor: 'end',
+                        align: 'top',
+                        color: '#333',
+                        font: {
+                            size: 11,
+                            weight: 'bold'
+                        },
+                        formatter: function(value) {
+                            return '¥' + (value / 1000).toFixed(0) + 'k';
                         }
                     }
                 },
