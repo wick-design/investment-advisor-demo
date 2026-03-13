@@ -5,23 +5,34 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>智能投资配置方案</title>
 <style>
+:root{--td-brand-color:#0052D9;--td-success-color:#00A870;--td-warning-color:#ED7B2F;}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;display:flex;justify-content:center;align-items:center;padding:20px}
-.container{background:#fff;border-radius:20px;padding:60px 40px;max-width:600px;box-shadow:0 20px 60px rgba(0,0,0,.3);text-align:center}
-h1{color:#333;font-size:2.5em;margin-bottom:20px}
-p{color:#666;font-size:1.1em;margin-bottom:40px;line-height:1.6}
-.button{display:inline-block;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;text-decoration:none;padding:18px 50px;border-radius:50px;font-size:1.2em;font-weight:600;box-shadow:0 10px 30px rgba(102,126,234,.4);transition:all .3s}
-.button:hover{transform:translateY(-2px);box-shadow:0 15px 40px rgba(102,126,234,.6)}
-.meta{margin-top:30px;color:#999;font-size:.9em}
-.badge{display:inline-block;background:#00a870;color:#fff;padding:4px 12px;border-radius:20px;font-size:0.8em;margin-left:10px}
+body{font-family:"PingFang SC",-apple-system,BlinkMacSystemFont,sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;display:flex;justify-content:center;align-items:center;padding:24px}
+.container{background:#fff;border-radius:16px;padding:60px 40px;max-width:650px;box-shadow:0 6px 30px 5px rgba(0,0,0,.05),0 16px 24px 2px rgba(0,0,0,.04);text-align:center;position:relative;overflow:hidden}
+.container::before{content:'';position:absolute;top:-50px;right:-50px;width:200px;height:200px;background:rgba(102,126,234,.05);border-radius:50%}
+h1{color:#000;font-size:2.5em;margin-bottom:16px;font-weight:700;letter-spacing:-0.5px}
+.badge-new{display:inline-block;background:linear-gradient(135deg,var(--td-success-color),#52C41A);color:#fff;padding:4px 12px;border-radius:16px;font-size:0.7em;margin-left:8px;vertical-align:middle;font-weight:600}
+.subtitle{color:#000000E6;font-size:1.2em;margin-bottom:40px;line-height:1.6}
+.button{display:inline-block;background:linear-gradient(135deg,var(--td-brand-color),#366EF4);color:#fff;text-decoration:none;padding:18px 48px;border-radius:8px;font-size:1.2em;font-weight:600;box-shadow:0 4px 16px rgba(0,82,217,.3);transition:all .3s;position:relative;z-index:1}
+.button:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,82,217,.4)}
+.button:active{transform:translateY(-1px)}
+.features{margin-top:40px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding:24px;background:#F3F3F3;border-radius:12px}
+.feature{text-align:center;padding:12px}
+.feature-icon{font-size:1.8em;margin-bottom:8px}
+.feature-text{font-size:0.9em;color:#000000E6;font-weight:500}
+@media(max-width:640px){body{padding:16px}.container{padding:40px 24px}.features{grid-template-columns:1fr;gap:12px}}
 </style>
 </head>
 <body>
 <div class="container">
-<h1>🎯 智能投资配置方案</h1>
-<p>20万元 · 3年期 · 稳健型策略<span class="badge">NEW</span></p>
+<h1>🎯 智能投资配置方案<span class="badge-new">NEW</span></h1>
+<p class="subtitle">20万元 · 3年期 · 稳健型策略<br><small style="font-size:0.85em;color:#00000066;">基于 TDesign 设计系统</small></p>
 <a href="/investment-plan.html" class="button">查看完整方案 →</a>
-<div class="meta"><p>✨ TDesign 设计 | 📱 移动适配 | 📊 数据可视化</p></div>
+<div class="features">
+<div class="feature"><div class="feature-icon">🎨</div><div class="feature-text">TDesign 设计</div></div>
+<div class="feature"><div class="feature-icon">📱</div><div class="feature-text">移动端适配</div></div>
+<div class="feature"><div class="feature-icon">📊</div><div class="feature-text">数据可视化</div></div>
+</div>
 </div>
 </body>
 </html>
