@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>移动端布局测试 - 智能投资配置方案</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: "PingFang SC", -apple-system, sans-serif;
+            background: #F3F3F3;
+            padding: 20px;
+        }
+        
+        .debug-info {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 0, 0, 0.8);
+            color: white;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            z-index: 9999;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+        }
+        
+        h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        /* 测试网格 */
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 40px;
+        }
+        
+        .test-item {
+            background: linear-gradient(135deg, #0052D9, #003CAB);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        /* 移动端：2列2行 */
+        @media (max-width: 768px) {
+            .debug-info::before {
+                content: '📱 MOBILE ';
+            }
+            
+            .test-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+            
+            .test-item {
+                padding: 16px 12px;
+                font-size: 14px;
+            }
+        }
+        
+        /* 桌面端 */
+        @media (min-width: 769px) {
+            .debug-info::before {
+                content: '💻 DESKTOP ';
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="debug-info">
+        Width: <span id="width"></span>px
+    </div>
+    
+    <div class="container">
+        <h2>🧪 响应式布局测试</h2>
+        
+        <p style="margin-bottom: 20px; color: #666;">
+            <strong>测试说明：</strong><br>
+            • 桌面端（>768px）：显示 4列1行<br>
+            • 移动端（≤768px）：显示 2列2行<br>
+            • 右上角红色标签显示当前断点和屏幕宽度
+        </p>
+        
+        <div class="test-grid">
+            <div class="test-item">指标1<br>投资金额</div>
+            <div class="test-item">指标2<br>投资期限</div>
+            <div class="test-item">指标3<br>风险等级</div>
+            <div class="test-item">指标4<br>预期收益</div>
+        </div>
+        
+        <h2>💡 投资建议测试</h2>
+        <div class="test-grid">
+            <div class="test-item">建议1<br>分批建仓</div>
+            <div class="test-item">建议2<br>定期再平衡</div>
+            <div class="test-item">建议3<br>长期持有</div>
+            <div class="test-item">建议4<br>关注基本面</div>
+        </div>
+        
+        <div style="margin-top: 40px; padding: 20px; background: #FFF8E1; border-radius: 8px; border-left: 4px solid #FF9800;">
+            <p style="color: #E65100; font-size: 14px; line-height: 1.6;">
+                <strong>✅ 如果看到2列2行，说明响应式正常！</strong><br>
+                <strong>❌ 如果还是1列4行，请尝试：</strong><br>
+                1. 硬刷新页面（Ctrl+Shift+R 或 Cmd+Shift+R）<br>
+                2. 清除浏览器缓存<br>
+                3. 检查viewport meta标签是否存在
+            </p>
+        </div>
+    </div>
+    
+    <script>
+        function updateWidth() {
+            document.getElementById('width').textContent = window.innerWidth;
+        }
+        updateWidth();
+        window.addEventListener('resize', updateWidth);
+    </script>
+</body>
+</html>
