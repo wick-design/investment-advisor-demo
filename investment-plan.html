@@ -140,45 +140,31 @@
             margin-bottom: 20px;
         }
         
+        /* ✅ 彩色色块标题（与扇形图颜色统一） */
         .category-header {
-            background: linear-gradient(135deg, #F8F9FA 0%, #E9ECEF 100%);
             padding: 16px 20px;
             border-radius: 8px;
             margin-bottom: 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            position: relative;
-            overflow: hidden;
+            color: white;
         }
         
-        .category-header::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 4px;
-            background: var(--category-color);
-        }
-        
-        .category-header.fund::before { background: var(--color-fund); }
-        .category-header.cash::before { background: var(--color-cash); }
-        .category-header.bond::before { background: var(--color-bond); }
-        .category-header.convertible::before { background: var(--color-convertible); }
-        .category-header.gold::before { background: var(--color-gold); }
+        .category-header.fund { background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%); }
+        .category-header.cash { background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%); }
+        .category-header.bond { background: linear-gradient(135deg, #10B981 0%, #059669 100%); }
+        .category-header.convertible { background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); }
+        .category-header.gold { background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%); }
         
         .category-name {
             font-size: 16px;
             font-weight: 600;
-            color: var(--td-text-primary);
-            padding-left: 12px;
         }
         
         .category-total {
             font-size: 15px;
             font-weight: 600;
-            color: #0052D9;
         }
         
         .product-list {
@@ -230,7 +216,6 @@
             display: inline-block;
         }
         
-        /* ✅ 份额/数量/金额强制同一行 */
         .product-stats {
             display: flex;
             gap: 12px;
@@ -255,7 +240,6 @@
             font-size: 15px;
         }
         
-        /* ✅ 推荐理由 - 去掉左侧边框，文字放大 */
         .product-reason {
             font-size: 14px;
             color: var(--td-text-secondary);
@@ -345,7 +329,7 @@
             line-height: 1.6;
         }
         
-        /* ✅ 页面底部信息 */
+        /* ✅ 页面底部信息（精简版） */
         .footer-info {
             text-align: center;
             padding: 24px;
@@ -358,15 +342,6 @@
         
         .footer-info strong {
             color: var(--td-text-primary);
-        }
-        
-        .footer-info a {
-            color: #0052D9;
-            text-decoration: none;
-        }
-        
-        .footer-info a:hover {
-            text-decoration: underline;
         }
         
         /* 响应式 - 移动端优化 */
@@ -383,7 +358,6 @@
                 font-size: 20px;
             }
             
-            /* ✅ 移动端指标卡片 2列2行 */
             .metrics-grid {
                 grid-template-columns: repeat(2, 1fr);
                 gap: 12px;
@@ -423,7 +397,6 @@
                 flex-wrap: wrap;
             }
             
-            /* ✅ 移动端投资建议 2列2行 */
             .advice-grid {
                 grid-template-columns: repeat(2, 1fr);
                 gap: 12px;
@@ -690,17 +663,13 @@
             </div>
         </div>
         
-        <!-- ✅ 页面底部信息 -->
+        <!-- ✅ 页面底部信息（精简版，去掉OpenClaw） -->
         <div class="footer-info">
             <div style="margin-bottom: 8px;">
-                <strong>生成时间：</strong>2026年3月13日 19:35
+                <strong>生成时间：</strong>2026年3月13日 19:45
             </div>
-            <div style="margin-bottom: 8px;">
+            <div>
                 <strong>数据来源：</strong>Wind资讯、腾讯自选股、天天基金网
-            </div>
-            <div style="color: #999; font-size: 12px;">
-                本方案由 <a href="https://openclaw.woa.com" target="_blank">OpenClaw 智能投顾系统</a> 生成 · 
-                技术支持：工蜂 AI × AnyDev
             </div>
         </div>
     </div>
@@ -719,6 +688,7 @@
         const assetData = {
             labels: ['指数基金', '货币基金', '债券基金', '可转债', '黄金ETF'],
             values: [60000, 60000, 40000, 20000, 20000],
+            percentages: ['30%', '30%', '20%', '10%', '10%'],
             colors: chartColors
         };
         
@@ -732,18 +702,32 @@
                         padding: 16,
                         font: { size: 12, family: "'PingFang SC', sans-serif" },
                         usePointStyle: true,
-                        pointStyle: 'circle'
+                        pointStyle: 'circle',
+                        // ✅ 在图例中显示百分比
+                        generateLabels: function(chart) {
+                            const data = chart.data;
+                            return data.labels.map((label, i) => ({
+                                text: label + ' ' + assetData.percentages[i],
+                                fillStyle: data.datasets[0].backgroundColor[i],
+                                hidden: false,
+                                index: i
+                            }));
+                        }
                     }
                 },
                 tooltip: {
                     backgroundColor: 'rgba(0, 0, 0, 0.8)',
                     padding: 12,
                     cornerRadius: 6
+                },
+                // ✅ 禁用扇形图内的标签
+                datalabels: {
+                    display: false
                 }
             }
         };
         
-        // ✅ 扇形图 - 直接显示百分比
+        // ✅ 扇形图 - 百分比在图例中
         const pieCtx = document.getElementById('pieChart').getContext('2d');
         new Chart(pieCtx, {
             type: 'doughnut',
@@ -758,25 +742,11 @@
             },
             options: {
                 ...commonOptions,
-                cutout: '60%',
-                plugins: {
-                    ...commonOptions.plugins,
-                    datalabels: {
-                        color: '#fff',
-                        font: {
-                            size: 14,
-                            weight: 'bold'
-                        },
-                        formatter: function(value) {
-                            const percentage = ((value / 200000) * 100).toFixed(0);
-                            return percentage + '%';
-                        }
-                    }
-                }
+                cutout: '60%'
             }
         });
         
-        // ✅ 柱状图 - 直接显示金额
+        // ✅ 柱状图 - 调整Y轴范围确保标签显示
         const barCtx = document.getElementById('barChart').getContext('2d');
         new Chart(barCtx, {
             type: 'bar',
@@ -796,8 +766,10 @@
                     ...commonOptions.plugins,
                     legend: { display: false },
                     datalabels: {
+                        display: true,
                         anchor: 'end',
                         align: 'top',
+                        offset: 4,
                         color: '#333',
                         font: {
                             size: 11,
@@ -811,6 +783,8 @@
                 scales: {
                     y: {
                         beginAtZero: true,
+                        // ✅ 增加Y轴最大值确保标签不超出
+                        max: 70000,
                         grid: { color: 'rgba(0, 0, 0, 0.05)' },
                         ticks: {
                             callback: function(value) {
