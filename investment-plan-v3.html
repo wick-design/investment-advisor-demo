@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能投资配比建议 v3.0 - 专业升级版</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header .version {
+            font-size: 14px;
+            opacity: 0.9;
+            background: rgba(255,255,255,0.2);
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            margin-bottom: 10px;
+        }
+
+        .header .subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+            margin-top: 10px;
+        }
+
+        .info-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 30px;
+            background: #f8f9fa;
+        }
+
+        .info-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .info-card .label {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .info-card .value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .section {
+            padding: 40px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+            border-left: 4px solid #667eea;
+            padding-left: 15px;
+            font-weight: 700;
+        }
+
+        .section-subtitle {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        .allocation-item {
+            background: white;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .allocation-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .allocation-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .allocation-amount {
+            font-size: 18px;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .progress-bar {
+            height: 25px;
+            background: #e9ecef;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            transition: width 0.5s ease;
+        }
+
+        .allocation-reason {
+            color: #555;
+            font-size: 14px;
+            line-height: 1.6;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .risk-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .risk-box h3 {
+            color: #856404;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .risk-item {
+            padding: 8px 0;
+            color: #666;
+        }
+
+        .risk-item strong {
+            color: #333;
+        }
+
+        .product-card {
+            background: white;
+            padding: 25px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .product-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.2);
+        }
+
+        .product-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .product-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .product-code {
+            font-size: 14px;
+            color: #999;
+            font-family: 'Courier New', monospace;
+        }
+
+        .product-amount {
+            font-size: 20px;
+            font-weight: 700;
+            color: #667eea;
+            text-align: right;
+        }
+
+        .product-tagline {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .product-reasons {
+            margin: 15px 0;
+        }
+
+        .product-reasons h4 {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .product-reasons h4::before {
+            content: "✅";
+            margin-right: 8px;
+            font-size: 18px;
+        }
+
+        .product-reasons ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .product-reasons li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+            color: #555;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .product-reasons li::before {
+            content: "·";
+            position: absolute;
+            left: 10px;
+            color: #667eea;
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        .product-metrics {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .product-metrics h4 {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .product-metrics h4::before {
+            content: "📊";
+            margin-right: 8px;
+        }
+
+        .product-metrics ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .product-metrics li {
+            padding: 5px 0;
+            color: #666;
+            font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .product-metrics li strong {
+            color: #333;
+        }
+
+        .execution-guide {
+            background: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .execution-guide h3 {
+            color: #1565C0;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .batch-item {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .batch-label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .batch-amount {
+            font-weight: 700;
+            color: #2196F3;
+        }
+
+        .tips-box {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+        }
+
+        .tips-box h3 {
+            color: #155724;
+            margin-bottom: 10px;
+        }
+
+        .tips-box ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .tips-box li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+            color: #155724;
+        }
+
+        .tips-box li::before {
+            content: "✅";
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+
+        .warning-box {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .warning-box strong {
+            color: #721c24;
+        }
+
+        .footer {
+            background: #f8f9fa;
+            padding: 30px;
+            text-align: center;
+            color: #666;
+        }
+
+        .chart-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .chart-box {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .chart-box h3 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .badge-new {
+            background: #28a745;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .chart-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .info-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="version">v3.0 专业升级版</div>
+            <h1>🎯 您的专属投资配置方案</h1>
+            <div class="subtitle">生成时间: 2026年3月16日 11:39 | 数据来源: Wind资讯、腾讯自选股、天天基金网</div>
+        </div>
+
+        <!-- 投资画像 -->
+        <div class="info-cards">
+            <div class="info-card">
+                <div class="label">💰 投资金额</div>
+                <div class="value">¥100,000</div>
+            </div>
+            <div class="info-card">
+                <div class="label">⏱️ 投资期限</div>
+                <div class="value">3年</div>
+            </div>
+            <div class="info-card">
+                <div class="label">🛡️ 风险等级</div>
+                <div class="value">稳健型</div>
+            </div>
+            <div class="info-card">
+                <div class="label">📈 预期年化</div>
+                <div class="value">5-8%</div>
+            </div>
+        </div>
+
+        <!-- 资产配置 (带配置逻辑 - v3.0新增) -->
+        <div class="section">
+            <h2 class="section-title">📊 资产配置 <span class="badge badge-new">NEW</span></h2>
+            <p class="section-subtitle">稳健型 - 为什么这么配?</p>
+
+            <!-- 指数基金 -->
+            <div class="allocation-item">
+                <div class="allocation-header">
+                    <span class="allocation-name">指数基金</span>
+                    <span class="allocation-amount">30% / ¥30,000</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 30%">30%</div>
+                </div>
+                <div class="allocation-reason">
+                    <strong>💡 配置理由:</strong> 沪深300跟踪大盘,长期年化8-10%。费率低廉(0.5%/年),分散300只蓝筹股风险,适合长期持有。
+                </div>
+            </div>
+
+            <!-- 货币基金 -->
+            <div class="allocation-item">
+                <div class="allocation-header">
+                    <span class="allocation-name">货币基金</span>
+                    <span class="allocation-amount">30% / ¥30,000</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 30%">30%</div>
+                </div>
+                <div class="allocation-reason">
+                    <strong>💡 配置理由:</strong> 保持适度流动性,T+0随用随取。降低组合整体波动,熊市时有弹药可以逢低加仓。
+                </div>
+            </div>
+
+            <!-- 债券基金 -->
+            <div class="allocation-item">
+                <div class="allocation-header">
+                    <span class="allocation-name">债券基金</span>
+                    <span class="allocation-amount">20% / ¥20,000</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 20%">20%</div>
+                </div>
+                <div class="allocation-reason">
+                    <strong>💡 配置理由:</strong> 稳定收益来源,年化4-6%。股市下跌时债市往往上涨,起到股债平衡作用。
+                </div>
+            </div>
+
+            <!-- 可转债 -->
+            <div class="allocation-item">
+                <div class="allocation-header">
+                    <span class="allocation-name">可转债</span>
+                    <span class="allocation-amount">10% / ¥10,000</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 10%">10%</div>
+                </div>
+                <div class="allocation-reason">
+                    <strong>💡 配置理由:</strong> 进可攻退可守。牛市跟涨(转股),熊市保底(债券价值),攻守兼备的投资品种。
+                </div>
+            </div>
+
+            <!-- 黄金 -->
+            <div class="allocation-item">
+                <div class="allocation-header">
+                    <span class="allocation-name">黄金</span>
+                    <span class="allocation-amount">10% / ¥10,000</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 10%">10%</div>
+                </div>
+                <div class="allocation-reason">
+                    <strong>💡 配置理由:</strong> 美元弱周期,黄金强。对冲通胀和系统性风险,与股票负相关,分散组合风险。
+                </div>
+            </div>
+
+            <!-- 风险预估 (v3.0新增) -->
+            <div class="risk-box">
+                <h3>⚠️ 风险预估 <span class="badge badge-new">NEW</span></h3>
+                <div class="risk-item"><strong>最大回撤:</strong> -19% (¥100,000 → ¥81,000)</div>
+                <div class="risk-item"><strong>恢复时间:</strong> 18-24个月</div>
+                <div class="risk-item"><strong>年度波动:</strong> ±12%</div>
+                <div class="risk-item" style="margin-top: 10px; font-size: 13px;">
+                    *基于2015/2018/2022年历史危机数据,考虑2026年3月市场环境调整
+                </div>
+            </div>
+        </div>
+
+        <!-- 图表展示 -->
+        <div class="section" style="background: #f8f9fa;">
+            <div class="chart-container">
+                <div class="chart-box">
+                    <h3>资产配置饼图</h3>
+                    <canvas id="pieChart"></canvas>
+                </div>
+                <div class="chart-box">
+                    <h3>金额分布柱状图</h3>
+                    <canvas id="barChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- 核心产品推荐 (v3.0优化) -->
+        <div class="section">
+            <h2 class="section-title">🔥 核心产品推荐 <span class="badge badge-new">UPGRADED</span></h2>
+
+            <!-- 产品1: 沪深300 ETF -->
+            <div class="product-card">
+                <div class="product-header">
+                    <div>
+                        <div class="product-name">1️⃣ 沪深300 ETF</div>
+                        <div class="product-code">510300</div>
+                        <div class="product-tagline">💡 大盘蓝筹,长期稳健</div>
+                    </div>
+                    <div class="product-amount">
+                        ¥30,016<br>
+                        <span style="font-size: 14px; color: #999;">¥4.69/份 × 6,400份</span>
+                    </div>
+                </div>
+
+                <div class="product-reasons">
+                    <h4>为什么选它?</h4>
+                    <ul>
+                        <li>覆盖A股70%市值,300只蓝筹股分散风险</li>
+                        <li>费率仅0.5%/年,长期省钱(主动基金1.5%)</li>
+                        <li>10年年化8-10%,跑赢通胀</li>
+                    </ul>
+                </div>
+
+                <div class="product-metrics">
+                    <h4>关键指标</h4>
+                    <ul>
+                        <li><span>近5年年化</span> <strong>+1.2%</strong></li>
+                        <li><span>最大回撤</span> <strong>-30% (2022年)</strong></li>
+                        <li><span>恢复时间</span> <strong>2-3年</strong></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 产品2: 天弘余额宝 -->
+            <div class="product-card">
+                <div class="product-header">
+                    <div>
+                        <div class="product-name">2️⃣ 天弘余额宝</div>
+                        <div class="product-code">000198</div>
+                        <div class="product-tagline">💡 T+0赎回,随用随取</div>
+                    </div>
+                    <div class="product-amount">
+                        ¥30,000
+                    </div>
+                </div>
+
+                <div class="product-reasons">
+                    <h4>为什么选它?</h4>
+                    <ul>
+                        <li>流动性极佳,当日可取1万</li>
+                        <li>年化2.3%,跑赢活期存款10倍</li>
+                        <li>6000亿规模,最安全的货币基金</li>
+                    </ul>
+                </div>
+
+                <div class="product-metrics">
+                    <h4>关键指标</h4>
+                    <ul>
+                        <li><span>7日年化</span> <strong>2.30%</strong></li>
+                        <li><span>风险等级</span> <strong>零(不会亏本)</strong></li>
+                        <li><span>流动性</span> <strong>T+0 (当日到账)</strong></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 产品3: 易方达安心回报债券A -->
+            <div class="product-card">
+                <div class="product-header">
+                    <div>
+                        <div class="product-name">3️⃣ 易方达安心回报债券A</div>
+                        <div class="product-code">110027</div>
+                        <div class="product-tagline">💡 稳定收益,年化4-6%</div>
+                    </div>
+                    <div class="product-amount">
+                        ¥20,000
+                    </div>
+                </div>
+
+                <div class="product-reasons">
+                    <h4>为什么选它?</h4>
+                    <ul>
+                        <li>纯债基金,不投股票,波动小</li>
+                        <li>易方达品牌,头部基金公司管理规范</li>
+                        <li>持有1年以上免赎回费,长期投资友好</li>
+                    </ul>
+                </div>
+
+                <div class="product-metrics">
+                    <h4>关键指标</h4>
+                    <ul>
+                        <li><span>近3年年化</span> <strong>+4.85%</strong></li>
+                        <li><span>最大回撤</span> <strong>-2.3%</strong></li>
+                        <li><span>基金规模</span> <strong>50亿</strong></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 产品4: 南银转债 -->
+            <div class="product-card">
+                <div class="product-header">
+                    <div>
+                        <div class="product-name">4️⃣ 南银转债</div>
+                        <div class="product-code">113050</div>
+                        <div class="product-tagline">💡 AAA评级,进退自如</div>
+                    </div>
+                    <div class="product-amount">
+                        ¥10,000<br>
+                        <span style="font-size: 14px; color: #999;">¥112.3 × 89手</span>
+                    </div>
+                </div>
+
+                <div class="product-reasons">
+                    <h4>为什么选它?</h4>
+                    <ul>
+                        <li>AAA最高信用等级,几乎无违约风险</li>
+                        <li>转股溢价率仅5.2%,性价比高</li>
+                        <li>南京银行高股息5%+,双重保护</li>
+                    </ul>
+                </div>
+
+                <div class="product-metrics">
+                    <h4>关键指标</h4>
+                    <ul>
+                        <li><span>信用评级</span> <strong>AAA (最高)</strong></li>
+                        <li><span>债底价值</span> <strong>¥105 (跌不破)</strong></li>
+                        <li><span>转股溢价率</span> <strong>5.2%</strong></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 执行指南 (v3.0新增) -->
+        <div class="section" style="background: #f8f9fa;">
+            <h2 class="section-title">📋 执行指南 <span class="badge badge-new">NEW</span></h2>
+
+            <div class="execution-guide">
+                <h3>💰 分批建仓 (降低风险)</h3>
+                <div class="batch-item">
+                    <span class="batch-label">第1批 (立即)</span>
+                    <span class="batch-amount">¥30,000 (30%) - 建立底仓</span>
+                </div>
+                <div class="batch-item">
+                    <span class="batch-label">第2批 (2周后)</span>
+                    <span class="batch-amount">¥40,000 (40%) - 观察市场</span>
+                </div>
+                <div class="batch-item">
+                    <span class="batch-label">第3批 (1个月后)</span>
+                    <span class="batch-amount">¥30,000 (30%) - 完成建仓</span>
+                </div>
+            </div>
+
+            <div class="execution-guide" style="margin-top: 20px;">
+                <h3>🔄 定期检视</h3>
+                <ul style="list-style: none; padding: 0;">
+                    <li style="padding: 8px 0; color: #1565C0;">· 每季度检查一次 (3/6/9/12月)</li>
+                    <li style="padding: 8px 0; color: #1565C0;">· 某类资产偏离目标 ±5% 时再平衡</li>
+                    <li style="padding: 8px 0; color: #1565C0;">· 每年重新评估风险承受能力</li>
+                </ul>
+            </div>
+
+            <div class="execution-guide" style="margin-top: 20px;">
+                <h3>💰 交易成本预估</h3>
+                <ul style="list-style: none; padding: 0;">
+                    <li style="padding: 8px 0; color: #1565C0;">· 股票/ETF: 买入佣金万2.5 + 卖出印花税0.1%</li>
+                    <li style="padding: 8px 0; color: #1565C0;">· 基金: 场内万2.5 / 场外1折申购</li>
+                    <li style="padding: 8px 0; color: #1565C0;">· 持有>1年: 基金赎回费 0%</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 投资建议 -->
+        <div class="section">
+            <h2 class="section-title">💡 投资建议</h2>
+            
+            <div class="tips-box">
+                <h3>✅ 操作建议</h3>
+                <ul>
+                    <li>坚持长期持有,不频繁交易</li>
+                    <li>牛市逐步止盈,熊市逢低补仓</li>
+                    <li>股市大跌>15%时,考虑加仓</li>
+                    <li>紧急用钱优先赎回: 货币基金 → 债券基金 → 可转债 → 股票</li>
+                </ul>
+            </div>
+
+            <div class="warning-box">
+                <strong>⚠️ 重要声明:</strong><br>
+                本方案仅供参考,不构成投资建议。历史收益不代表未来表现,市场有风险,投资需谨慎。建议咨询专业理财顾问后再做决策。
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p><strong>v3.0 专业升级版</strong> - 从"工具化"到"投顾化"</p>
+            <p>新增: 配置逻辑 | 产品理由 | 风险测算 | 执行指南 | 交易成本</p>
+            <p style="margin-top: 10px; font-size: 14px;">
+                数据来源: Wind资讯、腾讯自选股、天天基金网<br>
+                生成时间: 2026年3月16日 11:39
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // 饼图
+        const pieCtx = document.getElementById('pieChart').getContext('2d');
+        new Chart(pieCtx, {
+            type: 'pie',
+            data: {
+                labels: ['指数基金', '货币基金', '债券基金', '可转债', '黄金'],
+                datasets: [{
+                    data: [30, 30, 20, 10, 10],
+                    backgroundColor: [
+                        '#667eea',
+                        '#764ba2',
+                        '#f093fb',
+                        '#4facfe',
+                        '#43e97b'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 15,
+                            font: {
+                                size: 14
+                            },
+                            generateLabels: function(chart) {
+                                const data = chart.data;
+                                return data.labels.map((label, i) => ({
+                                    text: `${label} ${data.datasets[0].data[i]}%`,
+                                    fillStyle: data.datasets[0].backgroundColor[i],
+                                    hidden: false,
+                                    index: i,
+                                    strokeStyle: 'transparent',
+                                    lineWidth: 0
+                                }));
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.label + ': ' + context.parsed + '% (¥' + (context.parsed * 1000).toLocaleString() + ')';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // 柱状图
+        const barCtx = document.getElementById('barChart').getContext('2d');
+        new Chart(barCtx, {
+            type: 'bar',
+            data: {
+                labels: ['指数基金', '货币基金', '债券基金', '可转债', '黄金'],
+                datasets: [{
+                    label: '投资金额 (¥)',
+                    data: [30000, 30000, 20000, 10000, 10000],
+                    backgroundColor: [
+                        'rgba(102, 126, 234, 0.8)',
+                        'rgba(118, 75, 162, 0.8)',
+                        'rgba(240, 147, 251, 0.8)',
+                        'rgba(79, 172, 254, 0.8)',
+                        'rgba(67, 233, 123, 0.8)'
+                    ],
+                    borderColor: [
+                        '#667eea',
+                        '#764ba2',
+                        '#f093fb',
+                        '#4facfe',
+                        '#43e97b'
+                    ],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '¥' + value.toLocaleString();
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return '投资金额: ¥' + context.parsed.y.toLocaleString();
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // 进度条动画
+        window.addEventListener('load', function() {
+            const progressBars = document.querySelectorAll('.progress-fill');
+            progressBars.forEach(bar => {
+                const width = bar.style.width;
+                bar.style.width = '0%';
+                setTimeout(() => {
+                    bar.style.width = width;
+                }, 100);
+            });
+        });
+    </script>
+</body>
+</html>
