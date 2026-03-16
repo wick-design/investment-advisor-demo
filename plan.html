@@ -4,7 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>智能投资配置方案 - 20万元·3年·稳健型</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
+        // 产品推荐section排序 (按金额从高到低)
+        const productOrder = assetArray.map(a => {
+            const map = {
+                '指数基金': 'fund',
+                '股票': 'stock',
+                '货币基金': 'cash',
+                '可转债': 'convertible',
+                '债券基金': 'bond',
+                '黄金ETF': 'gold'
+            };
+            return map[a.name];
+        }).filter(c => c);
+        
+        const container = document.querySelector('.content-card:has(.product-category)');
+        const title = container.querySelector('.section-title');
+        
+        productOrder.forEach(className => {
+            const section = container.querySelector(`.product-category.${className}`);
+            if (section && section.style.display !== 'none') {
+                container.appendChild(section);
+            }
+        });
+        
+        // 保持标题在最前
+        container.insertBefore(title, container.firstChild);
+
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
     <style>
         :root {
@@ -863,20 +890,81 @@
         
         // 股票推荐数据
         const stockPool = {
-            aggressive: [
-                { code: 'sz300750', name: '宁德时代', desc: '全球电池龙头', roe: '22%', reason: '市占率35%,技术领先' },
-                { code: 'sh600519', name: '贵州茅台', desc: '白酒之王', roe: '33%', reason: '品牌护城河深厚' },
-                { code: 'sh600276', name: '恒瑞医药', desc: '创新药龙头', roe: '24%', reason: '研发投入15%,管线丰富' },
-                { code: 'sh688981', name: '中芯国际', desc: '半导体龙头', roe: '-5%', reason: '国产替代核心标的' }
-            ],
-            balanced: [
-                { code: 'sh600519', name: '贵州茅台', desc: '白酒龙头', roe: '33%', reason: '稳定分红,抗跌性强' },
-                { code: 'sh600036', name: '招商银行', desc: '零售之王', roe: '16%', reason: '股息率4.5%,估值合理' },
-                { code: 'sz000858', name: '五粮液', desc: '高端白酒', roe: '25%', reason: '性价比高,增长稳健' }
-            ]
-        };
+        "aggressive": {
+                "stocks": [
+                        {
+                                "code": "sz300750",
+                                "name": "宁德时代",
+                                "cat": "新能源",
+                                "roe": "22%",
+                                "pe": "28",
+                                "reason": "全球动力电池龙头,市占率35%,技术领先优势明显。受益于新能源车渗透率提升,长期成长确定性高。"
+                        },
+                        {
+                                "code": "sh688981",
+                                "name": "中芯国际",
+                                "cat": "半导体",
+                                "roe": "-5%",
+                                "pe": "-50",
+                                "reason": "国内唯一先进制程晶圆厂,国产替代核心标的。虽短期亏损,但长期看好芯片自主可控逻辑。"
+                        },
+                        {
+                                "code": "sz002475",
+                                "name": "立讯精密",
+                                "cat": "消费电子",
+                                "roe": "16%",
+                                "pe": "28",
+                                "reason": "苹果核心供应商,AirPods/连接器龙头。受益于消费电子创新,客户黏性强,盈利能力稳定。"
+                        },
+                        {
+                                "code": "sh600276",
+                                "name": "恒瑞医药",
+                                "cat": "创新药",
+                                "roe": "18%",
+                                "pe": "35",
+                                "reason": "创新药龙头,研发投入15%,管线丰富。PD-1等重磅品种放量,长期成长空间大。"
+                        },
+                        {
+                                "code": "sh600519",
+                                "name": "贵州茅台",
+                                "cat": "白酒",
+                                "roe": "33%",
+                                "pe": "35",
+                                "reason": "白酒之王,品牌护城河深厚,提价能力强。ROE常年>30%,现金流优异,抗周期能力强。"
+                        }
+                ]
+        },
+        "balanced": {
+                "stocks": [
+                        {
+                                "code": "sh600519",
+                                "name": "贵州茅台",
+                                "cat": "白酒",
+                                "roe": "33%",
+                                "pe": "35",
+                                "reason": "白酒之王,品牌护城河深厚,抗跌性强。稳定分红,长期持有收益确定性高。"
+                        },
+                        {
+                                "code": "sh600036",
+                                "name": "招商银行",
+                                "cat": "银行",
+                                "roe": "16%",
+                                "pe": "6.5",
+                                "reason": "零售银行之王,资产质量最优。股息率4.5%,估值合理,防御属性强。"
+                        },
+                        {
+                                "code": "sz000858",
+                                "name": "五粮液",
+                                "cat": "白酒",
+                                "roe": "25%",
+                                "pe": "18",
+                                "reason": "高端白酒次龙头,性价比高于茅台。增长稳健,分红率高,适合稳健配置。"
+                        }
+                ]
+        }
+};;
         
-        // 显示股票section
+        // 显示股票section (≥20万)
         if (assets.stock > 0 && stockPool[riskType]) {
             const stockSection = document.querySelector('.product-category.stock');
             stockSection.style.display = 'block';
@@ -886,7 +974,9 @@
                 '¥' + assets.stock.toLocaleString() + ' · ' + (alloc.stock * 100).toFixed(0) + '%';
             
             // 生成股票列表
-            const stocks = stockPool[riskType];
+            const stockData = stockPool[riskType];
+            if (!stockData || amount < 200000) return; // ≥20万才推荐
+            const stocks = stockData.stocks;
             const perStock = Math.round(assets.stock / stocks.length);
             const stockHTML = stocks.map(s => `
                 <div class="product-item">
@@ -904,10 +994,14 @@
                                 <div class="stat-label">ROE</div>
                                 <div class="stat-value">${s.roe}</div>
                             </div>
+                            <div class="stat-item">
+                                <div class="stat-label">PE</div>
+                                <div class="stat-value">${s.pe}</div>
+                            </div>
                         </div>
                     </div>
                     <div class="product-reason">
-                        <strong>推荐理由：</strong>${s.desc}。${s.reason}。
+                        <strong>推荐理由：</strong>${s.reason}
                     </div>
                 </div>
             `).join('');
