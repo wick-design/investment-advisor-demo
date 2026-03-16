@@ -533,7 +533,7 @@
                     <span class="category-total">¥60,000 · 30%</span>
                 </div>
                 <div class="category-rationale fund">
-                    <strong>为什么要配：</strong>沪深300跟踪大盘,长期年化8-10%。费率低廉(0.5%/年),分散300只蓝筹股风险,适合长期持有。
+                    <strong>配置理由：</strong>沪深300跟踪大盘,长期年化8-10%。费率低廉(0.5%/年),分散300只蓝筹股风险,适合长期持有。
                 </div>
                 <div class="product-list">
                     <div class="product-item">
@@ -596,7 +596,7 @@
                     <span class="category-total">¥60,000 · 30%</span>
                 </div>
                 <div class="category-rationale cash">
-                    <strong>为什么要配：</strong>保持适度流动性,T+0随用随取。降低组合整体波动,熊市时有弹药可以逢低加仓。
+                    <strong>配置理由：</strong>保持适度流动性,T+0随用随取。降低组合整体波动,熊市时有弹药可以逢低加仓。
                 </div>
                 <div class="product-list">
                     <div class="product-item">
@@ -634,7 +634,7 @@
                     <span class="category-total">¥40,000 · 20%</span>
                 </div>
                 <div class="category-rationale bond">
-                    <strong>为什么要配：</strong>稳定收益来源,年化4-6%。股市下跌时债市往往上涨,起到股债平衡作用。
+                    <strong>配置理由：</strong>稳定收益来源,年化4-6%。股市下跌时债市往往上涨,起到股债平衡作用。
                 </div>
                 <div class="product-list">
                     <div class="product-item">
@@ -672,7 +672,7 @@
                     <span class="category-total">¥20,000 · 10%</span>
                 </div>
                 <div class="category-rationale convertible">
-                    <strong>为什么要配：</strong>进可攻退可守。牛市跟涨(转股),熊市保底(债券价值),攻守兼备的投资品种。
+                    <strong>配置理由：</strong>进可攻退可守。牛市跟涨(转股),熊市保底(债券价值),攻守兼备的投资品种。
                 </div>
                 <div class="product-list">
                     <div class="product-item">
@@ -710,7 +710,7 @@
                     <span class="category-total">¥20,000 · 10%</span>
                 </div>
                 <div class="category-rationale gold">
-                    <strong>为什么要配：</strong>美元弱周期,黄金强。对冲通胀和系统性风险,与股票负相关,分散组合风险。
+                    <strong>配置理由：</strong>美元弱周期,黄金强。对冲通胀和系统性风险,与股票负相关,分散组合风险。
                 </div>
                 <div class="product-list">
                     <div class="product-item">
@@ -809,7 +809,7 @@
         
         // 更新页面数据
         document.title = '投资配置方案 - ' + amount.toLocaleString() + '元·' + periodMap[period] + '·' + risk.name;
-        document.querySelector('.banner-subtitle').textContent = '生成时间：' + new Date().toLocaleString('zh-CN') + ' | 数据来源：Wind资讯、腾讯自选股';
+        document.querySelector('.banner-subtitle').innerHTML = '生成时间：' + new Date().toLocaleString('zh-CN') + '<br>数据来源：Wind资讯、腾讯自选股';
         
         const metricValues = document.querySelectorAll('.metric-value');
         metricValues[0].textContent = '¥' + amount.toLocaleString();
