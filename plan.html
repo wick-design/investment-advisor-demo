@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>投资配置方案详情</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #0052D9 0%, #0034A6 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header .subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #0052D9;
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .metric-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid #0052D9;
+        }
+
+        .metric-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .metric-value {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .allocation-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .allocation-table th,
+        .allocation-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .allocation-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .allocation-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .product-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            border-left: 4px solid #8B5CF6;
+        }
+
+        .product-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .product-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .product-code {
+            font-size: 14px;
+            color: #666;
+            font-family: monospace;
+        }
+
+        .product-details {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .advice-list {
+            list-style: none;
+        }
+
+        .advice-list li {
+            padding: 12px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #10B981;
+        }
+
+        .advice-list li:before {
+            content: "✅ ";
+            margin-right: 8px;
+        }
+
+        .risk-warning {
+            background: #FEF3C7;
+            border-left: 4px solid #F59E0B;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .risk-warning h3 {
+            color: #92400E;
+            margin-bottom: 10px;
+        }
+
+        .risk-warning p {
+            color: #78350F;
+            line-height: 1.6;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .error {
+            text-align: center;
+            padding: 60px 20px;
+            color: #EF4444;
+        }
+
+        @media (max-width: 768px) {
+            .metrics {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                border-radius: 0;
+            }
+            
+            body {
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 投资配置方案详情</h1>
+            <p class="subtitle">生成时间: <span id="gen-time"></span></p>
+        </div>
+
+        <div class="content" id="content">
+            <div class="loading">
+                <p>⏳ 加载方案数据中...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 获取URL参数
+        function getUrlParams() {
+            const params = new URLSearchParams(window.location.search);
+            return {
+                amount: params.get('amount') || '100000',
+                risk: params.get('risk') || 'aggressive',
+                period: params.get('period') || '3y'
+            };
+        }
+
+        // 风险等级映射
+        const riskMap = {
+            'conservative': '保守型',
+            'stable': '稳健型',
+            'balanced': '平衡型',
+            'aggressive': '进取型'
+        };
+
+        // 期限映射
+        const periodMap = {
+            '1y': '1年',
+            '3y': '3年',
+            '5y': '5年'
+        };
+
+        // 预期年化收益
+        const expectedReturnMap = {
+            'conservative': '3-5%',
+            'stable': '5-8%',
+            'balanced': '8-12%',
+            'aggressive': '12-18%'
+        };
+
+        // 资产配置方案
+        const allocationMap = {
+            'conservative': {
+                index: 0.20,
+                cash: 0.40,
+                bond: 0.30,
+                convertible: 0.05,
+                gold: 0.05
+            },
+            'stable': {
+                index: 0.30,
+                cash: 0.30,
+                bond: 0.20,
+                convertible: 0.10,
+                gold: 0.10
+            },
+            'balanced': {
+                index: 0.50,
+                cash: 0.20,
+                bond: 0.10,
+                convertible: 0.15,
+                gold: 0.05
+            },
+            'aggressive': {
+                index: 0.70,
+                cash: 0.10,
+                bond: 0.00,
+                convertible: 0.15,
+                gold: 0.05
+            }
+        };
+
+        // 产品推荐
+        const productMap = {
+            index: {
+                name: '指数基金组合',
+                products: [
+                    { name: '沪深300 ETF', code: '510300', ratio: 0.43 },
+                    { name: '中证500 ETF', code: '510500', ratio: 0.29 },
+                    { name: '创业板指 ETF', code: '159915', ratio: 0.28 }
+                ]
+            },
+            cash: {
+                name: '货币基金',
+                products: [
+                    { name: '天弘余额宝', code: '000198', ratio: 1.0 }
+                ]
+            },
+            bond: {
+                name: '债券基金',
+                products: [
+                    { name: '易方达安心回报债券A', code: '003376', ratio: 1.0 }
+                ]
+            },
+            convertible: {
+                name: '可转债',
+                products: [
+                    { name: '南银转债', code: '113050', ratio: 0.50 },
+                    { name: '立讯转债', code: '128136', ratio: 0.50 }
+                ]
+            },
+            gold: {
+                name: '黄金ETF',
+                products: [
+                    { name: '华安黄金ETF', code: '518880', ratio: 1.0 }
+                ]
+            }
+        };
+
+        // 渲染页面
+        function renderPlan() {
+            const params = getUrlParams();
+            const amount = parseInt(params.amount);
+            const risk = params.risk;
+            const period = periodMap[params.period] || '3年';
+            const riskLevel = riskMap[risk] || '进取型';
+            const expectedReturn = expectedReturnMap[risk] || '12-18%';
+            const allocation = allocationMap[risk];
+
+            // 生成时间
+            document.getElementById('gen-time').textContent = new Date().toLocaleString('zh-CN');
+
+            // 构建HTML
+            let html = `
+                <div class="section">
+                    <div class="section-title">📋 投资画像</div>
+                    <div class="metrics">
+                        <div class="metric-card">
+                            <div class="metric-label">💰 投资金额</div>
+                            <div class="metric-value">¥${amount.toLocaleString()}</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-label">⏱️ 投资期限</div>
+                            <div class="metric-value">${period}</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-label">🛡️ 风险等级</div>
+                            <div class="metric-value">${riskLevel}</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-label">📈 预期年化</div>
+                            <div class="metric-value">${expectedReturn}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">📊 资产配置</div>
+                    <table class="allocation-table">
+                        <thead>
+                            <tr>
+                                <th>资产类别</th>
+                                <th>配比</th>
+                                <th>金额</th>
+                                <th>说明</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            // 添加资产配置行
+            const assets = [
+                { key: 'index', name: '指数基金', desc: '大中小盘全覆盖' },
+                { key: 'cash', name: '货币基金', desc: 'T+0随用随取' },
+                { key: 'bond', name: '债券基金', desc: '稳定收益来源' },
+                { key: 'convertible', name: '可转债', desc: '进可攻退可守' },
+                { key: 'gold', name: '黄金ETF', desc: '对冲风险' }
+            ];
+
+            assets.forEach(asset => {
+                const ratio = allocation[asset.key];
+                if (ratio > 0) {
+                    const assetAmount = Math.round(amount * ratio);
+                    html += `
+                        <tr>
+                            <td><strong>${asset.name}</strong></td>
+                            <td>${(ratio * 100).toFixed(0)}%</td>
+                            <td>¥${assetAmount.toLocaleString()}</td>
+                            <td>${asset.desc}</td>
+                        </tr>
+                    `;
+                }
+            });
+
+            html += `
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">🔥 产品推荐明细</div>
+            `;
+
+            // 添加产品卡片
+            Object.keys(allocation).forEach(key => {
+                if (allocation[key] > 0 && productMap[key]) {
+                    const category = productMap[key];
+                    const categoryAmount = Math.round(amount * allocation[key]);
+                    
+                    html += `<h3 style="margin: 20px 0 10px 0; color: #1a1a1a;">${category.name} (${(allocation[key] * 100).toFixed(0)}% / ¥${categoryAmount.toLocaleString()})</h3>`;
+                    
+                    category.products.forEach(product => {
+                        const productAmount = Math.round(categoryAmount * product.ratio);
+                        html += `
+                            <div class="product-card">
+                                <div class="product-header">
+                                    <span class="product-name">${product.name}</span>
+                                    <span class="product-code">${product.code}</span>
+                                </div>
+                                <div class="product-details">
+                                    💰 建议配置: ¥${productAmount.toLocaleString()}
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+            });
+
+            html += `
+                </div>
+
+                <div class="section">
+                    <div class="section-title">💡 投资建议</div>
+                    <ul class="advice-list">
+                        <li>分3批建仓,每批间隔2周,降低市场波动风险</li>
+                        <li>每季度检查一次配置,偏离±5%时进行再平衡</li>
+                        <li>坚持长期持有,不频繁交易,降低交易成本</li>
+                        <li>牛市时逐步止盈,熊市时逢低补仓</li>
+                    </ul>
+                </div>
+
+                <div class="risk-warning">
+                    <h3>⚠️ 风险提示</h3>
+                    <p>市场有风险,投资需谨慎。本方案基于历史数据测算,不构成投资建议。${riskLevel}配置波动较大,请做好心理准备。建议咨询专业理财顾问后再做决策。</p>
+                </div>
+            `;
+
+            document.getElementById('content').innerHTML = html;
+        }
+
+        // 页面加载时渲染
+        window.onload = renderPlan;
+    </script>
+</body>
+</html>
