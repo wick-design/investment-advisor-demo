@@ -7,6 +7,8 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
         // 产品推荐section排序 (按金额从高到低) - 延迟执行确保DOM加载
         setTimeout(() => {
+            console.log('开始排序产品section');
+            console.log('排序顺序:', productOrder);
         const productOrder = assetArray.map(a => {
             const map = {
                 '指数基金': 'fund',
@@ -19,9 +21,18 @@
             return map[a.name];
         }).filter(c => c);
         
-        const productCards = document.querySelectorAll('.content-card');
-        const container = Array.from(productCards).find(card => card.querySelector('.product-category'));
-        if (!container) return;
+        const allCards = document.querySelectorAll('.content-card');
+        let container = null;
+        for (let card of allCards) {
+            if (card.querySelector('.product-category')) {
+                container = card;
+                break;
+            }
+        }
+        if (!container) {
+            console.error('找不到产品container');
+            return;
+        }
         const title = container.querySelector('.section-title');
         
         const detailTitle = container.querySelector('.section-title');
@@ -49,6 +60,7 @@
         
         // 保持标题在最前
         container.insertBefore(detailTitle, container.firstChild);
+            console.log('排序完成');
         }, 100); // 延迟100ms执行
 
     </script>
