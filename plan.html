@@ -18,13 +18,31 @@
             return map[a.name];
         }).filter(c => c);
         
-        const container = document.querySelector('.content-card:has(.product-category)');
+        const productCards = document.querySelectorAll('.content-card');
+        const container = Array.from(productCards).find(card => card.querySelector('.product-category'));
+        if (!container) return;
         const title = container.querySelector('.section-title');
         
+        const detailTitle = container.querySelector('.section-title');
+        const sections = {};
+        
+        // 收集所有section
+        container.querySelectorAll('.product-category').forEach(sec => {
+            const classList = Array.from(sec.classList);
+            const className = classList.find(c => c !== 'product-category');
+            if (className) sections[className] = sec;
+        });
+        
+        // 清空容器保留标题
+        while (container.firstChild) {
+            container.removeChild(container.firstChild);
+        }
+        container.appendChild(detailTitle);
+        
+        // 按排序添加
         productOrder.forEach(className => {
-            const section = container.querySelector(`.product-category.${className}`);
-            if (section && section.style.display !== 'none') {
-                container.appendChild(section);
+            if (sections[className] && sections[className].style.display !== 'none') {
+                container.appendChild(sections[className]);
             }
         });
         
