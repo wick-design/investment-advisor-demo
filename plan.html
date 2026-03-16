@@ -739,7 +739,22 @@
                         </div>
                     </div>
                 </div>
+            
+            
+            <!-- 股票配置 -->
+            <div class="product-category stock" style="display: none;">
+                <div class="category-header" style="background: linear-gradient(135deg, #EC4899 0%, #DB2777 100%);">
+                    <span class="category-name">📈 股票配置</span>
+                    <span class="category-total stock-total">¥100,000 · 20%</span>
+                </div>
+                <div class="category-rationale" style="border-left-color: #EC4899;">
+                    <strong>配置理由：</strong>精选行业龙头,具备护城河优势。ROE>15%,财务健康,长期成长性好。
+                </div>
+                <div class="product-list stock-list">
+                    <!-- 动态生成 -->
+                </div>
             </div>
+
         </div>
         
         <!-- 投资建议 -->
@@ -845,21 +860,82 @@
         if (assets.gold > 0) document.querySelector('.category-header.gold .category-total').textContent = '¥' + assets.gold.toLocaleString() + ' · ' + (alloc.gold * 100).toFixed(0) + '%';
         
         // 图表数据
+        
+        // 股票推荐数据
+        const stockPool = {
+            aggressive: [
+                { code: 'sz300750', name: '宁德时代', desc: '全球电池龙头', roe: '22%', reason: '市占率35%,技术领先' },
+                { code: 'sh600519', name: '贵州茅台', desc: '白酒之王', roe: '33%', reason: '品牌护城河深厚' },
+                { code: 'sh600276', name: '恒瑞医药', desc: '创新药龙头', roe: '24%', reason: '研发投入15%,管线丰富' },
+                { code: 'sh688981', name: '中芯国际', desc: '半导体龙头', roe: '-5%', reason: '国产替代核心标的' }
+            ],
+            balanced: [
+                { code: 'sh600519', name: '贵州茅台', desc: '白酒龙头', roe: '33%', reason: '稳定分红,抗跌性强' },
+                { code: 'sh600036', name: '招商银行', desc: '零售之王', roe: '16%', reason: '股息率4.5%,估值合理' },
+                { code: 'sz000858', name: '五粮液', desc: '高端白酒', roe: '25%', reason: '性价比高,增长稳健' }
+            ]
+        };
+        
+        // 显示股票section
+        if (assets.stock > 0 && stockPool[riskType]) {
+            const stockSection = document.querySelector('.product-category.stock');
+            stockSection.style.display = 'block';
+            
+            // 更新标题
+            stockSection.querySelector('.stock-total').textContent = 
+                '¥' + assets.stock.toLocaleString() + ' · ' + (alloc.stock * 100).toFixed(0) + '%';
+            
+            // 生成股票列表
+            const stocks = stockPool[riskType];
+            const perStock = Math.round(assets.stock / stocks.length);
+            const stockHTML = stocks.map(s => `
+                <div class="product-item">
+                    <div class="product-header">
+                        <div class="product-info">
+                            <div class="product-name">${s.name}</div>
+                            <span class="product-code">${s.code}</span>
+                        </div>
+                        <div class="product-stats">
+                            <div class="stat-item">
+                                <div class="stat-label">投资金额</div>
+                                <div class="stat-value amount">¥${perStock.toLocaleString()}</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">ROE</div>
+                                <div class="stat-value">${s.roe}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="product-reason">
+                        <strong>推荐理由：</strong>${s.desc}。${s.reason}。
+                    </div>
+                </div>
+            `).join('');
+            
+            document.querySelector('.stock-list').innerHTML = stockHTML;
+        }
+
         Chart.register(ChartDataLabels);
         
         const chartColors = ['#8B5CF6', '#EF4444', '#10B981', '#F59E0B', '#3B82F6', '#EC4899'];
+        
+        // 构建资产数组并排序
+        const assetArray = [
+            { name: '指数基金', value: assets.index, percent: alloc.index, color: chartColors[0] },
+            { name: '股票', value: assets.stock, percent: alloc.stock, color: chartColors[5] },
+            { name: '货币基金', value: assets.cash, percent: alloc.cash, color: chartColors[1] },
+            { name: '可转债', value: assets.convertible, percent: alloc.convertible, color: chartColors[3] },
+            { name: '债券基金', value: assets.bond, percent: alloc.bond, color: chartColors[2] },
+            { name: '黄金ETF', value: assets.gold, percent: alloc.gold, color: chartColors[4] }
+        ].filter(a => a.value > 0).sort((a, b) => b.value - a.value);
+        
         const assetData = {
-            labels: ['指数基金', '货币基金', '债券基金', '可转债', '黄金ETF', '个股配置'].filter((v,i) => [assets.index, assets.cash, assets.bond, assets.convertible, assets.gold, assets.stock][i] > 0),
-            values: [assets.index, assets.cash, assets.bond, assets.convertible, assets.gold, assets.stock].filter(v => v > 0),
-            percentages: [
-                (alloc.index * 100).toFixed(0) + '%',
-                (alloc.cash * 100).toFixed(0) + '%',
-                (alloc.bond * 100).toFixed(0) + '%',
-                (alloc.convertible * 100).toFixed(0) + '%',
-                (alloc.gold * 100).toFixed(0) + '%'
-            ].filter((v,i) => [assets.index, assets.cash, assets.bond, assets.convertible, assets.gold, assets.stock][i] > 0),
-            colors: chartColors.filter((v,i) => [assets.index, assets.cash, assets.bond, assets.convertible, assets.gold, assets.stock][i] > 0)
+            labels: assetArray.map(a => a.name),
+            values: assetArray.map(a => a.value),
+            percentages: assetArray.map(a => (a.percent * 100).toFixed(0) + '%'),
+            colors: assetArray.map(a => a.color)
         };
+
         
         const commonOptions = {
             responsive: true,
