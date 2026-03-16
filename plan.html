@@ -975,7 +975,9 @@
             
             // 生成股票列表
             const stockData = stockPool[riskType];
-            if (!stockData || amount < 200000) return; // ≥20万才推荐
+            if (!stockData || amount < 200000) {
+                stockSection.style.display = 'none';
+            } else { // ≥20万才推荐
             const stocks = stockData.stocks;
             const perStock = Math.round(assets.stock / stocks.length);
             const stockHTML = stocks.map(s => `
@@ -1007,6 +1009,7 @@
             `).join('');
             
             document.querySelector('.stock-list').innerHTML = stockHTML;
+            }
         }
 
         Chart.register(ChartDataLabels);
