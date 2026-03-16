@@ -2,459 +2,846 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>投资配置方案详情</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>智能投资配置方案 - 20万元·3年·稳健型</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
     <style>
+        :root {
+            --td-bg-color-page: #F3F3F3;
+            --td-bg-color-container: #FFFFFF;
+            --td-border-color: #E7E7E7;
+            --td-text-primary: #000000;
+            --td-text-secondary: #00000099;
+            --td-text-placeholder: #00000066;
+            
+            --color-fund: #8B5CF6;
+            --color-cash: #EF4444;
+            --color-bond: #10B981;
+            --color-convertible: #F59E0B;
+            --color-gold: #3B82F6;
+        }
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
+        
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 20px;
+            font-family: "PingFang SC", -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--td-bg-color-page);
             min-height: 100vh;
+            padding: 24px;
+            line-height: 1.6;
+            color: var(--td-text-primary);
         }
-
+        
         .container {
-            max-width: 900px;
+            max-width: 1200px;
             margin: 0 auto;
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            overflow: hidden;
         }
-
-        .header {
-            background: linear-gradient(135deg, #0052D9 0%, #0034A6 100%);
+        
+        /* 顶部蓝色信息栏 */
+        .top-banner {
+            background: linear-gradient(135deg, #0052D9 0%, #003CAB 100%);
+            border-radius: 12px;
+            padding: 40px 32px;
             color: white;
-            padding: 40px 30px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0, 82, 217, 0.15);
+        }
+        
+        .banner-title {
+            font-size: 26px;
+            font-weight: 600;
             text-align: center;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
         }
-
-        .header h1 {
-            font-size: 28px;
-            margin-bottom: 10px;
+        
+        /* ✅ 生成时间在标题下方 */
+        .banner-subtitle {
+            text-align: center;
+            font-size: 13px;
+            opacity: 0.85;
+            margin-bottom: 28px;
         }
-
-        .header .subtitle {
-            font-size: 14px;
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+        
+        .metric-box {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .metric-label {
+            font-size: 13px;
             opacity: 0.9;
+            margin-bottom: 8px;
+            font-weight: 400;
         }
-
-        .content {
-            padding: 30px;
+        
+        .metric-value {
+            font-size: 22px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
         }
-
-        .section {
-            margin-bottom: 30px;
+        
+        /* 内容卡片 */
+        .content-card {
+            background: var(--td-bg-color-container);
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
         }
-
+        
         .section-title {
             font-size: 18px;
             font-weight: 600;
-            color: #1a1a1a;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #0052D9;
+            color: var(--td-text-primary);
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--td-border-color);
         }
-
-        .metrics {
+        
+        /* 图表区域 */
+        .charts-row {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 30px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
         }
-
-        .metric-card {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 12px;
-            border-left: 4px solid #0052D9;
+        
+        .chart-box {
+            text-align: center;
         }
-
-        .metric-label {
-            font-size: 12px;
-            color: #666;
-            margin-bottom: 5px;
-        }
-
-        .metric-value {
-            font-size: 24px;
+        
+        .chart-title {
+            font-size: 15px;
             font-weight: 600;
-            color: #1a1a1a;
-        }
-
-        .allocation-table {
-            width: 100%;
-            border-collapse: collapse;
+            color: var(--td-text-secondary);
             margin-bottom: 20px;
         }
-
-        .allocation-table th,
-        .allocation-table td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #e0e0e0;
+        
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 300px;
         }
-
-        .allocation-table th {
-            background: #f8f9fa;
-            font-weight: 600;
-            color: #1a1a1a;
+        
+        canvas {
+            width: 100% !important;
+            height: 100% !important;
         }
-
-        .allocation-table tbody tr:hover {
-            background: #f8f9fa;
+        
+        /* 产品推荐区 */
+        .product-category {
+            margin-bottom: 20px;
         }
-
-        .product-card {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 15px;
-            border-left: 4px solid #8B5CF6;
-        }
-
-        .product-header {
+        
+        .category-header {
+            padding: 16px 20px;
+            border-radius: 8px;
+            margin-bottom: 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
+            color: white;
         }
-
-        .product-name {
+        
+        .category-header.fund { background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%); }
+        .category-header.cash { background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%); }
+        .category-header.bond { background: linear-gradient(135deg, #10B981 0%, #059669 100%); }
+        .category-header.convertible { background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); }
+        .category-header.gold { background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%); }
+        
+        .category-name {
             font-size: 16px;
             font-weight: 600;
-            color: #1a1a1a;
         }
-
+        
+        .category-total {
+            font-size: 15px;
+            font-weight: 600;
+        }
+        
+        /* v3.0 新增: 配置理由说明 */
+        .category-rationale {
+            font-size: 13px;
+            color: var(--td-text-secondary);
+            line-height: 1.7;
+            padding: 12px 16px;
+            background: #F8F9FA;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            border-left: 3px solid currentColor;
+        }
+        
+        .category-rationale.fund { border-left-color: #8B5CF6; }
+        .category-rationale.cash { border-left-color: #EF4444; }
+        .category-rationale.bond { border-left-color: #10B981; }
+        .category-rationale.convertible { border-left-color: #F59E0B; }
+        .category-rationale.gold { border-left-color: #3B82F6; }
+        
+        .product-list {
+            display: grid;
+            gap: 12px;
+        }
+        
+        .product-item {
+            background: var(--td-bg-color-container);
+            padding: 18px;
+            border: 1px solid var(--td-border-color);
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        
+        .product-item:hover {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .product-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        
+        .product-info {
+            flex: 1;
+            min-width: 120px;
+        }
+        
+        .product-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--td-text-primary);
+            margin-bottom: 6px;
+        }
+        
         .product-code {
+            font-size: 12px;
+            color: var(--td-text-placeholder);
+            font-family: 'Monaco', monospace;
+            background: #F3F3F3;
+            padding: 2px 8px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        
+        /* ✅ 份额/价格/金额加文字说明 */
+        .product-stats {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            font-size: 13px;
+            flex-wrap: wrap;
+        }
+        
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .stat-label {
+            font-size: 11px;
+            color: var(--td-text-placeholder);
+            margin-bottom: 2px;
+        }
+        
+        .stat-value {
             font-size: 14px;
-            color: #666;
-            font-family: monospace;
+            font-weight: 600;
         }
-
-        .product-details {
+        
+        .stat-value.price {
+            color: #0052D9;
+        }
+        
+        .stat-value.shares {
+            color: var(--td-text-secondary);
+        }
+        
+        .stat-value.amount {
+            color: #00A870;
+            font-size: 15px;
+        }
+        
+        .product-reason {
             font-size: 14px;
-            color: #666;
-            line-height: 1.6;
-        }
-
-        .advice-list {
-            list-style: none;
-        }
-
-        .advice-list li {
+            color: var(--td-text-secondary);
+            line-height: 1.7;
             padding: 12px;
-            margin-bottom: 10px;
-            background: #f8f9fa;
+            background: #F8F9FA;
+            border-radius: 4px;
+            margin-top: 8px;
+        }
+        
+        .product-reason strong {
+            color: var(--td-text-primary);
+            font-weight: 600;
+        }
+        
+        /* 建议卡片 */
+        .advice-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+        
+        .advice-card {
+            background: var(--td-bg-color-container);
+            border: 1px solid var(--td-border-color);
             border-radius: 8px;
-            border-left: 4px solid #10B981;
-        }
-
-        .advice-list li:before {
-            content: "✅ ";
-            margin-right: 8px;
-        }
-
-        .risk-warning {
-            background: #FEF3C7;
-            border-left: 4px solid #F59E0B;
             padding: 20px;
-            border-radius: 8px;
-            margin-top: 20px;
+            text-align: center;
+            transition: all 0.3s;
         }
-
-        .risk-warning h3 {
-            color: #92400E;
-            margin-bottom: 10px;
+        
+        .advice-card:hover {
+            box-shadow: 0 2px 12px rgba(0, 82, 217, 0.12);
+            transform: translateY(-4px);
+            border-color: #0052D9;
         }
-
-        .risk-warning p {
-            color: #78350F;
+        
+        .advice-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+        
+        .advice-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--td-text-primary);
+            margin-bottom: 8px;
+        }
+        
+        .advice-content {
+            font-size: 12px;
+            color: var(--td-text-secondary);
             line-height: 1.6;
         }
-
-        .loading {
-            text-align: center;
-            padding: 60px 20px;
-            color: #666;
+        
+        /* 风险提示 */
+        .warning-compact {
+            background: linear-gradient(135deg, #FFF8E1 0%, #FFECB3 100%);
+            border: 1px solid #FFA726;
+            border-left: 4px solid #FF9800;
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin-top: 24px;
+            display: flex;
+            gap: 12px;
         }
-
-        .error {
-            text-align: center;
-            padding: 60px 20px;
-            color: #EF4444;
+        
+        .warning-icon {
+            font-size: 20px;
+            flex-shrink: 0;
         }
-
+        
+        .warning-content {
+            flex: 1;
+        }
+        
+        .warning-title-compact {
+            font-size: 14px;
+            font-weight: 600;
+            color: #E65100;
+            margin-bottom: 8px;
+        }
+        
+        .warning-text {
+            font-size: 12px;
+            color: #E65100;
+            line-height: 1.6;
+        }
+        
+        /* ✅ 底部数据来源 */
+        .footer-info {
+            text-align: center;
+            padding: 24px;
+            color: var(--td-text-secondary);
+            font-size: 13px;
+            border-top: 1px solid var(--td-border-color);
+            margin-top: 40px;
+        }
+        
+        .footer-info strong {
+            color: var(--td-text-primary);
+        }
+        
+        /* 响应式 */
         @media (max-width: 768px) {
-            .metrics {
+            body {
+                padding: 16px;
+            }
+            
+            .top-banner {
+                padding: 32px 20px;
+            }
+            
+            .banner-title {
+                font-size: 20px;
+            }
+            
+            .banner-subtitle {
+                font-size: 12px;
+            }
+            
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+            
+            .metric-box {
+                padding: 16px 12px;
+            }
+            
+            .metric-value {
+                font-size: 18px;
+            }
+            
+            .content-card {
+                padding: 24px 20px;
+            }
+            
+            .section-title {
+                font-size: 16px;
+            }
+            
+            .charts-row {
                 grid-template-columns: 1fr;
             }
             
-            .container {
-                border-radius: 0;
+            .chart-container {
+                height: 280px;
             }
             
-            body {
-                padding: 0;
+            .product-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .product-stats {
+                width: 100%;
+            }
+            
+            .advice-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+            
+            .advice-card {
+                padding: 16px 12px;
+            }
+            
+            .advice-icon {
+                font-size: 28px;
+                margin-bottom: 8px;
+            }
+            
+            .advice-title {
+                font-size: 13px;
+            }
+            
+            .advice-content {
+                font-size: 11px;
+            }
+            
+            .footer-info {
+                font-size: 12px;
+                padding: 20px 16px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .chart-container {
+                height: 250px;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>📊 投资配置方案详情</h1>
-            <p class="subtitle">生成时间: <span id="gen-time"></span></p>
-        </div>
-
-        <div class="content" id="content">
-            <div class="loading">
-                <p>⏳ 加载方案数据中...</p>
+        <!-- 顶部信息栏 -->
+        <div class="top-banner">
+            <h1 class="banner-title">🎯 您的专属投资配置方案</h1>
+            <!-- ✅ 生成时间在标题下方 -->
+            <div class="banner-subtitle">
+                生成时间：2026年3月13日 20:20 | 数据来源：Wind资讯、腾讯自选股、天天基金网
+            </div>
+            <div class="metrics-grid">
+                <div class="metric-box">
+                    <div class="metric-label">💰 投资金额</div>
+                    <div class="metric-value">¥200,000</div>
+                </div>
+                <div class="metric-box">
+                    <div class="metric-label">⏱️ 投资期限</div>
+                    <div class="metric-value">3年</div>
+                </div>
+                <div class="metric-box">
+                    <div class="metric-label">🛡️ 风险等级</div>
+                    <div class="metric-value">稳健型</div>
+                </div>
+                <div class="metric-box">
+                    <div class="metric-label">📈 预期年化收益</div>
+                    <div class="metric-value">5-8%</div>
+                </div>
             </div>
         </div>
-    </div>
-
-    <script>
-        // 获取URL参数
-        function getUrlParams() {
-            const params = new URLSearchParams(window.location.search);
-            return {
-                amount: params.get('amount') || '100000',
-                risk: params.get('risk') || 'aggressive',
-                period: params.get('period') || '3y'
-            };
-        }
-
-        // 风险等级映射
-        const riskMap = {
-            'conservative': '保守型',
-            'stable': '稳健型',
-            'balanced': '平衡型',
-            'aggressive': '进取型'
-        };
-
-        // 期限映射
-        const periodMap = {
-            '1y': '1年',
-            '3y': '3年',
-            '5y': '5年'
-        };
-
-        // 预期年化收益
-        const expectedReturnMap = {
-            'conservative': '3-5%',
-            'stable': '5-8%',
-            'balanced': '8-12%',
-            'aggressive': '12-18%'
-        };
-
-        // 资产配置方案
-        const allocationMap = {
-            'conservative': {
-                index: 0.20,
-                cash: 0.40,
-                bond: 0.30,
-                convertible: 0.05,
-                gold: 0.05
-            },
-            'stable': {
-                index: 0.30,
-                cash: 0.30,
-                bond: 0.20,
-                convertible: 0.10,
-                gold: 0.10
-            },
-            'balanced': {
-                index: 0.50,
-                cash: 0.20,
-                bond: 0.10,
-                convertible: 0.15,
-                gold: 0.05
-            },
-            'aggressive': {
-                index: 0.70,
-                cash: 0.10,
-                bond: 0.00,
-                convertible: 0.15,
-                gold: 0.05
-            }
-        };
-
-        // 产品推荐
-        const productMap = {
-            index: {
-                name: '指数基金组合',
-                products: [
-                    { name: '沪深300 ETF', code: '510300', ratio: 0.43 },
-                    { name: '中证500 ETF', code: '510500', ratio: 0.29 },
-                    { name: '创业板指 ETF', code: '159915', ratio: 0.28 }
-                ]
-            },
-            cash: {
-                name: '货币基金',
-                products: [
-                    { name: '天弘余额宝', code: '000198', ratio: 1.0 }
-                ]
-            },
-            bond: {
-                name: '债券基金',
-                products: [
-                    { name: '易方达安心回报债券A', code: '003376', ratio: 1.0 }
-                ]
-            },
-            convertible: {
-                name: '可转债',
-                products: [
-                    { name: '南银转债', code: '113050', ratio: 0.50 },
-                    { name: '立讯转债', code: '128136', ratio: 0.50 }
-                ]
-            },
-            gold: {
-                name: '黄金ETF',
-                products: [
-                    { name: '华安黄金ETF', code: '518880', ratio: 1.0 }
-                ]
-            }
-        };
-
-        // 渲染页面
-        function renderPlan() {
-            const params = getUrlParams();
-            const amount = parseInt(params.amount);
-            const risk = params.risk;
-            const period = periodMap[params.period] || '3年';
-            const riskLevel = riskMap[risk] || '进取型';
-            const expectedReturn = expectedReturnMap[risk] || '12-18%';
-            const allocation = allocationMap[risk];
-
-            // 生成时间
-            document.getElementById('gen-time').textContent = new Date().toLocaleString('zh-CN');
-
-            // 构建HTML
-            let html = `
-                <div class="section">
-                    <div class="section-title">📋 投资画像</div>
-                    <div class="metrics">
-                        <div class="metric-card">
-                            <div class="metric-label">💰 投资金额</div>
-                            <div class="metric-value">¥${amount.toLocaleString()}</div>
+        
+        <!-- 资产配置可视化 -->
+        <div class="content-card">
+            <h2 class="section-title">📊 资产配置可视化</h2>
+            <div class="charts-row">
+                <div class="chart-box">
+                    <h3 class="chart-title">资产配置比例</h3>
+                    <div class="chart-container">
+                        <canvas id="pieChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-box">
+                    <h3 class="chart-title">资产配置金额</h3>
+                    <div class="chart-container">
+                        <canvas id="barChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 详细产品推荐 -->
+        <div class="content-card">
+            <h2 class="section-title">📋 详细产品推荐</h2>
+            
+            <!-- 指数基金 -->
+            <div class="product-category fund">
+                <div class="category-header fund">
+                    <span class="category-name">📈 指数基金配置</span>
+                    <span class="category-total">¥60,000 · 30%</span>
+                </div>
+                <div class="category-rationale fund">
+                    <strong>为什么要配：</strong>沪深300跟踪大盘,长期年化8-10%。费率低廉(0.5%/年),分散300只蓝筹股风险,适合长期持有。
+                </div>
+                <div class="product-list">
+                    <div class="product-item">
+                        <div class="product-header">
+                            <div class="product-info">
+                                <div class="product-name">沪深300ETF</div>
+                                <span class="product-code">510300</span>
+                            </div>
+                            <div class="product-stats">
+                                <div class="stat-item">
+                                    <div class="stat-label">当前价格</div>
+                                    <div class="stat-value price">¥4.69/份</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">购买份额</div>
+                                    <div class="stat-value shares">6,400份</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">投资金额</div>
+                                    <div class="stat-value amount">¥30,016</div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="metric-card">
-                            <div class="metric-label">⏱️ 投资期限</div>
-                            <div class="metric-value">${period}</div>
+                        <div class="product-reason">
+                            <strong>推荐理由：</strong>涵盖A股市值最大的300只核心资产，费率低（0.5%/年），3年持有正收益率超85%，适合长期配置。
                         </div>
-                        <div class="metric-card">
-                            <div class="metric-label">🛡️ 风险等级</div>
-                            <div class="metric-value">${riskLevel}</div>
+                    </div>
+                    <div class="product-item">
+                        <div class="product-header">
+                            <div class="product-info">
+                                <div class="product-name">中证500ETF</div>
+                                <span class="product-code">510500</span>
+                            </div>
+                            <div class="product-stats">
+                                <div class="stat-item">
+                                    <div class="stat-label">当前价格</div>
+                                    <div class="stat-value price">¥6.73/份</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">购买份额</div>
+                                    <div class="stat-value shares">4,450份</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">投资金额</div>
+                                    <div class="stat-value amount">¥29,949</div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="metric-card">
-                            <div class="metric-label">📈 预期年化</div>
-                            <div class="metric-value">${expectedReturn}</div>
+                        <div class="product-reason">
+                            <strong>推荐理由：</strong>聚焦中盘成长股，覆盖新能源、医药、TMT等高成长赛道，与沪深300互补，提升组合弹性。
                         </div>
                     </div>
                 </div>
-
-                <div class="section">
-                    <div class="section-title">📊 资产配置</div>
-                    <table class="allocation-table">
-                        <thead>
-                            <tr>
-                                <th>资产类别</th>
-                                <th>配比</th>
-                                <th>金额</th>
-                                <th>说明</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-            `;
-
-            // 添加资产配置行
-            const assets = [
-                { key: 'index', name: '指数基金', desc: '大中小盘全覆盖' },
-                { key: 'cash', name: '货币基金', desc: 'T+0随用随取' },
-                { key: 'bond', name: '债券基金', desc: '稳定收益来源' },
-                { key: 'convertible', name: '可转债', desc: '进可攻退可守' },
-                { key: 'gold', name: '黄金ETF', desc: '对冲风险' }
-            ];
-
-            assets.forEach(asset => {
-                const ratio = allocation[asset.key];
-                if (ratio > 0) {
-                    const assetAmount = Math.round(amount * ratio);
-                    html += `
-                        <tr>
-                            <td><strong>${asset.name}</strong></td>
-                            <td>${(ratio * 100).toFixed(0)}%</td>
-                            <td>¥${assetAmount.toLocaleString()}</td>
-                            <td>${asset.desc}</td>
-                        </tr>
-                    `;
-                }
-            });
-
-            html += `
-                        </tbody>
-                    </table>
+            </div>
+            
+            <!-- 货币基金 -->
+            <div class="product-category cash">
+                <div class="category-header cash">
+                    <span class="category-name">💵 货币基金配置</span>
+                    <span class="category-total">¥60,000 · 30%</span>
                 </div>
-
-                <div class="section">
-                    <div class="section-title">🔥 产品推荐明细</div>
-            `;
-
-            // 添加产品卡片
-            Object.keys(allocation).forEach(key => {
-                if (allocation[key] > 0 && productMap[key]) {
-                    const category = productMap[key];
-                    const categoryAmount = Math.round(amount * allocation[key]);
-                    
-                    html += `<h3 style="margin: 20px 0 10px 0; color: #1a1a1a;">${category.name} (${(allocation[key] * 100).toFixed(0)}% / ¥${categoryAmount.toLocaleString()})</h3>`;
-                    
-                    category.products.forEach(product => {
-                        const productAmount = Math.round(categoryAmount * product.ratio);
-                        html += `
-                            <div class="product-card">
-                                <div class="product-header">
-                                    <span class="product-name">${product.name}</span>
-                                    <span class="product-code">${product.code}</span>
+                <div class="category-rationale cash">
+                    <strong>为什么要配：</strong>保持适度流动性,T+0随用随取。降低组合整体波动,熊市时有弹药可以逢低加仓。
+                </div>
+                <div class="product-list">
+                    <div class="product-item">
+                        <div class="product-header">
+                            <div class="product-info">
+                                <div class="product-name">天弘余额宝</div>
+                                <span class="product-code">000198</span>
+                            </div>
+                            <div class="product-stats">
+                                <div class="stat-item">
+                                    <div class="stat-label">7日年化</div>
+                                    <div class="stat-value price">2.3%</div>
                                 </div>
-                                <div class="product-details">
-                                    💰 建议配置: ¥${productAmount.toLocaleString()}
+                                <div class="stat-item">
+                                    <div class="stat-label">申赎规则</div>
+                                    <div class="stat-value shares">随时申赎</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">投资金额</div>
+                                    <div class="stat-value amount">¥60,000</div>
                                 </div>
                             </div>
-                        `;
-                    });
-                }
-            });
-
-            html += `
+                        </div>
+                        <div class="product-reason">
+                            <strong>推荐理由：</strong>T+0实时赎回，流动性极佳，年化收益2-3%，保持组合灵活性，可在市场低位时提供"子弹"。
+                        </div>
+                    </div>
                 </div>
-
-                <div class="section">
-                    <div class="section-title">💡 投资建议</div>
-                    <ul class="advice-list">
-                        <li>分3批建仓,每批间隔2周,降低市场波动风险</li>
-                        <li>每季度检查一次配置,偏离±5%时进行再平衡</li>
-                        <li>坚持长期持有,不频繁交易,降低交易成本</li>
-                        <li>牛市时逐步止盈,熊市时逢低补仓</li>
-                    </ul>
+            </div>
+            
+            <!-- 债券基金 -->
+            <div class="product-category bond">
+                <div class="category-header bond">
+                    <span class="category-name">🏦 债券基金配置</span>
+                    <span class="category-total">¥40,000 · 20%</span>
                 </div>
-
-                <div class="risk-warning">
-                    <h3>⚠️ 风险提示</h3>
-                    <p>市场有风险,投资需谨慎。本方案基于历史数据测算,不构成投资建议。${riskLevel}配置波动较大,请做好心理准备。建议咨询专业理财顾问后再做决策。</p>
+                <div class="category-rationale bond">
+                    <strong>为什么要配：</strong>稳定收益来源,年化4-6%。股市下跌时债市往往上涨,起到股债平衡作用。
                 </div>
-            `;
-
-            document.getElementById('content').innerHTML = html;
+                <div class="product-list">
+                    <div class="product-item">
+                        <div class="product-header">
+                            <div class="product-info">
+                                <div class="product-name">易方达纯债债券A</div>
+                                <span class="product-code">110037</span>
+                            </div>
+                            <div class="product-stats">
+                                <div class="stat-item">
+                                    <div class="stat-label">基金净值</div>
+                                    <div class="stat-value price">1.085</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">购买份额</div>
+                                    <div class="stat-value shares">36,866份</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">投资金额</div>
+                                    <div class="stat-value amount">¥40,000</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="product-reason">
+                            <strong>推荐理由：</strong>纯债基金，波动小，近3年年化收益5%左右，作为组合"压舱石"，降低整体波动率。
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 可转债 -->
+            <div class="product-category convertible">
+                <div class="category-header convertible">
+                    <span class="category-name">🔄 可转债配置</span>
+                    <span class="category-total">¥20,000 · 10%</span>
+                </div>
+                <div class="category-rationale convertible">
+                    <strong>为什么要配：</strong>进可攻退可守。牛市跟涨(转股),熊市保底(债券价值),攻守兼备的投资品种。
+                </div>
+                <div class="product-list">
+                    <div class="product-item">
+                        <div class="product-header">
+                            <div class="product-info">
+                                <div class="product-name">南银转债</div>
+                                <span class="product-code">113050</span>
+                            </div>
+                            <div class="product-stats">
+                                <div class="stat-item">
+                                    <div class="stat-label">当前价格</div>
+                                    <div class="stat-value price">¥100.5/张</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">购买数量</div>
+                                    <div class="stat-value shares">200张</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">投资金额</div>
+                                    <div class="stat-value amount">¥20,100</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="product-reason">
+                            <strong>推荐理由：</strong>AAA评级，"下有保底、上不封顶"，价格接近面值，安全边际高，适合稳健型投资者增强收益。
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 黄金ETF -->
+            <div class="product-category gold">
+                <div class="category-header gold">
+                    <span class="category-name">⚡ 黄金ETF配置</span>
+                    <span class="category-total">¥20,000 · 10%</span>
+                </div>
+                <div class="category-rationale gold">
+                    <strong>为什么要配：</strong>美元弱周期,黄金强。对冲通胀和系统性风险,与股票负相关,分散组合风险。
+                </div>
+                <div class="product-list">
+                    <div class="product-item">
+                        <div class="product-header">
+                            <div class="product-info">
+                                <div class="product-name">华安黄金ETF</div>
+                                <span class="product-code">518880</span>
+                            </div>
+                            <div class="product-stats">
+                                <div class="stat-item">
+                                    <div class="stat-label">当前价格</div>
+                                    <div class="stat-value price">¥4.85/份</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">购买份额</div>
+                                    <div class="stat-value shares">4,124份</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">投资金额</div>
+                                    <div class="stat-value amount">¥20,001</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="product-reason">
+                            <strong>推荐理由：</strong>避险资产，与股债相关性低，对冲市场风险，长期保值增值，配置10%可有效分散波动。
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 投资建议 -->
+        <div class="content-card">
+            <h2 class="section-title">💡 投资建议</h2>
+            <div class="advice-grid">
+                <div class="advice-card">
+                    <div class="advice-icon">📅</div>
+                    <div class="advice-title">分批建仓</div>
+                    <div class="advice-content">分2-3次建仓，降低择时风险</div>
+                </div>
+                <div class="advice-card">
+                    <div class="advice-icon">🔄</div>
+                    <div class="advice-title">定期再平衡</div>
+                    <div class="advice-content">每季度检查，偏离±5%时调整</div>
+                </div>
+                <div class="advice-card">
+                    <div class="advice-icon">⏳</div>
+                    <div class="advice-title">长期持有</div>
+                    <div class="advice-content">坚持3年,避免频繁交易</div>
+                </div>
+                <div class="advice-card">
+                    <div class="advice-icon">📊</div>
+                    <div class="advice-title">关注基本面</div>
+                    <div class="advice-content">定期查看财报和行业动态</div>
+                </div>
+            </div>
+            
+            <!-- 风险提示 -->
+            <div class="warning-compact">
+                <div class="warning-icon">⚠️</div>
+                <div class="warning-content">
+                    <div class="warning-title-compact">风险提示</div>
+                    <div class="warning-text">本方案仅供参考，不构成投资建议。市场有风险，投资需谨慎，历史收益不代表未来表现。</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+    <script>
+        // 获取URL参数
+        const params = new URLSearchParams(window.location.search);
+        const amount = parseInt(params.get('amount')) || 200000;
+        const riskType = params.get('risk') || 'stable';
+        const period = params.get('period') || '3y';
+        
+        const riskMap = {
+            conservative: { name: '保守型', return: '3-5%', allocation: { index: 0.20, cash: 0.40, bond: 0.30, convertible: 0.05, gold: 0.05 }},
+            stable: { name: '稳健型', return: '5-8%', allocation: { index: 0.30, cash: 0.30, bond: 0.20, convertible: 0.10, gold: 0.10 }},
+            balanced: { name: '平衡型', return: '8-12%', allocation: { index: 0.50, cash: 0.20, bond: 0.10, convertible: 0.15, gold: 0.05 }},
+            aggressive: { name: '进取型', return: '12-18%', allocation: { index: 0.70, cash: 0.10, bond: 0.00, convertible: 0.15, gold: 0.05 }}
+        };
+        
+        const periodMap = { '1y': '1年', '3y': '3年', '5y': '5年' };
+        const risk = riskMap[riskType];
+        const alloc = risk.allocation;
+        
+        // 更新顶部数据
+        document.querySelector('.metric-value').textContent = '¥' + amount.toLocaleString();
+        document.querySelectorAll('.metric-value')[1].textContent = periodMap[period];
+        document.querySelectorAll('.metric-value')[2].textContent = risk.name;
+        document.querySelectorAll('.metric-value')[3].textContent = risk.return;
+        document.querySelector('.banner-subtitle').textContent = '生成时间：' + new Date().toLocaleString('zh-CN') + ' | 数据来源：Wind资讯、腾讯自选股';
+        document.title = '投资配置方案 - ' + amount.toLocaleString() + '元·' + periodMap[period] + '·' + risk.name;
+        
+        // 计算资产金额
+        const assets = {
+            index: Math.round(amount * alloc.index),
+            cash: Math.round(amount * alloc.cash),
+            bond: Math.round(amount * alloc.bond),
+            convertible: Math.round(amount * alloc.convertible),
+            gold: Math.round(amount * alloc.gold)
+        };
+        
+        // 更新图表数据
+        const chartData = {
+            labels: ['指数基金', '货币基金', '债券基金', '可转债', '黄金ETF'],
+            values: [assets.index, assets.cash, assets.bond, assets.convertible, assets.gold],
+            percentages: [
+                (alloc.index * 100).toFixed(0) + '%',
+                (alloc.cash * 100).toFixed(0) + '%',
+                (alloc.bond * 100).toFixed(0) + '%',
+                (alloc.convertible * 100).toFixed(0) + '%',
+                (alloc.gold * 100).toFixed(0) + '%'
+            ].filter((v,i) => chartData.values[i] > 0)
+        };
+        
+        // 更新类别标题金额
+        if (assets.index > 0) {
+            document.querySelector('.category-header.fund .category-total').textContent = '¥' + assets.index.toLocaleString() + ' · ' + (alloc.index * 100).toFixed(0) + '%';
+            document.querySelectorAll('.stat-value.amount')[0].textContent = '¥' + Math.round(assets.index * 0.5).toLocaleString();
+            document.querySelectorAll('.stat-value.amount')[1].textContent = '¥' + Math.round(assets.index * 0.5).toLocaleString();
         }
-
-        // 页面加载时渲染
-        window.onload = renderPlan;
+        if (assets.cash > 0) document.querySelector('.category-header.cash .category-total').textContent = '¥' + assets.cash.toLocaleString() + ' · ' + (alloc.cash * 100).toFixed(0) + '%';
+        if (assets.bond > 0) document.querySelector('.category-header.bond .category-total').textContent = '¥' + assets.bond.toLocaleString() + ' · ' + (alloc.bond * 100).toFixed(0) + '%';
+        if (assets.convertible > 0) document.querySelector('.category-header.convertible .category-total').textContent = '¥' + assets.convertible.toLocaleString() + ' · ' + (alloc.convertible * 100).toFixed(0) + '%';
+        if (assets.gold > 0) document.querySelector('.category-header.gold .category-total').textContent = '¥' + assets.gold.toLocaleString() + ' · ' + (alloc.gold * 100).toFixed(0) + '%';
+        
+        // 隐藏0配比的类别
+        if (assets.bond === 0) document.querySelector('.product-category.bond').style.display = 'none';
     </script>
+
 </body>
 </html>
