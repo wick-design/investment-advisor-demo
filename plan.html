@@ -781,7 +781,7 @@
     
     
     <script>
-        // 获取URL参数
+        // URL参数解析
         const params = new URLSearchParams(window.location.search);
         const amount = parseInt(params.get('amount')) || 200000;
         const riskType = params.get('risk') || 'stable';
@@ -798,14 +798,6 @@
         const risk = riskMap[riskType];
         const alloc = risk.allocation;
         
-        // 更新顶部数据
-        document.querySelector('.metric-value').textContent = '¥' + amount.toLocaleString();
-        document.querySelectorAll('.metric-value')[1].textContent = periodMap[period];
-        document.querySelectorAll('.metric-value')[2].textContent = risk.name;
-        document.querySelectorAll('.metric-value')[3].textContent = risk.return;
-        document.querySelector('.banner-subtitle').textContent = '生成时间：' + new Date().toLocaleString('zh-CN') + ' | 数据来源：Wind资讯、腾讯自选股';
-        document.title = '投资配置方案 - ' + amount.toLocaleString() + '元·' + periodMap[period] + '·' + risk.name;
-        
         // 计算资产金额
         const assets = {
             index: Math.round(amount * alloc.index),
@@ -815,33 +807,113 @@
             gold: Math.round(amount * alloc.gold)
         };
         
-        // 更新图表数据
-        const chartData = {
-            labels: ['指数基金', '货币基金', '债券基金', '可转债', '黄金ETF'],
-            values: [assets.index, assets.cash, assets.bond, assets.convertible, assets.gold],
+        // 更新页面数据
+        document.title = '投资配置方案 - ' + amount.toLocaleString() + '元·' + periodMap[period] + '·' + risk.name;
+        document.querySelector('.banner-subtitle').textContent = '生成时间：' + new Date().toLocaleString('zh-CN') + ' | 数据来源：Wind资讯、腾讯自选股';
+        
+        const metricValues = document.querySelectorAll('.metric-value');
+        metricValues[0].textContent = '¥' + amount.toLocaleString();
+        metricValues[1].textContent = periodMap[period];
+        metricValues[2].textContent = risk.name;
+        metricValues[3].textContent = risk.return;
+        
+        // 更新类别标题
+        if (assets.index > 0) document.querySelector('.category-header.fund .category-total').textContent = '¥' + assets.index.toLocaleString() + ' · ' + (alloc.index * 100).toFixed(0) + '%';
+        if (assets.cash > 0) document.querySelector('.category-header.cash .category-total').textContent = '¥' + assets.cash.toLocaleString() + ' · ' + (alloc.cash * 100).toFixed(0) + '%';
+        if (assets.bond > 0) document.querySelector('.category-header.bond .category-total').textContent = '¥' + assets.bond.toLocaleString() + ' · ' + (alloc.bond * 100).toFixed(0) + '%';
+        else document.querySelector('.product-category.bond').style.display = 'none';
+        if (assets.convertible > 0) document.querySelector('.category-header.convertible .category-total').textContent = '¥' + assets.convertible.toLocaleString() + ' · ' + (alloc.convertible * 100).toFixed(0) + '%';
+        if (assets.gold > 0) document.querySelector('.category-header.gold .category-total').textContent = '¥' + assets.gold.toLocaleString() + ' · ' + (alloc.gold * 100).toFixed(0) + '%';
+        
+        // 图表数据
+        Chart.register(ChartDataLabels);
+        
+        const chartColors = ['#8B5CF6', '#EF4444', '#10B981', '#F59E0B', '#3B82F6'];
+        const assetData = {
+            labels: ['指数基金', '货币基金', '债券基金', '可转债', '黄金ETF'].filter((v,i) => [assets.index, assets.cash, assets.bond, assets.convertible, assets.gold][i] > 0),
+            values: [assets.index, assets.cash, assets.bond, assets.convertible, assets.gold].filter(v => v > 0),
             percentages: [
                 (alloc.index * 100).toFixed(0) + '%',
                 (alloc.cash * 100).toFixed(0) + '%',
                 (alloc.bond * 100).toFixed(0) + '%',
                 (alloc.convertible * 100).toFixed(0) + '%',
                 (alloc.gold * 100).toFixed(0) + '%'
-            ].filter((v,i) => chartData.values[i] > 0)
+            ].filter((v,i) => [assets.index, assets.cash, assets.bond, assets.convertible, assets.gold][i] > 0),
+            colors: chartColors.filter((v,i) => [assets.index, assets.cash, assets.bond, assets.convertible, assets.gold][i] > 0)
         };
         
-        // 更新类别标题金额
-        if (assets.index > 0) {
-            document.querySelector('.category-header.fund .category-total').textContent = '¥' + assets.index.toLocaleString() + ' · ' + (alloc.index * 100).toFixed(0) + '%';
-            document.querySelectorAll('.stat-value.amount')[0].textContent = '¥' + Math.round(assets.index * 0.5).toLocaleString();
-            document.querySelectorAll('.stat-value.amount')[1].textContent = '¥' + Math.round(assets.index * 0.5).toLocaleString();
-        }
-        if (assets.cash > 0) document.querySelector('.category-header.cash .category-total').textContent = '¥' + assets.cash.toLocaleString() + ' · ' + (alloc.cash * 100).toFixed(0) + '%';
-        if (assets.bond > 0) document.querySelector('.category-header.bond .category-total').textContent = '¥' + assets.bond.toLocaleString() + ' · ' + (alloc.bond * 100).toFixed(0) + '%';
-        if (assets.convertible > 0) document.querySelector('.category-header.convertible .category-total').textContent = '¥' + assets.convertible.toLocaleString() + ' · ' + (alloc.convertible * 100).toFixed(0) + '%';
-        if (assets.gold > 0) document.querySelector('.category-header.gold .category-total').textContent = '¥' + assets.gold.toLocaleString() + ' · ' + (alloc.gold * 100).toFixed(0) + '%';
+        const commonOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 16,
+                        font: { size: 12, family: "'PingFang SC', sans-serif" },
+                        usePointStyle: true,
+                        pointStyle: 'circle',
+                        boxWidth: 12,
+                        boxHeight: 12,
+                        generateLabels: function(chart) {
+                            const data = chart.data;
+                            return data.labels.map((label, i) => ({
+                                text: label + ' ' + assetData.percentages[i],
+                                fillStyle: data.datasets[0].backgroundColor[i],
+                                strokeStyle: 'transparent',
+                                lineWidth: 0,
+                                hidden: false,
+                                index: i
+                            }));
+                        }
+                    }
+                },
+                tooltip: { backgroundColor: 'rgba(0, 0, 0, 0.8)', padding: 12, cornerRadius: 6 },
+                datalabels: { display: false }
+            }
+        };
         
-        // 隐藏0配比的类别
-        if (assets.bond === 0) document.querySelector('.product-category.bond').style.display = 'none';
+        new Chart(document.getElementById('pieChart'), {
+            type: 'doughnut',
+            data: {
+                labels: assetData.labels,
+                datasets: [{ data: assetData.values, backgroundColor: assetData.colors, borderWidth: 3, borderColor: '#fff' }]
+            },
+            options: { ...commonOptions, cutout: '60%' }
+        });
+        
+        new Chart(document.getElementById('barChart'), {
+            type: 'bar',
+            data: {
+                labels: assetData.labels,
+                datasets: [{ label: '投资金额', data: assetData.values, backgroundColor: assetData.colors, borderRadius: 6, borderSkipped: false }]
+            },
+            options: {
+                ...commonOptions,
+                plugins: {
+                    ...commonOptions.plugins,
+                    legend: { display: false },
+                    datalabels: {
+                        display: true,
+                        anchor: 'end',
+                        align: 'top',
+                        offset: 4,
+                        color: '#333',
+                        font: { size: 11, weight: 'bold' },
+                        formatter: (value) => '¥' + (value / 1000).toFixed(0) + 'k'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: Math.max(...assetData.values) * 1.2,
+                        grid: { color: 'rgba(0, 0, 0, 0.05)' },
+                        ticks: { callback: (value) => '¥' + (value / 1000).toFixed(0) + 'k' }
+                    },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
     </script>
-
 </body>
 </html>
