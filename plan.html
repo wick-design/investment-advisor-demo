@@ -787,12 +787,30 @@
         const riskType = params.get('risk') || 'stable';
         const period = params.get('period') || '3y';
         
+        
         const riskMap = {
-            conservative: { name: '保守型', return: '3-5%', allocation: { index: 0.20, cash: 0.40, bond: 0.30, convertible: 0.05, gold: 0.05 }},
-            stable: { name: '稳健型', return: '5-8%', allocation: { index: 0.30, cash: 0.30, bond: 0.20, convertible: 0.10, gold: 0.10 }},
-            balanced: { name: '平衡型', return: '8-12%', allocation: { index: 0.50, cash: 0.20, bond: 0.10, convertible: 0.15, gold: 0.05 }},
-            aggressive: { name: '进取型', return: '12-18%', allocation: { index: 0.70, cash: 0.10, bond: 0.00, convertible: 0.15, gold: 0.05 }}
+            conservative: { 
+                name: '保守型', 
+                return: '3-5%', 
+                allocation: { index: 0.20, cash: 0.40, bond: 0.30, convertible: 0.05, gold: 0.05, stock: 0.00 }
+            },
+            stable: { 
+                name: '稳健型', 
+                return: '5-8%', 
+                allocation: { index: 0.30, cash: 0.30, bond: 0.20, convertible: 0.10, gold: 0.10, stock: 0.00 }
+            },
+            balanced: { 
+                name: '平衡型', 
+                return: '8-12%', 
+                allocation: { index: 0.40, cash: 0.20, bond: 0.10, convertible: 0.15, gold: 0.05, stock: 0.10 }
+            },
+            aggressive: { 
+                name: '进取型', 
+                return: '12-18%', 
+                allocation: { index: 0.50, cash: 0.10, bond: 0.00, convertible: 0.15, gold: 0.05, stock: 0.20 }
+            }
         };
+
         
         const periodMap = { '1y': '1年', '3y': '3年', '5y': '5年' };
         const risk = riskMap[riskType];
@@ -804,7 +822,8 @@
             cash: Math.round(amount * alloc.cash),
             bond: Math.round(amount * alloc.bond),
             convertible: Math.round(amount * alloc.convertible),
-            gold: Math.round(amount * alloc.gold)
+            gold: Math.round(amount * alloc.gold),
+            stock: Math.round(amount * alloc.stock)
         };
         
         // 更新页面数据
@@ -828,18 +847,18 @@
         // 图表数据
         Chart.register(ChartDataLabels);
         
-        const chartColors = ['#8B5CF6', '#EF4444', '#10B981', '#F59E0B', '#3B82F6'];
+        const chartColors = ['#8B5CF6', '#EF4444', '#10B981', '#F59E0B', '#3B82F6', '#EC4899'];
         const assetData = {
-            labels: ['指数基金', '货币基金', '债券基金', '可转债', '黄金ETF'].filter((v,i) => [assets.index, assets.cash, assets.bond, assets.convertible, assets.gold][i] > 0),
-            values: [assets.index, assets.cash, assets.bond, assets.convertible, assets.gold].filter(v => v > 0),
+            labels: ['指数基金', '货币基金', '债券基金', '可转债', '黄金ETF', '个股配置'].filter((v,i) => [assets.index, assets.cash, assets.bond, assets.convertible, assets.gold, assets.stock][i] > 0),
+            values: [assets.index, assets.cash, assets.bond, assets.convertible, assets.gold, assets.stock].filter(v => v > 0),
             percentages: [
                 (alloc.index * 100).toFixed(0) + '%',
                 (alloc.cash * 100).toFixed(0) + '%',
                 (alloc.bond * 100).toFixed(0) + '%',
                 (alloc.convertible * 100).toFixed(0) + '%',
                 (alloc.gold * 100).toFixed(0) + '%'
-            ].filter((v,i) => [assets.index, assets.cash, assets.bond, assets.convertible, assets.gold][i] > 0),
-            colors: chartColors.filter((v,i) => [assets.index, assets.cash, assets.bond, assets.convertible, assets.gold][i] > 0)
+            ].filter((v,i) => [assets.index, assets.cash, assets.bond, assets.convertible, assets.gold, assets.stock][i] > 0),
+            colors: chartColors.filter((v,i) => [assets.index, assets.cash, assets.bond, assets.convertible, assets.gold, assets.stock][i] > 0)
         };
         
         const commonOptions = {
