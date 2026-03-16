@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>智能投资配置方案 - 20万元·3年·稳健型</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
-        // 产品推荐section排序 (按金额从高到低)
+        // 产品推荐section排序 (按金额从高到低) - 延迟执行确保DOM加载
+        setTimeout(() => {
         const productOrder = assetArray.map(a => {
             const map = {
                 '指数基金': 'fund',
@@ -47,7 +48,8 @@
         });
         
         // 保持标题在最前
-        container.insertBefore(title, container.firstChild);
+        container.insertBefore(detailTitle, container.firstChild);
+        }, 100); // 延迟100ms执行
 
     </script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
