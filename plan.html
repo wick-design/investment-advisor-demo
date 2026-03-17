@@ -584,7 +584,7 @@
         <!-- 详细产品推荐 -->
         <div class="content-card">
             <h2 class="section-title">📋 详细产品推荐</h2>
-            
+
             <!-- 指数基金 -->
             <div class="product-category fund">
                 <div class="category-header fund">
@@ -648,79 +648,17 @@
                 </div>
             </div>
             
-            <!-- 货币基金 -->
-            <div class="product-category cash">
-                <div class="category-header cash">
-                    <span class="category-name">💵 货币基金配置</span>
-                    <span class="category-total">¥60,000 · 30%</span>
+            <!-- 股票配置 -->
+            <div class="product-category stock" style="display: none;">
+                <div class="category-header" style="background: linear-gradient(135deg, #EC4899 0%, #DB2777 100%);">
+                    <span class="category-name">📈 股票配置</span>
+                    <span class="category-total stock-total">¥100,000 · 20%</span>
                 </div>
-                <div class="category-rationale cash">
-                    <strong>配置理由：</strong>保持适度流动性,T+0随用随取。降低组合整体波动,熊市时有弹药可以逢低加仓。
+                <div class="category-rationale" style="border-left-color: #EC4899;">
+                    <strong>配置理由：</strong>精选行业龙头,具备护城河优势。ROE>15%,财务健康,长期成长性好。
                 </div>
-                <div class="product-list">
-                    <div class="product-item">
-                        <div class="product-header">
-                            <div class="product-info">
-                                <div class="product-name">天弘余额宝</div>
-                                <span class="product-code">000198</span>
-                            </div>
-                            <div class="product-stats">
-                                <div class="stat-item">
-                                    <div class="stat-label">7日年化</div>
-                                    <div class="stat-value price">2.3%</div>
-                                </div>
-                                <div class="stat-item">
-                                    <div class="stat-label">申赎规则</div>
-                                    <div class="stat-value shares">随时申赎</div>
-                                </div>
-                                <div class="stat-item">
-                                    <div class="stat-label">投资金额</div>
-                                    <div class="stat-value amount">¥60,000</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="product-reason">
-                            <strong>推荐理由：</strong>T+0实时赎回，流动性极佳，年化收益2-3%，保持组合灵活性，可在市场低位时提供"子弹"。
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 债券基金 -->
-            <div class="product-category bond">
-                <div class="category-header bond">
-                    <span class="category-name">🏦 债券基金配置</span>
-                    <span class="category-total">¥40,000 · 20%</span>
-                </div>
-                <div class="category-rationale bond">
-                    <strong>配置理由：</strong>稳定收益来源,年化4-6%。股市下跌时债市往往上涨,起到股债平衡作用。
-                </div>
-                <div class="product-list">
-                    <div class="product-item">
-                        <div class="product-header">
-                            <div class="product-info">
-                                <div class="product-name">易方达纯债债券A</div>
-                                <span class="product-code">110037</span>
-                            </div>
-                            <div class="product-stats">
-                                <div class="stat-item">
-                                    <div class="stat-label">基金净值</div>
-                                    <div class="stat-value price">1.085</div>
-                                </div>
-                                <div class="stat-item">
-                                    <div class="stat-label">购买份额</div>
-                                    <div class="stat-value shares">36,866份</div>
-                                </div>
-                                <div class="stat-item">
-                                    <div class="stat-label">投资金额</div>
-                                    <div class="stat-value amount">¥40,000</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="product-reason">
-                            <strong>推荐理由：</strong>纯债基金，波动小，近3年年化收益5%左右，作为组合"压舱石"，降低整体波动率。
-                        </div>
-                    </div>
+                <div class="product-list stock-list">
+                    <!-- 动态生成 -->
                 </div>
             </div>
             
@@ -762,6 +700,44 @@
                 </div>
             </div>
             
+            <!-- 货币基金 -->
+            <div class="product-category cash">
+                <div class="category-header cash">
+                    <span class="category-name">💵 货币基金配置</span>
+                    <span class="category-total">¥60,000 · 30%</span>
+                </div>
+                <div class="category-rationale cash">
+                    <strong>配置理由：</strong>保持适度流动性,T+0随用随取。降低组合整体波动,熊市时有弹药可以逢低加仓。
+                </div>
+                <div class="product-list">
+                    <div class="product-item">
+                        <div class="product-header">
+                            <div class="product-info">
+                                <div class="product-name">天弘余额宝</div>
+                                <span class="product-code">000198</span>
+                            </div>
+                            <div class="product-stats">
+                                <div class="stat-item">
+                                    <div class="stat-label">7日年化</div>
+                                    <div class="stat-value price">2.3%</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">申赎规则</div>
+                                    <div class="stat-value shares">随时申赎</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">投资金额</div>
+                                    <div class="stat-value amount">¥60,000</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="product-reason">
+                            <strong>推荐理由：</strong>T+0实时赎回，流动性极佳，年化收益2-3%，保持组合灵活性，可在市场低位时提供"子弹"。
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
             <!-- 黄金ETF -->
             <div class="product-category gold">
                 <div class="category-header gold">
@@ -798,19 +774,43 @@
                         </div>
                     </div>
                 </div>
+            </div>
             
-            
-            <!-- 股票配置 -->
-            <div class="product-category stock" style="display: none;">
-                <div class="category-header" style="background: linear-gradient(135deg, #EC4899 0%, #DB2777 100%);">
-                    <span class="category-name">📈 股票配置</span>
-                    <span class="category-total stock-total">¥100,000 · 20%</span>
+            <!-- 债券基金 -->
+            <div class="product-category bond">
+                <div class="category-header bond">
+                    <span class="category-name">🏦 债券基金配置</span>
+                    <span class="category-total">¥40,000 · 20%</span>
                 </div>
-                <div class="category-rationale" style="border-left-color: #EC4899;">
-                    <strong>配置理由：</strong>精选行业龙头,具备护城河优势。ROE>15%,财务健康,长期成长性好。
+                <div class="category-rationale bond">
+                    <strong>配置理由：</strong>稳定收益来源,年化4-6%。股市下跌时债市往往上涨,起到股债平衡作用。
                 </div>
-                <div class="product-list stock-list">
-                    <!-- 动态生成 -->
+                <div class="product-list">
+                    <div class="product-item">
+                        <div class="product-header">
+                            <div class="product-info">
+                                <div class="product-name">易方达纯债债券A</div>
+                                <span class="product-code">110037</span>
+                            </div>
+                            <div class="product-stats">
+                                <div class="stat-item">
+                                    <div class="stat-label">基金净值</div>
+                                    <div class="stat-value price">1.085</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">购买份额</div>
+                                    <div class="stat-value shares">36,866份</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">投资金额</div>
+                                    <div class="stat-value amount">¥40,000</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="product-reason">
+                            <strong>推荐理由：</strong>纯债基金，波动小，近3年年化收益5%左右，作为组合"压舱石"，降低整体波动率。
+                        </div>
+                    </div>
                 </div>
             </div>
 
