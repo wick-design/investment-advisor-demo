@@ -538,7 +538,7 @@
             console.log('排序完成,顺序:', productOrder);
         }, 200);
  // 延迟100ms执行
-    // ===== 实时股票数据 (2026/3/17 17:10:49) =====
+    // ===== 实时股票数据 (2026/3/17 17:19:51) =====
     window.REALTIME_STOCKS = [
     {
         "code": "sz300750",
@@ -1045,41 +1045,85 @@
                 '¥' + assets.stock.toLocaleString() + ' · ' + (alloc.stock * 100).toFixed(0) + '%';
             
             // 生成股票列表
-            const stockData = stockPool[riskType];
-            if (!stockData || amount < 200000) {
-                stockSection.style.display = 'none';
-            } else { // ≥20万才推荐
-            const stocks = stockData.stocks;
-            const perStock = Math.round(assets.stock / stocks.length);
-            const stockHTML = stocks.map(s => `
-                <div class="product-item">
-                    <div class="product-header">
-                        <div class="product-info">
-                            <div class="product-name">${s.name}</div>
-                            <span class="product-code">${s.code}</span>
-                        </div>
-                        <div class="product-stats">
-                            <div class="stat-item">
-                                <div class="stat-label">投资金额</div>
-                                <div class="stat-value amount">¥${perStock.toLocaleString()}</div>
+            // 使用实时股票数据
+            if (window.REALTIME_STOCKS && window.REALTIME_STOCKS.length > 0) {
+                console.log('✅ 渲染实时股票:', window.REALTIME_STOCKS.length, '只');
+                const stockHTML = window.REALTIME_STOCKS.map((s, i) => {
+                    const position = ['主仓', '副仓', '副仓', '配置仓'][i];
+                    const changeColor = parseFloat(s.change) > 0 ? '#10B981' : '#EF4444';
+                    const changeSign = parseFloat(s.change) > 0 ? '+' : '';
+                    return `
+                    <div class="product-item">
+                        <div class="product-header">
+                            <div class="product-info">
+                                <div class="product-name">${s.name} <span style="background:#EC4899;color:white;padding:2px 8px;border-radius:4px;font-size:11px;margin-left:8px;">${position} ${s.ratio}%</span></div>
+                                <span class="product-code">${s.code}</span>
                             </div>
-                            <div class="stat-item">
-                                <div class="stat-label">ROE</div>
-                                <div class="stat-value">${s.roe}</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-label">PE</div>
-                                <div class="stat-value">${s.pe}</div>
+                            <div class="product-stats">
+                                <div class="stat-item">
+                                    <div class="stat-label">股数</div>
+                                    <div class="stat-value">${s.shares.toLocaleString()}股</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">股价</div>
+                                    <div class="stat-value price">¥${Number(s.price).toFixed(2)}</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">金额</div>
+                                    <div class="stat-value amount">¥${s.amount.toLocaleString()}</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">PE</div>
+                                    <div class="stat-value">${s.pe}</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">今日</div>
+                                    <div class="stat-value" style="color:${changeColor}">${changeSign}${s.change}%</div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="product-reason">
-                        <strong>推荐理由：</strong>${s.reason}
-                    </div>
-                </div>
-            `).join('');
-            
-            document.querySelector('.stock-list').innerHTML = stockHTML;
+                `;
+                }).join('');
+                document.querySelector('.stock-list').innerHTML = stockHTML;
+            } else {
+                console.warn('⚠️ 未找到实时股票数据');
+                // 降级使用默认数据
+                const stockData = stockPool[riskType];
+                if (!stockData || amount < 200000) {
+                    stockSection.style.display = 'none';
+                } else {
+                    const stocks = stockData.stocks;
+                    const perStock = Math.round(assets.stock / stocks.length);
+                    const stockHTML = stocks.map(s => `
+                        <div class="product-item">
+                            <div class="product-header">
+                                <div class="product-info">
+                                    <div class="product-name">${s.name}</div>
+                                    <span class="product-code">${s.code}</span>
+                                </div>
+                                <div class="product-stats">
+                                    <div class="stat-item">
+                                        <div class="stat-label">投资金额</div>
+                                        <div class="stat-value amount">¥${perStock.toLocaleString()}</div>
+                                    </div>
+                                    <div class="stat-item">
+                                        <div class="stat-label">ROE</div>
+                                        <div class="stat-value">${s.roe}</div>
+                                    </div>
+                                    <div class="stat-item">
+                                        <div class="stat-label">PE</div>
+                                        <div class="stat-value">${s.pe}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="product-reason">
+                                <strong>推荐理由：</strong>${s.reason}
+                            </div>
+                        </div>
+                    `).join('');
+                    document.querySelector('.stock-list').innerHTML = stockHTML;
+                }
             }
         }
 
