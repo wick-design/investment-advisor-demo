@@ -831,111 +831,7 @@
             </div>
         </div>
         
-        <script>
-        // 动态生成投资建议
-        const adviceGrid = document.getElementById('adviceGrid');
-        
-        // 根据风险等级和期限生成建议
-        const adviceMap = {
-            'conservative': {
-                '1y': [
-                    { icon: '💰', title: '稳健为主', content: '70%固收类,安全优先' },
-                    { icon: '🔄', title: '季度检视', content: '每季度查看一次收益' },
-                    { icon: '📊', title: '不追涨杀跌', content: '保持稳定,勿频繁操作' },
-                    { icon: '💡', title: '到期续投', content: '1年到期可续投或调整' }
-                ],
-                '3y': [
-                    { icon: '💰', title: '稳健配置', content: '高股息+债券为主' },
-                    { icon: '🔄', title: '半年再平衡', content: '每半年检查配比' },
-                    { icon: '📊', title: '长期持有', content: '坚持3年,平滑波动' },
-                    { icon: '💡', title: '分红再投', content: '股息和利息可再投资' }
-                ],
-                '5y': [
-                    { icon: '💰', title: '长期稳健', content: '复利增长,耐心持有' },
-                    { icon: '🔄', title: '年度再平衡', content: '每年调整一次即可' },
-                    { icon: '📊', title: '坚持长期', content: '5年足够平滑周期' },
-                    { icon: '💡', title: '避免提前赎回', content: '尽量持有至到期' }
-                ]
-            },
-            'stable': {
-                '1y': [
-                    { icon: '📅', title: '分批建仓', content: '分2批,降低择时风险' },
-                    { icon: '🔄', title: '季度检视', content: '每季度检查偏离度' },
-                    { icon: '⏳', title: '保持耐心', content: '1年较短,勿急于调整' },
-                    { icon: '📊', title: '关注大势', content: '留意市场整体走向' }
-                ],
-                '3y': [
-                    { icon: '📅', title: '分批建仓', content: '分2-3批,间隔2周' },
-                    { icon: '🔄', title: '定期再平衡', content: '偏离±5%时调整' },
-                    { icon: '⏳', title: '长期持有', content: '坚持3年,避免频繁交易' },
-                    { icon: '📊', title: '关注基本面', content: '定期查看财报动态' }
-                ],
-                '5y': [
-                    { icon: '📅', title: '分批建仓', content: '分3批,充分分散' },
-                    { icon: '🔄', title: '年度再平衡', content: '每年检查一次' },
-                    { icon: '⏳', title: '坚持长期', content: '5年周期足够充分' },
-                    { icon: '📊', title: '复利增长', content: '分红再投,雪球效应' }
-                ]
-            },
-            'balanced': {
-                '1y': [
-                    { icon: '📅', title: '分批建仓', content: '分2批,降低风险' },
-                    { icon: '🔄', title: '季度检视', content: '每季度再平衡' },
-                    { icon: '⏳', title: '警惕波动', content: '1年期可能波动较大' },
-                    { icon: '📊', title: '控制仓位', content: '股票仓位≤30%' }
-                ],
-                '3y': [
-                    { icon: '📅', title: '分批建仓', content: '分2-3批,间隔2周' },
-                    { icon: '🔄', title: '定期再平衡', content: '偏离±5%时调整' },
-                    { icon: '⏳', title: '长期持有', content: '坚持3年投资周期' },
-                    { icon: '📊', title: '关注基本面', content: '定期查看持仓财报' }
-                ],
-                '5y': [
-                    { icon: '📅', title: '分批建仓', content: '分3批,充分分散' },
-                    { icon: '🔄', title: '年度再平衡', content: '每年调整一次' },
-                    { icon: '⏳', title: '长期投资', content: '5年足够平滑波动' },
-                    { icon: '📊', title: '适度调仓', content: '根据市场适时调整' }
-                ]
-            },
-            'aggressive': {
-                '1y': [
-                    { icon: '⚠️', title: '高风险警示', content: '1年期波动极大,慎重' },
-                    { icon: '🔄', title: '月度监控', content: '每月检查持仓' },
-                    { icon: '⏳', title: '建议延长', content: '强烈建议延至3年' },
-                    { icon: '📊', title: '严格止损', content: '个股-20%,指数-25%' }
-                ],
-                '3y': [
-                    { icon: '📅', title: '分批建仓', content: '分3批,每批间隔2周' },
-                    { icon: '🔄', title: '定期检视', content: '每季度再平衡一次' },
-                    { icon: '⏳', title: '长期持有', content: '坚持3年,平滑波动' },
-                    { icon: '📊', title: '设置止损', content: '个股-20%,指数-25%' }
-                ],
-                '5y': [
-                    { icon: '📅', title: '分批建仓', content: '分3批,充分分散' },
-                    { icon: '🔄', title: '年度再平衡', content: '每年调整一次' },
-                    { icon: '⏳', title: '长期投资', content: '5年足够享受成长' },
-                    { icon: '📊', title: '逢低加仓', content: '大跌>15%可考虑补仓' }
-                ]
-            }
-        };
-        
-        // 获取建议
-        const periodKey = period === '1年' ? '1y' : period === '5年' ? '5y' : '3y';
-        const advices = adviceMap[riskType][periodKey];
-        
-        // 生成HTML
-        advices.forEach(advice => {
-            const card = document.createElement('div');
-            card.className = 'advice-card';
-            card.innerHTML = `
-                <div class="advice-icon">${advice.icon}</div>
-                <div class="advice-title">${advice.title}</div>
-                <div class="advice-content">${advice.content}</div>
-            `;
-            adviceGrid.appendChild(card);
-        });
-        </script>
-        
+        <!-- 动态生成投资建议(见底部script) -->
         <!-- 风险提示 -->
             <div class="warning-compact">
                 <div class="warning-icon">⚠️</div>
@@ -1235,6 +1131,124 @@
                 }
             }
         });
+    </script>
+
+    <script>
+        // 动态生成投资建议
+        (function() {
+            const adviceGrid = document.getElementById('adviceGrid');
+            if (!adviceGrid) {
+                console.error('找不到adviceGrid');
+                return;
+            }
+            
+            // 根据风险等级和期限生成建议
+            const adviceMap = {
+                'conservative': {
+                    '1y': [
+                        { icon: '💰', title: '稳健为主', content: '70%固收类,安全优先' },
+                        { icon: '🔄', title: '季度检视', content: '每季度查看一次收益' },
+                        { icon: '📊', title: '不追涨杀跌', content: '保持稳定,勿频繁操作' },
+                        { icon: '💡', title: '到期续投', content: '1年到期可续投或调整' }
+                    ],
+                    '3y': [
+                        { icon: '💰', title: '稳健配置', content: '高股息+债券为主' },
+                        { icon: '🔄', title: '半年再平衡', content: '每半年检查配比' },
+                        { icon: '📊', title: '长期持有', content: '坚持3年,平滑波动' },
+                        { icon: '💡', title: '分红再投', content: '股息和利息可再投资' }
+                    ],
+                    '5y': [
+                        { icon: '💰', title: '长期稳健', content: '复利增长,耐心持有' },
+                        { icon: '🔄', title: '年度再平衡', content: '每年调整一次即可' },
+                        { icon: '📊', title: '坚持长期', content: '5年足够平滑周期' },
+                        { icon: '💡', title: '避免提前赎回', content: '尽量持有至到期' }
+                    ]
+                },
+                'stable': {
+                    '1y': [
+                        { icon: '📅', title: '分批建仓', content: '分2批,降低择时风险' },
+                        { icon: '🔄', title: '季度检视', content: '每季度检查偏离度' },
+                        { icon: '⏳', title: '保持耐心', content: '1年较短,勿急于调整' },
+                        { icon: '📊', title: '关注大势', content: '留意市场整体走向' }
+                    ],
+                    '3y': [
+                        { icon: '📅', title: '分批建仓', content: '分2-3批,间隔2周' },
+                        { icon: '🔄', title: '定期再平衡', content: '偏离±5%时调整' },
+                        { icon: '⏳', title: '长期持有', content: '坚持3年,避免频繁交易' },
+                        { icon: '📊', title: '关注基本面', content: '定期查看财报动态' }
+                    ],
+                    '5y': [
+                        { icon: '📅', title: '分批建仓', content: '分3批,充分分散' },
+                        { icon: '🔄', title: '年度再平衡', content: '每年检查一次' },
+                        { icon: '⏳', title: '坚持长期', content: '5年周期足够充分' },
+                        { icon: '📊', title: '复利增长', content: '分红再投,雪球效应' }
+                    ]
+                },
+                'balanced': {
+                    '1y': [
+                        { icon: '📅', title: '分批建仓', content: '分2批,降低风险' },
+                        { icon: '🔄', title: '季度检视', content: '每季度再平衡' },
+                        { icon: '⏳', title: '警惕波动', content: '1年期可能波动较大' },
+                        { icon: '📊', title: '控制仓位', content: '股票仓位≤30%' }
+                    ],
+                    '3y': [
+                        { icon: '📅', title: '分批建仓', content: '分2-3批,间隔2周' },
+                        { icon: '🔄', title: '定期再平衡', content: '偏离±5%时调整' },
+                        { icon: '⏳', title: '长期持有', content: '坚持3年投资周期' },
+                        { icon: '📊', title: '关注基本面', content: '定期查看持仓财报' }
+                    ],
+                    '5y': [
+                        { icon: '📅', title: '分批建仓', content: '分3批,充分分散' },
+                        { icon: '🔄', title: '年度再平衡', content: '每年调整一次' },
+                        { icon: '⏳', title: '长期投资', content: '5年足够平滑波动' },
+                        { icon: '📊', title: '适度调仓', content: '根据市场适时调整' }
+                    ]
+                },
+                'aggressive': {
+                    '1y': [
+                        { icon: '⚠️', title: '高风险警示', content: '1年期波动极大,慎重' },
+                        { icon: '🔄', title: '月度监控', content: '每月检查持仓' },
+                        { icon: '⏳', title: '建议延长', content: '强烈建议延至3年' },
+                        { icon: '📊', title: '严格止损', content: '个股-20%,指数-25%' }
+                    ],
+                    '3y': [
+                        { icon: '📅', title: '分批建仓', content: '分3批,每批间隔2周' },
+                        { icon: '🔄', title: '定期检视', content: '每季度再平衡一次' },
+                        { icon: '⏳', title: '长期持有', content: '坚持3年,平滑波动' },
+                        { icon: '📊', title: '设置止损', content: '个股-20%,指数-25%' }
+                    ],
+                    '5y': [
+                        { icon: '📅', title: '分批建仓', content: '分3批,充分分散' },
+                        { icon: '🔄', title: '年度再平衡', content: '每年调整一次' },
+                        { icon: '⏳', title: '长期投资', content: '5年足够享受成长' },
+                        { icon: '📊', title: '逢低加仓', content: '大跌>15%可考虑补仓' }
+                    ]
+                }
+            };
+            
+            // 获取建议
+            const periodKey = period === '1年' ? '1y' : period === '5年' ? '5y' : '3y';
+            const advices = adviceMap[riskType]?.[periodKey];
+            
+            if (!advices) {
+                console.error('找不到建议配置:', riskType, periodKey);
+                return;
+            }
+            
+            // 生成HTML
+            advices.forEach(advice => {
+                const card = document.createElement('div');
+                card.className = 'advice-card';
+                card.innerHTML = `
+                    <div class="advice-icon">${advice.icon}</div>
+                    <div class="advice-title">${advice.title}</div>
+                    <div class="advice-content">${advice.content}</div>
+                `;
+                adviceGrid.appendChild(card);
+            });
+            
+            console.log('✅ 投资建议已生成:', advices.length, '条');
+        })();
     </script>
 </body>
 </html>
