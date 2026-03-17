@@ -4,73 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>智能投资配置方案 - 20万元·3年·稳健型</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
-        
-        // 产品推荐section动态排序 (按当前配比从高到低)
-        setTimeout(() => {
-            
-            // 优先级映射 (金额相同时的排序)
-            const priority = { index: 1, stock: 2, convertible: 3, cash: 4, bond: 5, gold: 6 };
-            
-            const assetOrder = Object.entries(assets)
-                .filter(([_, value]) => value > 0)
-                .sort((a, b) => {
-                    if (b[1] !== a[1]) return b[1] - a[1]; // 金额降序
-                    return priority[a[0]] - priority[b[0]]; // 相同金额按优先级
-                })
-                .map(([key]) => key);
-            
-            console.log('配比排序:', assetOrder, assets);
-            
-            const map = {
-                index: 'fund',
-                stock: 'stock',
-                cash: 'cash',
-                convertible: 'convertible',
-                bond: 'bond',
-                gold: 'gold'
-            };
-            
-            const productOrder = assetOrder.map(k => map[k]).filter(c => c);
-            
-            const allCards = document.querySelectorAll('.content-card');
-            let container = null;
-            for (let card of allCards) {
-                if (card.querySelector('.product-category')) {
-                    container = card;
-                    break;
-                }
-            }
-            if (!container) {
-                console.error('找不到产品container');
-                return;
-            }
-            
-            const detailTitle = container.querySelector('.section-title');
-            const sections = {};
-            
-            container.querySelectorAll('.product-category').forEach(sec => {
-                const classList = Array.from(sec.classList);
-                const className = classList.find(c => c !== 'product-category');
-                if (className) sections[className] = sec;
-            });
-            
-            while (container.firstChild) {
-                container.removeChild(container.firstChild);
-            }
-            container.appendChild(detailTitle);
-            
-            productOrder.forEach(className => {
-                if (sections[className] && sections[className].style.display !== 'none') {
-                    container.appendChild(sections[className]);
-                }
-            });
-            
-            console.log('排序完成,顺序:', productOrder);
-        }, 200);
- // 延迟100ms执行
-
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
     <style>
         :root {
@@ -539,6 +473,73 @@
             }
         }
     </style>
+<script>
+        
+        // 产品推荐section动态排序 (按当前配比从高到低)
+        setTimeout(() => {
+            
+            // 优先级映射 (金额相同时的排序)
+            const priority = { index: 1, stock: 2, convertible: 3, cash: 4, bond: 5, gold: 6 };
+            
+            const assetOrder = Object.entries(assets)
+                .filter(([_, value]) => value > 0)
+                .sort((a, b) => {
+                    if (b[1] !== a[1]) return b[1] - a[1]; // 金额降序
+                    return priority[a[0]] - priority[b[0]]; // 相同金额按优先级
+                })
+                .map(([key]) => key);
+            
+            console.log('配比排序:', assetOrder, assets);
+            
+            const map = {
+                index: 'fund',
+                stock: 'stock',
+                cash: 'cash',
+                convertible: 'convertible',
+                bond: 'bond',
+                gold: 'gold'
+            };
+            
+            const productOrder = assetOrder.map(k => map[k]).filter(c => c);
+            
+            const allCards = document.querySelectorAll('.content-card');
+            let container = null;
+            for (let card of allCards) {
+                if (card.querySelector('.product-category')) {
+                    container = card;
+                    break;
+                }
+            }
+            if (!container) {
+                console.error('找不到产品container');
+                return;
+            }
+            
+            const detailTitle = container.querySelector('.section-title');
+            const sections = {};
+            
+            container.querySelectorAll('.product-category').forEach(sec => {
+                const classList = Array.from(sec.classList);
+                const className = classList.find(c => c !== 'product-category');
+                if (className) sections[className] = sec;
+            });
+            
+            while (container.firstChild) {
+                container.removeChild(container.firstChild);
+            }
+            container.appendChild(detailTitle);
+            
+            productOrder.forEach(className => {
+                if (sections[className] && sections[className].style.display !== 'none') {
+                    container.appendChild(sections[className]);
+                }
+            });
+            
+            console.log('排序完成,顺序:', productOrder);
+        }, 200);
+ // 延迟100ms执行
+
+    </script>
 </head>
 <body>
     <div class="container">
