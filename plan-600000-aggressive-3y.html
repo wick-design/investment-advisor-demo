@@ -848,9 +848,9 @@
     <script>
         // URL参数解析
         const params = new URLSearchParams(window.location.search);
-        const amount = parseInt(params.get('amount')) || 200000;
+        const amount = 600000; // 固定值
         const riskType = params.get('risk') || 'stable';
-        const period = params.get('period') || '3y';
+        const period = '3y'; // 固定值
         
         
         const riskMap = {
