@@ -8,9 +8,16 @@
         
         // 产品推荐section动态排序 (按当前配比从高到低)
         setTimeout(() => {
+            
+            // 优先级映射 (金额相同时的排序)
+            const priority = { index: 1, stock: 2, convertible: 3, cash: 4, bond: 5, gold: 6 };
+            
             const assetOrder = Object.entries(funds)
                 .filter(([_, value]) => value > 0)
-                .sort((a, b) => b[1] - a[1])
+                .sort((a, b) => {
+                    if (b[1] !== a[1]) return b[1] - a[1]; // 金额降序
+                    return priority[a[0]] - priority[b[0]]; // 相同金额按优先级
+                })
                 .map(([key]) => key);
             
             console.log('配比排序:', assetOrder, funds);
