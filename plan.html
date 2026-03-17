@@ -649,7 +649,7 @@
             </div>
             
             <!-- 股票配置 -->
-            <div class="product-category stock" style="display: none;">
+            <div class="product-category stock">
                 <div class="category-header" style="background: linear-gradient(135deg, #EC4899 0%, #DB2777 100%);">
                     <span class="category-name">📈 股票配置</span>
                     <span class="category-total stock-total">¥100,000 · 20%</span>
@@ -997,6 +997,9 @@
 };;
         
         // 显示股票section (≥20万)
+        const stockSection = document.querySelector('.product-category.stock');
+        stockSection.style.display = 'none'; // 默认隐藏
+        
         if (assets.stock > 0 && stockPool[riskType]) {
             const stockSection = document.querySelector('.product-category.stock');
             stockSection.style.display = 'block';
