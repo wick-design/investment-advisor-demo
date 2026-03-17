@@ -538,7 +538,7 @@
             console.log('排序完成,顺序:', productOrder);
         }, 200);
  // 延迟100ms执行
-    // ===== 实时股票数据 (2026/3/17 17:29:44) =====
+    // ===== 实时股票数据 (2026/3/17 17:37:56) =====
     window.REALTIME_STOCKS = [
     {
         "code": "sz300750",
@@ -1049,20 +1049,21 @@
             if (window.REALTIME_STOCKS && window.REALTIME_STOCKS.length > 0) {
                 console.log('✅ 渲染实时股票:', window.REALTIME_STOCKS.length, '只');
                 
-                // 从stockPool获取推荐理由
+                // 从stockPool获取推荐理由和ROE
                 const stockData = stockPool[riskType];
-                const reasonMap = {};
+                const stockInfoMap = {};
                 if (stockData && stockData.stocks) {
                     stockData.stocks.forEach(s => {
-                        reasonMap[s.code] = s.reason;
+                        stockInfoMap[s.code] = {
+                            reason: s.reason,
+                            roe: s.roe
+                        };
                     });
                 }
                 
                 const stockHTML = window.REALTIME_STOCKS.map((s, i) => {
                     const position = ['主仓', '副仓', '副仓', '配置仓'][i];
-                    const changeColor = parseFloat(s.change) > 0 ? '#10B981' : '#EF4444';
-                    const changeSign = parseFloat(s.change) > 0 ? '+' : '';
-                    const reason = reasonMap[s.code] || '行业龙头,长期成长性好。';
+                    const info = stockInfoMap[s.code] || { reason: '行业龙头,长期成长性好。', roe: 'N/A' };
                     
                     return `
                     <div class="product-item">
@@ -1073,29 +1074,29 @@
                             </div>
                             <div class="product-stats">
                                 <div class="stat-item">
-                                    <div class="stat-label">股数</div>
-                                    <div class="stat-value">${s.shares.toLocaleString()}股</div>
+                                    <div class="stat-label">当前价格</div>
+                                    <div class="stat-value price">¥${Number(s.price).toFixed(2)}/股</div>
                                 </div>
                                 <div class="stat-item">
-                                    <div class="stat-label">股价</div>
-                                    <div class="stat-value price">¥${Number(s.price).toFixed(2)}</div>
+                                    <div class="stat-label">购买股数</div>
+                                    <div class="stat-value shares">${s.shares.toLocaleString()}股</div>
                                 </div>
                                 <div class="stat-item">
-                                    <div class="stat-label">金额</div>
+                                    <div class="stat-label">投资金额</div>
                                     <div class="stat-value amount">¥${s.amount.toLocaleString()}</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">ROE</div>
+                                    <div class="stat-value">${info.roe}</div>
                                 </div>
                                 <div class="stat-item">
                                     <div class="stat-label">PE</div>
                                     <div class="stat-value">${s.pe}</div>
                                 </div>
-                                <div class="stat-item">
-                                    <div class="stat-label">今日</div>
-                                    <div class="stat-value" style="color:${changeColor}">${changeSign}${s.change}%</div>
-                                </div>
                             </div>
                         </div>
                         <div class="product-reason">
-                            <strong>推荐理由：</strong>${reason}
+                            <strong>推荐理由：</strong>${info.reason}
                         </div>
                     </div>
                 `;
