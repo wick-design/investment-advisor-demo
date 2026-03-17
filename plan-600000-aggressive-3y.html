@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>投资配置方案 - ¥600,000 · 进取型 · 3y - 2026/3/17 15:39:11</title>
+    <title>智能投资配置方案 - 60万元·3y·进取型</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
     <style>
@@ -1132,7 +1132,59 @@
                 }
             }
         });
-    </script>
+    
+
+    // 实时股票数据 (2026/3/17 16:23:44)
+    const realTimeStockData = [
+  {
+    "code": "sz300750",
+    "name": "宁德时代",
+    "price": 405,
+    "shares": 100,
+    "amount": 40500,
+    "ratio": 33.8,
+    "pe": "25.6",
+    "change": -0.83
+  },
+  {
+    "code": "sz002475",
+    "name": "立讯精密",
+    "price": 49.83,
+    "shares": 600,
+    "amount": 29898,
+    "ratio": 24.9,
+    "pe": "23.0",
+    "change": 1.16
+  },
+  {
+    "code": "sh600276",
+    "name": "恒瑞医药",
+    "price": 56.3,
+    "shares": 500,
+    "amount": 28150,
+    "ratio": 23.5,
+    "pe": "50.0",
+    "change": 1.28
+  },
+  {
+    "code": "sz000858",
+    "name": "五 粮 液",
+    "price": 104.79,
+    "shares": 100,
+    "amount": 10479,
+    "ratio": 8.7,
+    "pe": "14.3",
+    "change": 0.24
+  }
+];
+    
+    // 替换默认股票数据
+    if (assets.stock > 0 && amount >= 200000) {
+      console.log('🔴 使用实时股票数据');
+      window.realTimeStocks = realTimeStockData;
+    }
+
+</script>
 
     <script>
         // 动态生成投资建议
