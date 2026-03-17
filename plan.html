@@ -5,63 +5,63 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>智能投资配置方案 - 20万元·3年·稳健型</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
-        // 产品推荐section排序 (按金额从高到低) - 延迟执行确保DOM加载
+        
+        // 产品推荐section动态排序 (按当前配比从高到低)
         setTimeout(() => {
-            console.log('开始排序产品section');
-            console.log('排序顺序:', productOrder);
-        const productOrder = assetArray.map(a => {
+            const assetOrder = Object.entries(funds)
+                .filter(([_, value]) => value > 0)
+                .sort((a, b) => b[1] - a[1])
+                .map(([key]) => key);
+            
+            console.log('配比排序:', assetOrder, funds);
+            
             const map = {
-                '指数基金': 'fund',
-                '股票': 'stock',
-                '货币基金': 'cash',
-                '可转债': 'convertible',
-                '债券基金': 'bond',
-                '黄金ETF': 'gold'
+                index: 'fund',
+                stock: 'stock',
+                cash: 'cash',
+                convertible: 'convertible',
+                bond: 'bond',
+                gold: 'gold'
             };
-            return map[a.name];
-        }).filter(c => c);
-        
-        const allCards = document.querySelectorAll('.content-card');
-        let container = null;
-        for (let card of allCards) {
-            if (card.querySelector('.product-category')) {
-                container = card;
-                break;
+            
+            const productOrder = assetOrder.map(k => map[k]).filter(c => c);
+            
+            const allCards = document.querySelectorAll('.content-card');
+            let container = null;
+            for (let card of allCards) {
+                if (card.querySelector('.product-category')) {
+                    container = card;
+                    break;
+                }
             }
-        }
-        if (!container) {
-            console.error('找不到产品container');
-            return;
-        }
-        const title = container.querySelector('.section-title');
-        
-        const detailTitle = container.querySelector('.section-title');
-        const sections = {};
-        
-        // 收集所有section
-        container.querySelectorAll('.product-category').forEach(sec => {
-            const classList = Array.from(sec.classList);
-            const className = classList.find(c => c !== 'product-category');
-            if (className) sections[className] = sec;
-        });
-        
-        // 清空容器保留标题
-        while (container.firstChild) {
-            container.removeChild(container.firstChild);
-        }
-        container.appendChild(detailTitle);
-        
-        // 按排序添加
-        productOrder.forEach(className => {
-            if (sections[className] && sections[className].style.display !== 'none') {
-                container.appendChild(sections[className]);
+            if (!container) {
+                console.error('找不到产品container');
+                return;
             }
-        });
-        
-        // 保持标题在最前
-        container.insertBefore(detailTitle, container.firstChild);
-            console.log('排序完成');
-        }, 100); // 延迟100ms执行
+            
+            const detailTitle = container.querySelector('.section-title');
+            const sections = {};
+            
+            container.querySelectorAll('.product-category').forEach(sec => {
+                const classList = Array.from(sec.classList);
+                const className = classList.find(c => c !== 'product-category');
+                if (className) sections[className] = sec;
+            });
+            
+            while (container.firstChild) {
+                container.removeChild(container.firstChild);
+            }
+            container.appendChild(detailTitle);
+            
+            productOrder.forEach(className => {
+                if (sections[className] && sections[className].style.display !== 'none') {
+                    container.appendChild(sections[className]);
+                }
+            });
+            
+            console.log('排序完成,顺序:', productOrder);
+        }, 200);
+ // 延迟100ms执行
 
     </script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
