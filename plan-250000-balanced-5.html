@@ -474,7 +474,70 @@
         }
     </style>
 <script>
-        // 产品排序逻辑已移至主脚本末尾,确保assets变量已定义
+        
+        // 产品推荐section动态排序 (按当前配比从高到低)
+        setTimeout(() => {
+            
+            // 优先级映射 (金额相同时的排序)
+            const priority = { index: 1, stock: 2, convertible: 3, cash: 4, bond: 5, gold: 6 };
+            
+            const assetOrder = Object.entries(assets)
+                .filter(([_, value]) => value > 0)
+                .sort((a, b) => {
+                    if (b[1] !== a[1]) return b[1] - a[1]; // 金额降序
+                    return priority[a[0]] - priority[b[0]]; // 相同金额按优先级
+                })
+                .map(([key]) => key);
+            
+            console.log('配比排序:', assetOrder, assets);
+            
+            const map = {
+                index: 'fund',
+                stock: 'stock',
+                cash: 'cash',
+                convertible: 'convertible',
+                bond: 'bond',
+                gold: 'gold'
+            };
+            
+            const productOrder = assetOrder.map(k => map[k]).filter(c => c);
+            
+            const allCards = document.querySelectorAll('.content-card');
+            let container = null;
+            for (let card of allCards) {
+                if (card.querySelector('.product-category')) {
+                    container = card;
+                    break;
+                }
+            }
+            if (!container) {
+                console.error('找不到产品container');
+                return;
+            }
+            
+            const detailTitle = container.querySelector('.section-title');
+            const sections = {};
+            
+            container.querySelectorAll('.product-category').forEach(sec => {
+                const classList = Array.from(sec.classList);
+                const className = classList.find(c => c !== 'product-category');
+                if (className) sections[className] = sec;
+            });
+            
+            while (container.firstChild) {
+                container.removeChild(container.firstChild);
+            }
+            container.appendChild(detailTitle);
+            
+            productOrder.forEach(className => {
+                if (sections[className] && sections[className].style.display !== 'none') {
+                    container.appendChild(sections[className]);
+                }
+            });
+            
+            console.log('排序完成,顺序:', productOrder);
+        }, 200);
+ // 延迟100ms执行
     // ===== 实时股票数据 (2026/3/17 18:46:10) =====
     window.REALTIME_STOCKS = [
     {
@@ -971,12 +1034,8 @@
             stockSection.querySelector('.stock-total').textContent = 
                 '¥' + assets.stock.toLocaleString() + ' · ' + (alloc.stock * 100).toFixed(0) + '%';
             
-            // 生成股票列表 - 使用实时股票数据
-            if (window.REALTIME_STOCKS && window.REALTIME_STOCKS.length > 0) {
-                console.log('✅ 渲染实时股票:', window.REALTIME_STOCKS.length, '只');
-                
-                // 从stockPool获取推荐理由和ROE
-                // 使用实时股票数据
+            // 生成股票列表
+            // 使用实时股票数据
             if (window.REALTIME_STOCKS && window.REALTIME_STOCKS.length > 0) {
                 console.log('✅ 渲染实时股票:', window.REALTIME_STOCKS.length, '只');
                 
@@ -1033,82 +1092,6 @@
                 `;
                 }).join('');
                 document.querySelector('.stock-list').innerHTML = stockHTML;
-            } else {
-                console.warn('⚠️ 未找到实时股票数据');
-                // 降级使用默认数据
-                const stockData = stockPool[riskType];
-                if (!stockData || amount < 200000) {
-                    stockSection.style.display = 'none';
-                } else {
-                    const stocks = stockData.stocks;
-                    const perStock = Math.round(assets.stock / stocks.length);
-                    const stockHTML = stocks.map(s => `
-                        <div class="product-item">
-                            <div class="product-header">
-                                <div class="product-info">
-                                    <div class="product-name">${s.name}</div>
-                                    <span class="product-code">${s.code}</span>
-                                </div>
-                                <div class="product-stats">
-                                    <div class="stat-item">
-                                        <div class="stat-label">投资金额</div>
-                                        <div class="stat-value amount">¥${perStock.toLocaleString()}</div>
-                                    </div>
-                                    <div class="stat-item">
-                                        <div class="stat-label">ROE</div>
-                                        <div class="stat-value">${s.roe}</div>
-                                    </div>
-                                    <div class="stat-item">
-                                        <div class="stat-label">PE</div>
-                                        <div class="stat-value">${s.pe}</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="product-reason">
-                                <strong>推荐理由：</strong>${s.reason}
-                            </div>
-                        </div>
-                    `).join('');
-                    document.querySelector('.stock-list').innerHTML = stockHTML;
-                }
-            } else {
-                console.warn('⚠️ 未找到实时股票数据');
-                // 降级使用默认数据
-                const stockData = stockPool[riskType];
-                if (!stockData || amount < 200000) {
-                    stockSection.style.display = 'none';
-                } else {
-                    const stocks = stockData.stocks;
-                    const perStock = Math.round(assets.stock / stocks.length);
-                    const stockHTML = stocks.map(s => `
-                        <div class="product-item">
-                            <div class="product-header">
-                                <div class="product-info">
-                                    <div class="product-name">${s.name}</div>
-                                    <span class="product-code">${s.code}</span>
-                                </div>
-                                <div class="product-stats">
-                                    <div class="stat-item">
-                                        <div class="stat-label">投资金额</div>
-                                        <div class="stat-value amount">¥${perStock.toLocaleString()}</div>
-                                    </div>
-                                    <div class="stat-item">
-                                        <div class="stat-label">ROE</div>
-                                        <div class="stat-value">${s.roe}</div>
-                                    </div>
-                                    <div class="stat-item">
-                                        <div class="stat-label">PE</div>
-                                        <div class="stat-value">${s.pe}</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="product-reason">
-                                <strong>推荐理由：</strong>${s.reason}
-                            </div>
-                        </div>
-                    `).join('');
-                    document.querySelector('.stock-list').innerHTML = stockHTML;
-                }
             } else {
                 console.warn('⚠️ 未找到实时股票数据');
                 // 降级使用默认数据
@@ -1364,70 +1347,6 @@
             
             console.log('✅ 投资建议已生成:', advices.length, '条');
         })();
-        
-        // 产品推荐section动态排序 (按当前配比从高到低)
-        // 延迟执行确保DOM完全加载
-        setTimeout(() => {
-            
-            // 优先级映射 (金额相同时的排序)
-            const priority = { index: 1, stock: 2, convertible: 3, cash: 4, bond: 5, gold: 6 };
-            
-            const assetOrder = Object.entries(assets)
-                .filter(([_, value]) => value > 0)
-                .sort((a, b) => {
-                    if (b[1] !== a[1]) return b[1] - a[1]; // 金额降序
-                    return priority[a[0]] - priority[b[0]]; // 相同金额按优先级
-                })
-                .map(([key]) => key);
-            
-            console.log('📋 配比排序:', assetOrder);
-            
-            const map = {
-                index: 'fund',
-                stock: 'stock',
-                cash: 'cash',
-                convertible: 'convertible',
-                bond: 'bond',
-                gold: 'gold'
-            };
-            
-            const productOrder = assetOrder.map(k => map[k]).filter(c => c);
-            
-            const allCards = document.querySelectorAll('.content-card');
-            let container = null;
-            for (let card of allCards) {
-                if (card.querySelector('.product-category')) {
-                    container = card;
-                    break;
-                }
-            }
-            if (!container) {
-                console.warn('⚠️ 找不到产品container');
-                return;
-            }
-            
-            const detailTitle = container.querySelector('.section-title');
-            const sections = {};
-            
-            container.querySelectorAll('.product-category').forEach(sec => {
-                const classList = Array.from(sec.classList);
-                const className = classList.find(c => c !== 'product-category');
-                if (className) sections[className] = sec;
-            });
-            
-            while (container.firstChild) {
-                container.removeChild(container.firstChild);
-            }
-            container.appendChild(detailTitle);
-            
-            productOrder.forEach(className => {
-                if (sections[className] && sections[className].style.display !== 'none') {
-                    container.appendChild(sections[className]);
-                }
-            });
-            
-            console.log('✅ 产品排序完成,顺序:', productOrder);
-        }, 300); // 延迟300ms确保DOM完全渲染
     </script>
 </body>
 </html>
