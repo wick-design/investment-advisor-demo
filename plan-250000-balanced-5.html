@@ -971,13 +971,7 @@
             stockSection.querySelector('.stock-total').textContent = 
                 '¥' + assets.stock.toLocaleString() + ' · ' + (alloc.stock * 100).toFixed(0) + '%';
             
-            // 生成股票列表
-            // 使用实时股票数据
-            if (window.REALTIME_STOCKS && window.REALTIME_STOCKS.length > 0) {
-                console.log('✅ 渲染实时股票:', window.REALTIME_STOCKS.length, '只');
-                
-                // 从stockPool获取推荐理由和ROE
-                // 使用实时股票数据
+            // 生成股票列表 - 使用实时股票数据
             if (window.REALTIME_STOCKS && window.REALTIME_STOCKS.length > 0) {
                 console.log('✅ 渲染实时股票:', window.REALTIME_STOCKS.length, '只');
                 
