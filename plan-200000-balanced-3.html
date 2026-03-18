@@ -474,70 +474,7 @@
         }
     </style>
 <script>
-        
-        // 产品推荐section动态排序 (按当前配比从高到低)
-        setTimeout(() => {
-            
-            // 优先级映射 (金额相同时的排序)
-            const priority = { index: 1, stock: 2, convertible: 3, cash: 4, bond: 5, gold: 6 };
-            
-            const assetOrder = Object.entries(assets)
-                .filter(([_, value]) => value > 0)
-                .sort((a, b) => {
-                    if (b[1] !== a[1]) return b[1] - a[1]; // 金额降序
-                    return priority[a[0]] - priority[b[0]]; // 相同金额按优先级
-                })
-                .map(([key]) => key);
-            
-            console.log('配比排序:', assetOrder, assets);
-            
-            const map = {
-                index: 'fund',
-                stock: 'stock',
-                cash: 'cash',
-                convertible: 'convertible',
-                bond: 'bond',
-                gold: 'gold'
-            };
-            
-            const productOrder = assetOrder.map(k => map[k]).filter(c => c);
-            
-            const allCards = document.querySelectorAll('.content-card');
-            let container = null;
-            for (let card of allCards) {
-                if (card.querySelector('.product-category')) {
-                    container = card;
-                    break;
-                }
-            }
-            if (!container) {
-                console.error('找不到产品container');
-                return;
-            }
-            
-            const detailTitle = container.querySelector('.section-title');
-            const sections = {};
-            
-            container.querySelectorAll('.product-category').forEach(sec => {
-                const classList = Array.from(sec.classList);
-                const className = classList.find(c => c !== 'product-category');
-                if (className) sections[className] = sec;
-            });
-            
-            while (container.firstChild) {
-                container.removeChild(container.firstChild);
-            }
-            container.appendChild(detailTitle);
-            
-            productOrder.forEach(className => {
-                if (sections[className] && sections[className].style.display !== 'none') {
-                    container.appendChild(sections[className]);
-                }
-            });
-            
-            console.log('排序完成,顺序:', productOrder);
-        }, 200);
- // 延迟100ms执行
+        // 产品排序逻辑已移至主脚本末尾,确保assets变量已定义
     // ===== 实时股票数据 (2026/3/17 18:46:10) =====
     window.REALTIME_STOCKS = [
     {
@@ -1433,6 +1370,70 @@
             
             console.log('✅ 投资建议已生成:', advices.length, '条');
         })();
+        
+        // 产品推荐section动态排序 (按当前配比从高到低)
+        // 延迟执行确保DOM完全加载
+        setTimeout(() => {
+            
+            // 优先级映射 (金额相同时的排序)
+            const priority = { index: 1, stock: 2, convertible: 3, cash: 4, bond: 5, gold: 6 };
+            
+            const assetOrder = Object.entries(assets)
+                .filter(([_, value]) => value > 0)
+                .sort((a, b) => {
+                    if (b[1] !== a[1]) return b[1] - a[1]; // 金额降序
+                    return priority[a[0]] - priority[b[0]]; // 相同金额按优先级
+                })
+                .map(([key]) => key);
+            
+            console.log('📋 配比排序:', assetOrder);
+            
+            const map = {
+                index: 'fund',
+                stock: 'stock',
+                cash: 'cash',
+                convertible: 'convertible',
+                bond: 'bond',
+                gold: 'gold'
+            };
+            
+            const productOrder = assetOrder.map(k => map[k]).filter(c => c);
+            
+            const allCards = document.querySelectorAll('.content-card');
+            let container = null;
+            for (let card of allCards) {
+                if (card.querySelector('.product-category')) {
+                    container = card;
+                    break;
+                }
+            }
+            if (!container) {
+                console.warn('⚠️ 找不到产品container');
+                return;
+            }
+            
+            const detailTitle = container.querySelector('.section-title');
+            const sections = {};
+            
+            container.querySelectorAll('.product-category').forEach(sec => {
+                const classList = Array.from(sec.classList);
+                const className = classList.find(c => c !== 'product-category');
+                if (className) sections[className] = sec;
+            });
+            
+            while (container.firstChild) {
+                container.removeChild(container.firstChild);
+            }
+            container.appendChild(detailTitle);
+            
+            productOrder.forEach(className => {
+                if (sections[className] && sections[className].style.display !== 'none') {
+                    container.appendChild(sections[className]);
+                }
+            });
+            
+            console.log('✅ 产品排序完成,顺序:', productOrder);
+        }, 300); // 延迟300ms确保DOM完全渲染
     </script>
 </body>
 </html>
