@@ -538,7 +538,7 @@
             console.log('排序完成,顺序:', productOrder);
         }, 200);
  // 延迟100ms执行
-    // ===== 实时股票数据 (2026/3/17 17:37:56) =====
+    // ===== 实时股票数据 (2026/3/17 18:46:10) =====
     window.REALTIME_STOCKS = [
     {
         "code": "sz300750",
@@ -546,7 +546,7 @@
         "price": 405,
         "shares": 100,
         "amount": 40500,
-        "ratio": 29.8,
+        "ratio": 44,
         "pe": "25.6",
         "change": -0.83
     },
@@ -554,9 +554,9 @@
         "code": "sz002475",
         "name": "立讯精密",
         "price": 49.83,
-        "shares": 600,
-        "amount": 29898,
-        "ratio": 22,
+        "shares": 500,
+        "amount": 24915,
+        "ratio": 27.1,
         "pe": "23.0",
         "change": 1.16
     },
@@ -564,21 +564,11 @@
         "code": "sh600276",
         "name": "恒瑞医药",
         "price": 56.3,
-        "shares": 600,
-        "amount": 33780,
-        "ratio": 24.8,
+        "shares": 400,
+        "amount": 22520,
+        "ratio": 24.5,
         "pe": "50.0",
         "change": 1.28
-    },
-    {
-        "code": "sz000858",
-        "name": "五 粮 液",
-        "price": 104.79,
-        "shares": 100,
-        "amount": 10479,
-        "ratio": 7.7,
-        "pe": "14.3",
-        "change": 0.24
     }
 ];
     console.log('📊 已加载实时股票数据:', window.REALTIME_STOCKS);
@@ -893,9 +883,9 @@
     <script>
         // URL参数解析
         const params = new URLSearchParams(window.location.search);
-        const amount = 680000; // 固定值
+        const amount = 460000; // 固定值
         const riskType = 'aggressive'; // 固定值
-        const period = '4年'; // 固定期限
+        const period = '3'; // 固定期限
         
         
         const riskMap = {
@@ -1050,6 +1040,11 @@
                 console.log('✅ 渲染实时股票:', window.REALTIME_STOCKS.length, '只');
                 
                 // 从stockPool获取推荐理由和ROE
+                // 使用实时股票数据
+            if (window.REALTIME_STOCKS && window.REALTIME_STOCKS.length > 0) {
+                console.log('✅ 渲染实时股票:', window.REALTIME_STOCKS.length, '只');
+                
+                // 从stockPool获取推荐理由和ROE
                 const stockData = stockPool[riskType];
                 const stockInfoMap = {};
                 if (stockData && stockData.stocks) {
@@ -1102,6 +1097,44 @@
                 `;
                 }).join('');
                 document.querySelector('.stock-list').innerHTML = stockHTML;
+            } else {
+                console.warn('⚠️ 未找到实时股票数据');
+                // 降级使用默认数据
+                const stockData = stockPool[riskType];
+                if (!stockData || amount < 200000) {
+                    stockSection.style.display = 'none';
+                } else {
+                    const stocks = stockData.stocks;
+                    const perStock = Math.round(assets.stock / stocks.length);
+                    const stockHTML = stocks.map(s => `
+                        <div class="product-item">
+                            <div class="product-header">
+                                <div class="product-info">
+                                    <div class="product-name">${s.name}</div>
+                                    <span class="product-code">${s.code}</span>
+                                </div>
+                                <div class="product-stats">
+                                    <div class="stat-item">
+                                        <div class="stat-label">投资金额</div>
+                                        <div class="stat-value amount">¥${perStock.toLocaleString()}</div>
+                                    </div>
+                                    <div class="stat-item">
+                                        <div class="stat-label">ROE</div>
+                                        <div class="stat-value">${s.roe}</div>
+                                    </div>
+                                    <div class="stat-item">
+                                        <div class="stat-label">PE</div>
+                                        <div class="stat-value">${s.pe}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="product-reason">
+                                <strong>推荐理由：</strong>${s.reason}
+                            </div>
+                        </div>
+                    `).join('');
+                    document.querySelector('.stock-list').innerHTML = stockHTML;
+                }
             } else {
                 console.warn('⚠️ 未找到实时股票数据');
                 // 降级使用默认数据
