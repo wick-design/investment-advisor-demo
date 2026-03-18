@@ -571,6 +571,19 @@
         "change": 1.28
     }
 ];
+
+    // ===== 产品数据 (动态生成) =====
+    window.PRODUCT_ALLOCATIONS = {
+    "stock": 0.4,
+    "index": 0.35,
+    "cash": 0.05,
+    "convertible": 0.15,
+    "bond": 0.05,
+    "gold": 0
+};
+    window.TOTAL_AMOUNT = 680000;
+    console.log('📊 资产配比:', window.PRODUCT_ALLOCATIONS);
+
     console.log('📊 已加载实时股票数据:', window.REALTIME_STOCKS);
 
 
@@ -883,9 +896,9 @@
     <script>
         // URL参数解析
         const params = new URLSearchParams(window.location.search);
-        const amount = 460000; // 固定值
+        const amount = 680000; // 固定值
         const riskType = 'aggressive'; // 固定值
-        const period = '3'; // 固定期限
+        const period = '4年'; // 固定期限
         
         
         const riskMap = {
@@ -948,76 +961,43 @@
         
         // 股票推荐数据
         const stockPool = {
-        "aggressive": {
+        "conservative": {
                 "stocks": [
-                        {
-                                "code": "sz300750",
-                                "name": "宁德时代",
-                                "cat": "新能源",
-                                "roe": "22%",
-                                "pe": "28",
-                                "reason": "全球动力电池龙头,市占率35%,技术领先优势明显。受益于新能源车渗透率提升,长期成长确定性高。"
-                        },
-                        {
-                                "code": "sh688981",
-                                "name": "中芯国际",
-                                "cat": "半导体",
-                                "roe": "-5%",
-                                "pe": "-50",
-                                "reason": "国内唯一先进制程晶圆厂,国产替代核心标的。虽短期亏损,但长期看好芯片自主可控逻辑。"
-                        },
-                        {
-                                "code": "sz002475",
-                                "name": "立讯精密",
-                                "cat": "消费电子",
-                                "roe": "16%",
-                                "pe": "28",
-                                "reason": "苹果核心供应商,AirPods/连接器龙头。受益于消费电子创新,客户黏性强,盈利能力稳定。"
-                        },
-                        {
-                                "code": "sh600276",
-                                "name": "恒瑞医药",
-                                "cat": "创新药",
-                                "roe": "18%",
-                                "pe": "35",
-                                "reason": "创新药龙头,研发投入15%,管线丰富。PD-1等重磅品种放量,长期成长空间大。"
-                        },
-                        {
-                                "code": "sh600519",
-                                "name": "贵州茅台",
-                                "cat": "白酒",
-                                "roe": "33%",
-                                "pe": "35",
-                                "reason": "白酒之王,品牌护城河深厚,提价能力强。ROE常年>30%,现金流优异,抗周期能力强。"
-                        }
+                        { "code": "sh600036", "name": "招商银行", "cat": "银行", "roe": "16%", "pe": "6.5", "reason": "零售银行之王,资产质量最优。股息率4.5%,估值合理,防御属性强,长期稳定分红。" },
+                        { "code": "sh601398", "name": "工商银行", "cat": "银行", "roe": "11%", "pe": "5.0", "reason": "宇宙第一大行,规模庞大,资产优质。股息率6.0%,估值极低,适合保守配置。" },
+                        { "code": "sh600887", "name": "伊利股份", "cat": "食品", "roe": "22%", "pe": "16", "reason": "乳制品龙头,市占率40%,消费刚需强。稳定增长,分红率高,波动小。" },
+                        { "code": "sz000858", "name": "五粮液", "cat": "白酒", "roe": "25%", "pe": "18", "reason": "高端白酒次龙头,品牌力强。增长稳健,分红率高,抗跌性好。" },
+                        { "code": "sh601318", "name": "中国平安", "cat": "保险", "roe": "18%", "pe": "8.5", "reason": "综合金融龙头,寿险+科技双轮驱动。股息率5.5%,估值合理,长期成长性好。" }
+                ]
+        },
+        "stable": {
+                "stocks": [
+                        { "code": "sh600519", "name": "贵州茅台", "cat": "白酒", "roe": "33%", "pe": "35", "reason": "白酒之王,品牌护城河深厚。ROE常年>30%,现金流优异,抗周期能力强。" },
+                        { "code": "sh600036", "name": "招商银行", "cat": "银行", "roe": "16%", "pe": "6.5", "reason": "零售银行之王,资产质量最优。股息率4.5%,估值合理,防御属性强。" },
+                        { "code": "sz000858", "name": "五粮液", "cat": "白酒", "roe": "25%", "pe": "18", "reason": "高端白酒次龙头,性价比高于茅台。增长稳健,分红率高,适合稳健配置。" },
+                        { "code": "sh600887", "name": "伊利股份", "cat": "食品", "roe": "22%", "pe": "16", "reason": "乳制品龙头,市占率40%,消费刚需强。业绩稳定,长期持有收益确定性高。" },
+                        { "code": "sh603288", "name": "海天味业", "cat": "调味品", "roe": "33%", "pe": "32", "reason": "酱油龙头,毛利率45%,定价权强。消费品中的茅台,长期成长空间大。" },
+                        { "code": "sh601318", "name": "中国平安", "cat": "保险", "roe": "18%", "pe": "8.5", "reason": "综合金融龙头,寿险+科技双轮驱动。股息率5.5%,估值合理,攻守兼备。" }
                 ]
         },
         "balanced": {
                 "stocks": [
-                        {
-                                "code": "sh600519",
-                                "name": "贵州茅台",
-                                "cat": "白酒",
-                                "roe": "33%",
-                                "pe": "35",
-                                "reason": "白酒之王,品牌护城河深厚,抗跌性强。稳定分红,长期持有收益确定性高。"
-                        },
-                        {
-                                "code": "sh600036",
-                                "name": "招商银行",
-                                "cat": "银行",
-                                "roe": "16%",
-                                "pe": "6.5",
-                                "reason": "零售银行之王,资产质量最优。股息率4.5%,估值合理,防御属性强。"
-                        },
-                        {
-                                "code": "sz000858",
-                                "name": "五粮液",
-                                "cat": "白酒",
-                                "roe": "25%",
-                                "pe": "18",
-                                "reason": "高端白酒次龙头,性价比高于茅台。增长稳健,分红率高,适合稳健配置。"
-                        }
+                        { "code": "sh600519", "name": "贵州茅台", "cat": "白酒", "roe": "33%", "pe": "35", "reason": "白酒之王,品牌护城河深厚。ROE常年>30%,现金流优异,抗周期能力强。" },
+                        { "code": "sh600036", "name": "招商银行", "cat": "银行", "roe": "16%", "pe": "6.5", "reason": "零售银行之王,资产质量最优。股息率4.5%,估值合理,防御属性强。" },
+                        { "code": "sz000858", "name": "五粮液", "cat": "白酒", "roe": "25%", "pe": "18", "reason": "高端白酒次龙头,性价比高于茅台。增长稳健,分红率高,适合平衡配置。" },
+                        { "code": "sz300750", "name": "宁德时代", "cat": "新能源", "roe": "22%", "pe": "28", "reason": "全球动力电池龙头,市占率35%,技术领先。受益于新能源车渗透率提升,成长确定性高。" },
+                        { "code": "sz002475", "name": "立讯精密", "cat": "消费电子", "roe": "16%", "pe": "28", "reason": "苹果核心供应商,AirPods/连接器龙头。客户黏性强,盈利能力稳定。" },
+                        { "code": "sh600887", "name": "伊利股份", "cat": "食品", "roe": "22%", "pe": "16", "reason": "乳制品龙头,市占率40%,消费刚需强。业绩稳定,估值合理。" }
+                ]
+        },
+        "aggressive": {
+                "stocks": [
+                        { "code": "sz300750", "name": "宁德时代", "cat": "新能源", "roe": "22%", "pe": "28", "reason": "全球动力电池龙头,市占率35%,技术领先优势明显。受益于新能源车渗透率提升,长期成长确定性高。" },
+                        { "code": "sh688981", "name": "中芯国际", "cat": "半导体", "roe": "-5%", "pe": "-50", "reason": "国内唯一先进制程晶圆厂,国产替代核心标的。虽短期亏损,但长期看好芯片自主可控逻辑。" },
+                        { "code": "sz002475", "name": "立讯精密", "cat": "消费电子", "roe": "16%", "pe": "28", "reason": "苹果核心供应商,AirPods/连接器龙头。受益于消费电子创新,客户黏性强,盈利能力稳定。" },
+                        { "code": "sh600276", "name": "恒瑞医药", "cat": "创新药", "roe": "18%", "pe": "35", "reason": "创新药龙头,研发投入15%,管线丰富。PD-1等重磅品种放量,长期成长空间大。" },
+                        { "code": "sh600519", "name": "贵州茅台", "cat": "白酒", "roe": "33%", "pe": "35", "reason": "白酒之王,品牌护城河深厚,提价能力强。ROE常年>30%,现金流优异,抗周期能力强。" },
+                        { "code": "sz002594", "name": "比亚迪", "cat": "新能源车", "roe": "20%", "pe": "25", "reason": "新能源车+电池垂直一体化龙头,技术领先。销量高增长,全球化加速,成长空间巨大。" }
                 ]
         }
 };;
@@ -1036,11 +1016,6 @@
             
             // 生成股票列表
             // 使用实时股票数据
-            if (window.REALTIME_STOCKS && window.REALTIME_STOCKS.length > 0) {
-                console.log('✅ 渲染实时股票:', window.REALTIME_STOCKS.length, '只');
-                
-                // 从stockPool获取推荐理由和ROE
-                // 使用实时股票数据
             if (window.REALTIME_STOCKS && window.REALTIME_STOCKS.length > 0) {
                 console.log('✅ 渲染实时股票:', window.REALTIME_STOCKS.length, '只');
                 
@@ -1097,44 +1072,6 @@
                 `;
                 }).join('');
                 document.querySelector('.stock-list').innerHTML = stockHTML;
-            } else {
-                console.warn('⚠️ 未找到实时股票数据');
-                // 降级使用默认数据
-                const stockData = stockPool[riskType];
-                if (!stockData || amount < 200000) {
-                    stockSection.style.display = 'none';
-                } else {
-                    const stocks = stockData.stocks;
-                    const perStock = Math.round(assets.stock / stocks.length);
-                    const stockHTML = stocks.map(s => `
-                        <div class="product-item">
-                            <div class="product-header">
-                                <div class="product-info">
-                                    <div class="product-name">${s.name}</div>
-                                    <span class="product-code">${s.code}</span>
-                                </div>
-                                <div class="product-stats">
-                                    <div class="stat-item">
-                                        <div class="stat-label">投资金额</div>
-                                        <div class="stat-value amount">¥${perStock.toLocaleString()}</div>
-                                    </div>
-                                    <div class="stat-item">
-                                        <div class="stat-label">ROE</div>
-                                        <div class="stat-value">${s.roe}</div>
-                                    </div>
-                                    <div class="stat-item">
-                                        <div class="stat-label">PE</div>
-                                        <div class="stat-value">${s.pe}</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="product-reason">
-                                <strong>推荐理由：</strong>${s.reason}
-                            </div>
-                        </div>
-                    `).join('');
-                    document.querySelector('.stock-list').innerHTML = stockHTML;
-                }
             } else {
                 console.warn('⚠️ 未找到实时股票数据');
                 // 降级使用默认数据
@@ -1366,7 +1303,9 @@
             };
             
             // 获取建议
-            const periodKey = period === '1年' ? '1y' : period === '5年' ? '5y' : '3y';
+            // 更智能的期限映射(支持任意年数)
+            const periodNum = parseInt(period.toString().replace(/[^0-9]/g, '')) || 3;
+            const periodKey = periodNum === 1 ? '1y' : periodNum >= 5 ? '5y' : '3y';
             const advices = adviceMap[riskType]?.[periodKey];
             
             if (!advices) {
