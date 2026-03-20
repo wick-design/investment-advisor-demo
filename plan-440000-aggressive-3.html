@@ -422,6 +422,19 @@
             // 渲染股票列表
             if (window.REALTIME_STOCKS && window.REALTIME_STOCKS.length > 0) {
                 renderStocks();
+
+    // ===== 产品数据 (动态生成) =====
+    window.PRODUCT_ALLOCATIONS = {
+    "stock": 0.4,
+    "index": 0.35,
+    "cash": 0.05,
+    "convertible": 0.15,
+    "bond": 0.05,
+    "gold": 0
+};
+    window.TOTAL_AMOUNT = 440000;
+    console.log('📊 资产配比:', window.PRODUCT_ALLOCATIONS);
+
             } else if (config.stock === 0) {
                 document.getElementById('stockSection').style.display = 'none';
             }
@@ -607,7 +620,7 @@
                 container.appendChild(li);
             });
         }
-    // ===== 实时股票数据 (2026/3/20 17:02:37) =====
+    // ===== 实时股票数据 (2026/3/20 17:05:14) =====
     window.REALTIME_STOCKS = [
     {
         "code": "sh600519",
