@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能投资配置方案 - 32万元·10年·进取型</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            min-height: 100vh;
+            color: #e0e0e0;
+            padding: 20px;
+        }
+        .container { max-width: 960px; margin: 0 auto; }
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 40px 20px 30px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            margin-bottom: 24px;
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+        }
+        .header h1 { font-size: 28px; color: #fff; margin-bottom: 8px; font-weight: 700; }
+        .header .subtitle { color: #a0aec0; font-size: 14px; margin-bottom: 20px; }
+        .meta-tags { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+        .meta-tag {
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .tag-amount { background: rgba(99,179,237,0.2); color: #63b3ed; border: 1px solid rgba(99,179,237,0.3); }
+        .tag-period { background: rgba(154,230,180,0.2); color: #9ae6b4; border: 1px solid rgba(154,230,180,0.3); }
+        .tag-risk   { background: rgba(252,211,77,0.2);  color: #fcd34d; border: 1px solid rgba(252,211,77,0.3); }
+        .tag-yield  { background: rgba(252,129,129,0.2); color: #fc8181; border: 1px solid rgba(252,129,129,0.3); }
+        /* Cards */
+        .card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+        }
+        .card-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        /* Chart */
+        .chart-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        .chart-container { width: 220px; height: 220px; flex-shrink: 0; }
+        .legend-list { flex: 1; min-width: 200px; }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            border-radius: 8px;
+            margin-bottom: 6px;
+            background: rgba(255,255,255,0.04);
+            transition: background 0.2s;
+        }
+        .legend-item:hover { background: rgba(255,255,255,0.08); }
+        .legend-left { display: flex; align-items: center; gap: 10px; }
+        .legend-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+        .legend-name { font-size: 14px; color: #e2e8f0; }
+        .legend-right { text-align: right; }
+        .legend-pct { font-size: 15px; font-weight: 700; color: #fff; }
+        .legend-amt { font-size: 12px; color: #718096; }
+        /* Allocation sections */
+        .alloc-section { margin-bottom: 24px; }
+        .alloc-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .alloc-icon { font-size: 20px; }
+        .alloc-title { font-size: 15px; font-weight: 700; color: #fff; }
+        .alloc-badge {
+            margin-left: auto;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        /* Product items */
+        .product-item {
+            background: rgba(255,255,255,0.04);
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin-bottom: 8px;
+            border: 1px solid rgba(255,255,255,0.06);
+            transition: border-color 0.2s;
+        }
+        .product-item:hover { border-color: rgba(255,255,255,0.15); }
+        .product-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; flex-wrap: wrap; gap: 8px; }
+        .product-info .product-name { font-size: 14px; font-weight: 600; color: #e2e8f0; margin-bottom: 3px; }
+        .product-info .product-code { font-size: 11px; color: #718096; }
+        .product-stats { display: flex; gap: 16px; flex-wrap: wrap; }
+        .stat-item { text-align: right; }
+        .stat-label { font-size: 11px; color: #718096; margin-bottom: 2px; }
+        .stat-value { font-size: 13px; font-weight: 600; }
+        .stat-value.price  { color: #63b3ed; }
+        .stat-value.shares { color: #9ae6b4; }
+        .stat-value.amount { color: #fcd34d; }
+        .product-reason { font-size: 12px; color: #a0aec0; line-height: 1.5; }
+        /* Advice */
+        .advice-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+        .advice-item {
+            background: rgba(255,255,255,0.04);
+            border-radius: 10px;
+            padding: 14px;
+            border-left: 3px solid;
+        }
+        .advice-item h4 { font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+        .advice-item p  { font-size: 12px; color: #a0aec0; line-height: 1.5; }
+        /* Risk disclaimer */
+        .disclaimer {
+            background: rgba(252,129,129,0.08);
+            border: 1px solid rgba(252,129,129,0.2);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #fc8181;
+            line-height: 1.6;
+        }
+        /* Footer */
+        .footer { text-align: center; padding: 20px; color: #4a5568; font-size: 12px; margin-top: 10px; }
+        /* Responsive */
+        @media (max-width: 600px) {
+            .chart-wrapper { flex-direction: column; align-items: center; }
+            .product-stats { gap: 10px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <!-- Header -->
+    <div class="header">
+        <h1>📊 智能投资配置方案</h1>
+        <div class="subtitle" id="subtitle">基于您的风险偏好与投资目标，为您量身定制</div>
+        <div class="meta-tags" id="metaTags"></div>
+    </div>
+
+    <!-- Pie Chart -->
+    <div class="card">
+        <div class="card-title">🎯 资产配置总览</div>
+        <div class="chart-wrapper">
+            <div class="chart-container">
+                <canvas id="allocChart"></canvas>
+            </div>
+            <div class="legend-list" id="legendList"></div>
+        </div>
+    </div>
+
+    <!-- Detailed Allocations -->
+    <div class="card" id="detailCard">
+        <div class="card-title">📋 具体产品推荐</div>
+        <div id="allocSections"></div>
+    </div>
+
+    <!-- Investment Advice -->
+    <div class="card">
+        <div class="card-title">💡 投资建议</div>
+        <div class="advice-grid" id="adviceGrid"></div>
+    </div>
+
+    <!-- Disclaimer -->
+    <div class="disclaimer">
+        ⚠️ <strong>风险提示：</strong>本方案仅供参考，不构成投资建议。投资有风险，入市需谨慎。
+        股票、基金等金融产品存在本金损失风险，过往业绩不代表未来收益。
+        请根据自身风险承受能力，理性投资，切勿将生活必需资金用于高风险投资。
+    </div>
+
+    <div class="footer">由智能投资顾问生成 · <span id="genTime"></span></div>
+</div>
+
+<script>
+    // ===== 配置参数（由 generate-with-style.js 替换）=====
+    const amount = 320000; // 固定值
+    const riskType = 'aggressive'; // 固定值
+    const period = '10年'; // 固定期限
+
+    // ===== 配置数据 =====
+    const RISK_CONFIG = {
+        conservative: {
+            name: '保守型', color: '#63b3ed', yield: '3-5%',
+            alloc: { stock:0, index:0.10, cash:0.60, convertible:0.05, bond:0.20, gold:0.05 },
+            advice: ['以货币基金和债券基金为主，本金安全优先', '黄金ETF作为抗通胀配置', '适合风险厌恶型投资者或临近退休人群']
+        },
+        stable: {
+            name: '稳健型', color: '#9ae6b4', yield: '5-8%',
+            alloc: { stock:0, index:0.30, cash:0.30, convertible:0.10, bond:0.20, gold:0.10 },
+            advice: ['指数基金跟随市场，长期稳健增长', '货币基金保持流动性', '债券+黄金降低组合波动']
+        },
+        balanced: {
+            name: '平衡型', color: '#fcd34d', yield: '8-12%',
+            alloc: { stock:0.20, index:0.35, cash:0.15, convertible:0.15, bond:0.10, gold:0.05 },
+            advice: ['股票+指数基金攻守兼备', '可转债下有保底上不封顶', '适合中等风险承受能力投资者']
+        },
+        aggressive: {
+            name: '进取型', color: '#fc8181', yield: '12-18%',
+            alloc: { stock:0.40, index:0.35, cash:0.05, convertible:0.15, bond:0.05, gold:0 },
+            advice: ['重仓股票和指数基金追求高收益', '可转债提供额外弹性', '适合年轻、风险承受能力强的投资者', '建议持有3年以上平滑波动']
+        }
+    };
+
+    const ASSET_LABELS = {
+        stock: { name: '股票', icon: '📈', color: '#fc8181' },
+        index: { name: '指数基金', icon: '📊', color: '#63b3ed' },
+        cash:  { name: '货币基金', icon: '💵', color: '#9ae6b4' },
+        convertible: { name: '可转债', icon: '🔄', color: '#fcd34d' },
+        bond:  { name: '债券基金', icon: '🏦', color: '#b794f4' },
+        gold:  { name: '黄金ETF', icon: '⚡', color: '#f6ad55' }
+    };
+
+    // ===== 初始化 =====
+    const cfg = RISK_CONFIG[riskType] || RISK_CONFIG['balanced'];
+    const alloc = cfg.alloc;
+
+    // 期限映射
+    const periodNum = parseInt(period.toString().replace(/[^0-9]/g, '')) || 3;
+    const periodKey = periodNum === 1 ? '1y' : periodNum >= 5 ? '5y' : '3y';
+
+    // Header
+    document.getElementById('subtitle').textContent =
+        `${cfg.name} · ${period} · 预期年化 ${cfg.yield}`;
+    document.getElementById('genTime').textContent =
+        new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' });
+
+    const metaHTML = `
+        <span class="meta-tag tag-amount">💰 ¥${(amount/10000).toFixed(0)}万元</span>
+        <span class="meta-tag tag-period">⏱️ ${period}</span>
+        <span class="meta-tag tag-risk">🎯 ${cfg.name}</span>
+        <span class="meta-tag tag-yield">📈 预期年化 ${cfg.yield}</span>
+    `;
+    document.getElementById('metaTags').innerHTML = metaHTML;
+
+    // ===== 饼图 =====
+    const chartLabels = [], chartData = [], chartColors = [], legendItems = [];
+    Object.entries(alloc).forEach(([key, pct]) => {
+        if (pct <= 0) return;
+        const a = ASSET_LABELS[key];
+        chartLabels.push(a.name);
+        chartData.push(Math.round(pct * 100));
+        chartColors.push(a.color);
+        legendItems.push({ name: a.name, color: a.color, pct: Math.round(pct*100), amt: Math.round(amount*pct) });
+    });
+
+    new Chart(document.getElementById('allocChart'), {
+        type: 'doughnut',
+        data: { labels: chartLabels, datasets: [{ data: chartData, backgroundColor: chartColors, borderWidth: 2, borderColor: 'rgba(0,0,0,0.3)' }] },
+        options: {
+            responsive: true, maintainAspectRatio: true, cutout: '65%',
+            plugins: { legend: { display: false }, tooltip: {
+                callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed}%` }
+            }}
+        }
+    });
+
+    document.getElementById('legendList').innerHTML = legendItems.map(item => `
+        <div class="legend-item">
+            <div class="legend-left">
+                <div class="legend-dot" style="background:${item.color}"></div>
+                <div class="legend-name">${item.name}</div>
+            </div>
+            <div class="legend-right">
+                <div class="legend-pct">${item.pct}%</div>
+                <div class="legend-amt">¥${item.amt.toLocaleString()}</div>
+            </div>
+        </div>`).join('');
+
+    // ===== 产品详情占位（由 generate-with-style.js 注入实际数据）=====
+    const allocSections = document.getElementById('allocSections');
+
+    // 实时股票数据注入点（generate-with-style.js 会在此之前插入 window.REALTIME_STOCKS）
+    function renderStockSection() {
+        if (!window.REALTIME_STOCKS || alloc.stock === 0) return '';
+
+    // ===== 产品数据 (动态生成) =====
+    window.PRODUCT_ALLOCATIONS = {
+    "stock": 0.4,
+    "index": 0.35,
+    "cash": 0.05,
+    "convertible": 0.15,
+    "bond": 0.05,
+    "gold": 0
+};
+    window.TOTAL_AMOUNT = 320000;
+    console.log('📊 资产配比:', window.PRODUCT_ALLOCATIONS);
+
+        const stockAmt = Math.round(amount * alloc.stock);
+        let html = `<div class="alloc-section">
+            <div class="alloc-header">
+                <span class="alloc-icon">📈</span>
+                <span class="alloc-title">股票 · ${Math.round(alloc.stock*100)}%</span>
+                <span class="alloc-badge" style="background:rgba(252,129,129,0.15);color:#fc8181">¥${stockAmt.toLocaleString()}</span>
+            </div>`;
+        window.REALTIME_STOCKS.forEach(s => {
+            const chgColor = s.change >= 0 ? '#9ae6b4' : '#fc8181';
+            const chgSign  = s.change >= 0 ? '+' : '';
+            html += `<div class="product-item">
+                <div class="product-header">
+                    <div class="product-info">
+                        <div class="product-name">${s.name}</div>
+                        <span class="product-code">${s.code} · PE ${s.pe} · 实时数据</span>
+                    </div>
+                    <div class="product-stats">
+                        <div class="stat-item">
+                            <div class="stat-label">当前价格</div>
+                            <div class="stat-value price">¥${s.price.toFixed(2)}</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">今日涨跌</div>
+                            <div class="stat-value" style="color:${chgColor}">${chgSign}${s.change.toFixed(2)}%</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">建议买入</div>
+                            <div class="stat-value shares">${s.shares}股</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">投资金额</div>
+                            <div class="stat-value amount">¥${s.amount.toLocaleString()}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+        });
+        html += '</div>';
+        return html;
+    }
+
+    // 动态产品区块（由 generate-with-style.js 通过 window.PRODUCT_ALLOCATIONS 注入）
+    function renderDynamicSections() {
+        if (!window.PRODUCT_ALLOCATIONS) return '<p style="color:#718096;font-size:13px">产品数据加载中...</p>';
+
+        const pa = window.PRODUCT_ALLOCATIONS;
+        const sections = [];
+
+        // 指数基金
+        if (pa.index > 0) {
+            sections.push(`<div class="alloc-section">
+                <div class="alloc-header">
+                    <span class="alloc-icon">📊</span>
+                    <span class="alloc-title">指数基金 · ${Math.round(pa.index*100)}%</span>
+                    <span class="alloc-badge" style="background:rgba(99,179,237,0.15);color:#63b3ed">¥${Math.round(amount*pa.index).toLocaleString()}</span>
+                </div>
+                <div id="indexFundsContainer"><!-- 由JS注入 --></div>
+            </div>`);
+        }
+        // 可转债
+        if (pa.convertible > 0) {
+            sections.push(`<div class="alloc-section">
+                <div class="alloc-header">
+                    <span class="alloc-icon">🔄</span>
+                    <span class="alloc-title">可转债 · ${Math.round(pa.convertible*100)}%</span>
+                    <span class="alloc-badge" style="background:rgba(252,211,77,0.15);color:#fcd34d">¥${Math.round(amount*pa.convertible).toLocaleString()}</span>
+                </div>
+                <div id="convertibleBondsContainer"><!-- 由JS注入 --></div>
+            </div>`);
+        }
+        // 货币基金
+        if (pa.cash > 0) {
+            sections.push(`<div class="alloc-section">
+                <div class="alloc-header">
+                    <span class="alloc-icon">💵</span>
+                    <span class="alloc-title">货币基金 · ${Math.round(pa.cash*100)}%</span>
+                    <span class="alloc-badge" style="background:rgba(154,230,180,0.15);color:#9ae6b4">¥${Math.round(amount*pa.cash).toLocaleString()}</span>
+                </div>
+                <div id="moneyFundsContainer"><!-- 由JS注入 --></div>
+            </div>`);
+        }
+        // 债券基金
+        if (pa.bond > 0) {
+            sections.push(`<div class="alloc-section">
+                <div class="alloc-header">
+                    <span class="alloc-icon">🏦</span>
+                    <span class="alloc-title">债券基金 · ${Math.round(pa.bond*100)}%</span>
+                    <span class="alloc-badge" style="background:rgba(183,148,244,0.15);color:#b794f4">¥${Math.round(amount*pa.bond).toLocaleString()}</span>
+                </div>
+                <div id="bondFundsContainer"><!-- 由JS注入 --></div>
+            </div>`);
+        }
+        // 黄金ETF
+        if (pa.gold > 0) {
+            sections.push(`<div class="alloc-section">
+                <div class="alloc-header">
+                    <span class="alloc-icon">⚡</span>
+                    <span class="alloc-title">黄金ETF · ${Math.round(pa.gold*100)}%</span>
+                    <span class="alloc-badge" style="background:rgba(246,173,85,0.15);color:#f6ad55">¥${Math.round(amount*pa.gold).toLocaleString()}</span>
+                </div>
+                <div id="goldETFsContainer"><!-- 由JS注入 --></div>
+            </div>`);
+        }
+
+        return sections.join('');
+    }
+
+    // 渲染所有区块
+    allocSections.innerHTML = renderStockSection() + renderDynamicSections();
+
+    // 注入各类产品 HTML（由 generate-with-style.js 通过 innerHTML 注入）
+    if (window.INDEX_FUNDS_HTML)      { const el = document.getElementById('indexFundsContainer');      if(el) el.innerHTML = window.INDEX_FUNDS_HTML; }
+    if (window.CONVERTIBLE_HTML)      { const el = document.getElementById('convertibleBondsContainer'); if(el) el.innerHTML = window.CONVERTIBLE_HTML; }
+    if (window.MONEY_FUNDS_HTML)      { const el = document.getElementById('moneyFundsContainer');      if(el) el.innerHTML = window.MONEY_FUNDS_HTML; }
+    if (window.BOND_FUNDS_HTML)       { const el = document.getElementById('bondFundsContainer');       if(el) el.innerHTML = window.BOND_FUNDS_HTML; }
+    if (window.GOLD_ETFS_HTML)        { const el = document.getElementById('goldETFsContainer');        if(el) el.innerHTML = window.GOLD_ETFS_HTML; }
+
+    // ===== 投资建议 =====
+    const adviceColors = ['#63b3ed', '#9ae6b4', '#fcd34d', '#fc8181'];
+    document.getElementById('adviceGrid').innerHTML = cfg.advice.map((text, i) => `
+        <div class="advice-item" style="border-color:${adviceColors[i % adviceColors.length]}">
+            <h4 style="color:${adviceColors[i % adviceColors.length]}">建议 ${i+1}</h4>
+            <p>${text}</p>
+        </div>`).join('');
+
+</script>
+</body>
+</html>
