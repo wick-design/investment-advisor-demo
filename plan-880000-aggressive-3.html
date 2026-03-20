@@ -586,7 +586,7 @@
 
 
     // ===== 产品数据将在这里动态注入 =====
-    // ===== 实时股票数据 (2026/3/20 17:30:28) =====
+    // ===== 实时股票数据 (2026/3/20 17:34:20) =====
     window.REALTIME_STOCKS = [
     {
         "code": "sh600519",
@@ -640,7 +640,7 @@
     }
 ];
     console.log('📊 已加载实时股票数据:', window.REALTIME_STOCKS);
-    // ===== 实时基金数据 (2026/3/20 17:30:28) =====
+    // ===== 实时基金数据 (2026/3/20 17:34:20) =====
     window.REALTIME_FUNDS = [
     {
         "code": "sh510500",
@@ -662,6 +662,22 @@
     }
 ];
     console.log('📊 已加载实时基金数据:', window.REALTIME_FUNDS);
+    // ===== 实时可转债数据 (2026/3/20 17:34:20) =====
+    window.REALTIME_BONDS = [
+    {
+        "code": "sh110079",
+        "name": "杭银转债",
+        "price": 152.372,
+        "change": 0
+    },
+    {
+        "code": "sh113652",
+        "name": "伟22转债",
+        "price": 132.174,
+        "change": -0.62
+    }
+];
+    console.log('📊 已加载实时可转债数据:', window.REALTIME_BONDS);
 
 
 
@@ -806,32 +822,8 @@
                 <div class="category-rationale convertible">
                     <strong>配置理由：</strong>进可攻退可守。牛市跟涨(转股),熊市保底(债券价值),攻守兼备的投资品种。
                 </div>
-                <div class="product-list">
-                    <div class="product-item">
-                        <div class="product-header">
-                            <div class="product-info">
-                                <div class="product-name">南银转债</div>
-                                <span class="product-code">113050</span>
-                            </div>
-                            <div class="product-stats">
-                                <div class="stat-item">
-                                    <div class="stat-label">当前价格</div>
-                                    <div class="stat-value price">¥100.5/张</div>
-                                </div>
-                                <div class="stat-item">
-                                    <div class="stat-label">购买数量</div>
-                                    <div class="stat-value shares">200张</div>
-                                </div>
-                                <div class="stat-item">
-                                    <div class="stat-label">投资金额</div>
-                                    <div class="stat-value amount">¥20,100</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="product-reason">
-                            <strong>推荐理由：</strong>AAA评级，"下有保底、上不封顶"，价格接近面值，安全边际高，适合稳健型投资者增强收益。
-                        </div>
-                    </div>
+                <div class="product-list convertible-list">
+                    <!-- 可转债产品将动态生成 -->
                 </div>
             </div>
             
@@ -1190,6 +1182,102 @@
                     document.querySelector('.stock-list').innerHTML = stockHTML;
                 }
             }
+        }
+        
+        // ===== 渲染基金数据 =====
+        if (window.REALTIME_FUNDS && window.REALTIME_FUNDS.length > 0 && assets.index > 0) {
+            console.log('✅ 渲染实时基金:', window.REALTIME_FUNDS.length, '只');
+            const fundSection = document.querySelector('.product-category.fund');
+            const fundList = fundSection.querySelector('.product-list');
+            
+            // 计算每只基金的投资金额
+            const perFund = Math.round(assets.index / window.REALTIME_FUNDS.length);
+            
+            const fundHTML = window.REALTIME_FUNDS.map((f, i) => {
+                const shares = Math.floor(perFund / f.price);
+                const actualAmount = shares * f.price;
+                const changeColor = f.change >= 0 ? '#10B981' : '#EF4444';
+                const changeSign = f.change >= 0 ? '+' : '';
+                
+                return `
+                <div class="product-item">
+                    <div class="product-header">
+                        <div class="product-info">
+                            <div class="product-name">${f.name}</div>
+                            <span class="product-code">${f.code.replace(/^(sh|sz)/, '')}</span>
+                        </div>
+                        <div class="product-stats">
+                            <div class="stat-item">
+                                <div class="stat-label">当前价格</div>
+                                <div class="stat-value price">¥${f.price.toFixed(3)}/份</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">购买份额</div>
+                                <div class="stat-value shares">${shares.toLocaleString()}份</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">投资金额</div>
+                                <div class="stat-value amount">¥${actualAmount.toLocaleString()}</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">今日涨跌</div>
+                                <div class="stat-value" style="color: ${changeColor}">${changeSign}${f.change.toFixed(2)}%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            }).join('');
+            
+            fundList.innerHTML = fundHTML;
+        }
+        
+        // ===== 渲染可转债数据 =====
+        if (window.REALTIME_BONDS && window.REALTIME_BONDS.length > 0 && assets.convertible > 0) {
+            console.log('✅ 渲染实时可转债:', window.REALTIME_BONDS.length, '只');
+            const bondSection = document.querySelector('.product-category.convertible');
+            const bondList = bondSection.querySelector('.convertible-list');
+            
+            // 计算每只可转债的投资金额
+            const perBond = Math.round(assets.convertible / window.REALTIME_BONDS.length);
+            
+            const bondHTML = window.REALTIME_BONDS.map((b, i) => {
+                const shares = Math.floor(perBond / b.price);
+                const actualAmount = shares * b.price;
+                const changeColor = b.change >= 0 ? '#10B981' : '#EF4444';
+                const changeSign = b.change >= 0 ? '+' : '';
+                
+                return `
+                <div class="product-item">
+                    <div class="product-header">
+                        <div class="product-info">
+                            <div class="product-name">${b.name}</div>
+                            <span class="product-code">${b.code.replace(/^(sh|sz)/, '')}</span>
+                        </div>
+                        <div class="product-stats">
+                            <div class="stat-item">
+                                <div class="stat-label">当前价格</div>
+                                <div class="stat-value price">¥${b.price.toFixed(3)}/张</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">购买数量</div>
+                                <div class="stat-value shares">${shares}张</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">投资金额</div>
+                                <div class="stat-value amount">¥${actualAmount.toLocaleString()}</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">今日涨跌</div>
+                                <div class="stat-value" style="color: ${changeColor}">${changeSign}${b.change.toFixed(2)}%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            }).join('');
+            
+            bondList.innerHTML = bondHTML;
         }
 
         Chart.register(ChartDataLabels);
