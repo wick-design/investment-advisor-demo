@@ -586,7 +586,7 @@
 
 
     // ===== 产品数据将在这里动态注入 =====
-    // ===== 实时股票数据 (2026/3/20 17:11:38) =====
+    // ===== 实时股票数据 (2026/3/20 17:27:52) =====
     window.REALTIME_STOCKS = [
     {
         "code": "sh600519",
@@ -640,6 +640,29 @@
     }
 ];
     console.log('📊 已加载实时股票数据:', window.REALTIME_STOCKS);
+    // ===== 实时基金数据 (2026/3/20 17:27:52) =====
+    window.REALTIME_FUNDS = [
+    {
+        "code": "sh510500",
+        "name": "中证500ETF",
+        "price": 7.812,
+        "change": -1.67
+    },
+    {
+        "code": "sh588000",
+        "name": "科创50ETF",
+        "price": 1.388,
+        "change": -1.63
+    },
+    {
+        "code": "sz159875",
+        "name": "新能源ETF嘉实",
+        "price": 0.734,
+        "change": 2.37
+    }
+];
+    console.log('📊 已加载实时基金数据:', window.REALTIME_FUNDS);
+
 
 
 
