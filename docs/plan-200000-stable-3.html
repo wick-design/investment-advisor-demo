@@ -582,13 +582,13 @@
     "gold": 0.05
 };
     window.TOTAL_AMOUNT = 200000;
-    window.USE_PREGENERATED_HTML = true; // 使用预生成的HTML（包含推荐理由）
+    window.USE_PREGENERATED_HTML = false; // 使用实时数据渲染（基金/黄金ETF/可转债）
     console.log('📊 资产配比:', window.PRODUCT_ALLOCATIONS);
-    console.log('📝 使用预生成HTML: true');
+    console.log('📝 使用实时数据渲染: true');
 
 
     // ===== 产品数据将在这里动态注入 =====
-    // ===== 实时股票数据 (2026/3/24 19:49:12) =====
+    // ===== 实时股票数据 (2026/3/24 19:53:18) =====
     window.REALTIME_STOCKS = [
     {
         "code": "sh600036",
@@ -622,7 +622,7 @@
     }
 ];
     console.log('📊 已加载实时股票数据:', window.REALTIME_STOCKS);
-    // ===== 实时基金数据 (2026/3/24 19:49:12) =====
+    // ===== 实时基金数据 (2026/3/24 19:53:18) =====
     window.REALTIME_FUNDS = [
     {
         "code": "sh510300",
@@ -644,7 +644,7 @@
     }
 ];
     console.log('📊 已加载实时基金数据:', window.REALTIME_FUNDS);
-    // ===== 实时可转债数据 (2026/3/24 19:49:12) =====
+    // ===== 实时可转债数据 (2026/3/24 19:53:18) =====
     window.REALTIME_BONDS = [
     {
         "code": "sh110079",
@@ -660,7 +660,7 @@
     }
 ];
     console.log('📊 已加载实时可转债数据:', window.REALTIME_BONDS);
-    // ===== 实时黄金ETF数据 (2026/3/24 19:49:12) =====
+    // ===== 实时黄金ETF数据 (2026/3/24 19:53:18) =====
     window.REALTIME_GOLD = [
     {
         "code": "sh518880",
