@@ -588,7 +588,7 @@
 
 
     // ===== 产品数据将在这里动态注入 =====
-    // ===== 实时股票数据 (2026/3/26 20:40:33) =====
+    // ===== 实时股票数据 (2026/3/26 20:58:13) =====
     window.REALTIME_STOCKS = [
     {
         "code": "sh600036",
@@ -622,51 +622,57 @@
     }
 ];
     console.log('📊 已加载实时股票数据:', window.REALTIME_STOCKS);
-    // ===== 实时基金数据 (2026/3/26 20:40:33) =====
+    // ===== 实时基金数据 (2026/3/26 20:58:13) =====
     window.REALTIME_FUNDS = [
     {
         "code": "sh510300",
         "name": "沪深300ETF华泰柏瑞",
         "price": 4.488,
-        "change": -1.23
+        "change": -1.23,
+        "reason": "规模最大,流动性最好,跟踪A股核心300只蓝筹,长期年化8-10%,3年持有正收益率超85%"
     },
     {
         "code": "sh510500",
         "name": "中证500ETF南方",
         "price": 7.7,
-        "change": -1.61
+        "change": -1.61,
+        "reason": "覆盖中盘成长龙头,聚焦新能源/医药/TMT高成长赛道,与沪深300互补提升组合弹性"
     },
     {
         "code": "sh510630",
         "name": "消费ETF华夏",
         "price": 0.86,
-        "change": -0.81
+        "change": -0.81,
+        "reason": "白酒+食品饮料龙头集合,长期回报高,品牌护城河深厚,消费复苏受益明显"
     }
 ];
     console.log('📊 已加载实时基金数据:', window.REALTIME_FUNDS);
-    // ===== 实时可转债数据 (2026/3/26 20:40:33) =====
+    // ===== 实时可转债数据 (2026/3/26 20:58:13) =====
     window.REALTIME_BONDS = [
     {
         "code": "sh110079",
         "name": "杭银转债",
         "price": 152.372,
-        "change": 0
+        "change": 0,
+        "reason": "长三角区域银行,不良率低于1%,资产质量优异。正股ROE连续5年超12%,估值合理,下修条款友好,债底保护强。"
     },
     {
         "code": "sh113652",
         "name": "伟22转债",
         "price": 134.815,
-        "change": -1.51
+        "change": -1.51,
+        "reason": "医疗器械龙头,骨科植入物市占率第一。受益集采政策明朗化,业绩增速20%+,转股溢价率适中,攻守兼备。"
     }
 ];
     console.log('📊 已加载实时可转债数据:', window.REALTIME_BONDS);
-    // ===== 实时黄金ETF数据 (2026/3/26 20:40:33) =====
+    // ===== 实时黄金ETF数据 (2026/3/26 20:58:13) =====
     window.REALTIME_GOLD = [
     {
         "code": "sh518880",
         "name": "黄金ETF华安",
         "price": 9.45,
-        "change": -1.98
+        "change": -1.98,
+        "reason": "规模全市场最大（1155亿），日均成交额超10亿，买卖价差极小，大额交易不影响价格。精准跟踪上海金现货价格，近5年年化回报约15%，全球避险情绪上升时表现突出，是组合中对抗通胀的核心配置。"
     }
 ];
     console.log('📊 已加载实时黄金ETF数据:', window.REALTIME_GOLD);
@@ -1349,6 +1355,7 @@
                             </div>
                         </div>
                     </div>
+                    ${f.reason ? `<div class="product-reason"><strong>推荐理由:</strong>${f.reason}</div>` : ''}
                 </div>
             `;
             }).join('');
@@ -1397,6 +1404,7 @@
                             </div>
                         </div>
                     </div>
+                    ${b.reason ? `<div class="product-reason"><strong>推荐理由:</strong>${b.reason}</div>` : ''}
                 </div>
             `;
             }).join('');
@@ -1444,6 +1452,7 @@
                             </div>
                         </div>
                     </div>
+                    ${g.reason ? `<div class="product-reason"><strong>推荐理由:</strong>${g.reason}</div>` : ''}
                 </div>
             `;
             }).join('');
