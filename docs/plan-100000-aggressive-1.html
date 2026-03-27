@@ -541,42 +541,44 @@
     // ===== 实时股票数据 (2026/3/17 18:46:10) =====
     window.REALTIME_STOCKS = [
     {
-        "code": "sz300750",
-        "name": "宁德时代",
-        "price": 405,
+        "code": "sz002415",
+        "name": "海康威视",
+        "price": 30.43,
+        "shares": 300,
+        "amount": 9129,
+        "ratio": 45.6,
+        "pe": "19.7",
+        "change": 0.20
+    },
+    {
+        "code": "sh688981",
+        "name": "中芯国际",
+        "price": 97.61,
         "shares": 100,
-        "amount": 40500,
-        "ratio": 44,
-        "pe": "25.6",
-        "change": -0.83
+        "amount": 9761,
+        "ratio": 48.8,
+        "pe": "154.9",
+        "change": 0.75
     },
     {
-        "code": "sz002475",
-        "name": "立讯精密",
-        "price": 49.83,
-        "shares": 500,
-        "amount": 24915,
-        "ratio": 27.1,
-        "pe": "23.0",
-        "change": 1.16
-    },
-    {
-        "code": "sh600276",
-        "name": "恒瑞医药",
-        "price": 56.3,
-        "shares": 400,
-        "amount": 22520,
-        "ratio": 24.5,
-        "pe": "50.0",
-        "change": 1.28
+        "code": "sz300122",
+        "name": "智飞生物",
+        "price": 15.12,
+        "shares": 100,
+        "amount": 1512,
+        "ratio": 7.6,
+        "pe": "-27.6",
+        "change": 2.30
     }
 ];
 
     // ===== 产品数据 (动态生成) =====
+    // ⚠️ 修正说明：原方案股票40%不适合10万小资金（高价股100股起买门槛过高）
+    // 调整：指数基金↑50%（ETF门槛低）、股票↓20%（只选低价龙头）
     window.PRODUCT_ALLOCATIONS = {
-    "stock": 0.4,
-    "index": 0.35,
-    "cash": 0.05,
+    "stock": 0.20,
+    "index": 0.50,
+    "cash": 0.10,
     "bond": 0.05,
     "convertible": 0.15,
     "gold": 0
@@ -1006,7 +1008,7 @@
             aggressive: { 
                 name: '进取型', 
                 return: '8-12%', 
-                allocation: { index: 0.35, cash: 0.05, bond: 0.05, convertible: 0.15, gold: 0.00, stock: 0.40 }
+                allocation: { index: 0.50, cash: 0.10, bond: 0.05, convertible: 0.15, gold: 0.00, stock: 0.20 }
             }
         };
 
