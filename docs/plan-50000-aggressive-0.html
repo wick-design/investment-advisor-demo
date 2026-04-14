@@ -588,6 +588,91 @@
 
 
     // ===== 产品数据将在这里动态注入 =====
+    // ===== 实时股票数据 (2026/4/14 11:50:24) =====
+    window.REALTIME_STOCKS = [
+    {
+        "code": "sh600519",
+        "name": "贵州茅台",
+        "price": 1438,
+        "shares": 100,
+        "amount": 143800,
+        "ratio": 719,
+        "pe": "N/A",
+        "change": -0.37
+    },
+    {
+        "code": "sz002594",
+        "name": "比亚迪",
+        "price": 103.33,
+        "shares": 100,
+        "amount": 10333,
+        "ratio": 51.7,
+        "pe": "N/A",
+        "change": -0.88
+    },
+    {
+        "code": "sz300750",
+        "name": "宁德时代",
+        "price": 424.61,
+        "shares": 100,
+        "amount": 42461,
+        "ratio": 212.3,
+        "pe": "N/A",
+        "change": -0.59
+    }
+];
+    console.log('📊 已加载实时股票数据:', window.REALTIME_STOCKS);
+    // ===== 实时基金数据 (2026/4/14 11:50:24) =====
+    window.REALTIME_FUNDS = [
+    {
+        "code": "sh510500",
+        "name": "中证500ETF南方",
+        "price": 8.14,
+        "change": 1.35,
+        "reason": "覆盖中盘成长龙头,聚焦新能源/医药/TMT高成长赛道,与沪深300互补提升组合弹性"
+    },
+    {
+        "code": "sh512500",
+        "name": "中证500ETF华夏",
+        "price": 4.5,
+        "change": 1.35,
+        "reason": "费率低,管理精细,中盘股配置首选,长期跑赢大盘概率高"
+    },
+    {
+        "code": "sz159875",
+        "name": "新能源ETF嘉实",
+        "price": 0.74,
+        "change": 0.82,
+        "reason": "涵盖比亚迪/宁德时代等龙头,新能源汽车渗透率持续提升,政策红利持续,长期成长逻辑清晰"
+    }
+];
+    console.log('📊 已加载实时基金数据:', window.REALTIME_FUNDS);
+    // ===== 实时可转债数据 (2026/4/14 11:50:24) =====
+    window.REALTIME_BONDS = [
+    {
+        "code": "sh110079",
+        "name": "杭银转债",
+        "price": 152.37,
+        "change": 0,
+        "reason": "长三角区域银行,不良率低于1%,资产质量优异。正股ROE连续5年超12%,估值合理,下修条款友好,债底保护强。"
+    },
+    {
+        "code": "sh113652",
+        "name": "伟22转债",
+        "price": 136.08,
+        "change": -0.63,
+        "reason": "医疗器械龙头,骨科植入物市占率第一。受益集采政策明朗化,业绩增速20%+,转股溢价率适中,攻守兼备。"
+    },
+    {
+        "code": "sh113072",
+        "price": 0,
+        "change": 0,
+        "reason": "优质城商行,ROE超15%连续10年,零售业务突出。正股基本面扎实,估值仅0.8倍PB,下修条款灵活,安全边际高。"
+    }
+];
+    console.log('📊 已加载实时可转债数据:', window.REALTIME_BONDS);
+
+
 
 
     </script>
@@ -659,20 +744,20 @@
                         <div class="product-header">
                             <div class="product-info">
                                 <div class="product-name">南方中证500ETF</div>
-                                <span class="product-code">sh510500 · 估值数据</span>
+                                <span class="product-code">sh510500 · 实时数据</span>
                             </div>
                             <div class="product-stats">
                                 <div class="stat-item">
                                     <div class="stat-label">当前价格</div>
-                                    <div class="stat-value price">¥4.50/份</div>
+                                    <div class="stat-value price">¥8.14/份</div>
                                 </div>
                                 <div class="stat-item">
                                     <div class="stat-label">购买份额</div>
-                                    <div class="stat-value shares">1,296份</div>
+                                    <div class="stat-value shares">716份</div>
                                 </div>
                                 <div class="stat-item">
                                     <div class="stat-label">投资金额</div>
-                                    <div class="stat-value amount">¥5,832</div>
+                                    <div class="stat-value amount">¥5,828.24</div>
                                 </div>
                             </div>
                         </div>
@@ -684,7 +769,7 @@
                         <div class="product-header">
                             <div class="product-info">
                                 <div class="product-name">华夏中证500ETF</div>
-                                <span class="product-code">sh512500 · 估值数据</span>
+                                <span class="product-code">sh512500 · 实时数据</span>
                             </div>
                             <div class="product-stats">
                                 <div class="stat-item">
@@ -709,20 +794,20 @@
                         <div class="product-header">
                             <div class="product-info">
                                 <div class="product-name">新能源车ETF</div>
-                                <span class="product-code">sz159875 · 估值数据</span>
+                                <span class="product-code">sz159875 · 实时数据</span>
                             </div>
                             <div class="product-stats">
                                 <div class="stat-item">
                                     <div class="stat-label">当前价格</div>
-                                    <div class="stat-value price">¥4.50/份</div>
+                                    <div class="stat-value price">¥0.74/份</div>
                                 </div>
                                 <div class="stat-item">
                                     <div class="stat-label">购买份额</div>
-                                    <div class="stat-value shares">1,296份</div>
+                                    <div class="stat-value shares">7,882份</div>
                                 </div>
                                 <div class="stat-item">
                                     <div class="stat-label">投资金额</div>
-                                    <div class="stat-value amount">¥5,832</div>
+                                    <div class="stat-value amount">¥5,832.68</div>
                                 </div>
                             </div>
                         </div>
@@ -767,15 +852,15 @@
                             <div class="product-stats">
                                 <div class="stat-item">
                                     <div class="stat-label">当前价格</div>
-                                    <div class="stat-value price">¥120.00/张</div>
+                                    <div class="stat-value price">¥152.37/张</div>
                                 </div>
                                 <div class="stat-item">
                                     <div class="stat-label">购买数量</div>
-                                    <div class="stat-value shares">20张</div>
+                                    <div class="stat-value shares">16张</div>
                                 </div>
                                 <div class="stat-item">
                                     <div class="stat-label">投资金额</div>
-                                    <div class="stat-value amount">¥2,400</div>
+                                    <div class="stat-value amount">¥2,437.92</div>
                                 </div>
                             </div>
                         </div>
@@ -792,15 +877,15 @@
                             <div class="product-stats">
                                 <div class="stat-item">
                                     <div class="stat-label">当前价格</div>
-                                    <div class="stat-value price">¥120.00/张</div>
+                                    <div class="stat-value price">¥136.08/张</div>
                                 </div>
                                 <div class="stat-item">
                                     <div class="stat-label">购买数量</div>
-                                    <div class="stat-value shares">20张</div>
+                                    <div class="stat-value shares">18张</div>
                                 </div>
                                 <div class="stat-item">
                                     <div class="stat-label">投资金额</div>
-                                    <div class="stat-value amount">¥2,400</div>
+                                    <div class="stat-value amount">¥2,449.44</div>
                                 </div>
                             </div>
                         </div>
@@ -817,15 +902,15 @@
                             <div class="product-stats">
                                 <div class="stat-item">
                                     <div class="stat-label">当前价格</div>
-                                    <div class="stat-value price">¥120.00/张</div>
+                                    <div class="stat-value price">¥0.00/张</div>
                                 </div>
                                 <div class="stat-item">
                                     <div class="stat-label">购买数量</div>
-                                    <div class="stat-value shares">20张</div>
+                                    <div class="stat-value shares">Infinity张</div>
                                 </div>
                                 <div class="stat-item">
                                     <div class="stat-label">投资金额</div>
-                                    <div class="stat-value amount">¥2,400</div>
+                                    <div class="stat-value amount">¥NaN</div>
                                 </div>
                             </div>
                         </div>
