@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>100万定制投资配置方案（优化版）</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif; background: #f0f4f8; color: #1a202c; line-height: 1.6; }
+
+  .hero {
+    background: linear-gradient(135deg, #1a237e 0%, #283593 40%, #1565c0 70%, #0277bd 100%);
+    color: white;
+    padding: 48px 24px 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; top: -60px; right: -60px;
+    width: 200px; height: 200px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 50%;
+  }
+  .hero::after {
+    content: '';
+    position: absolute; bottom: -80px; left: -40px;
+    width: 250px; height: 250px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 50%;
+  }
+  .hero h1 { font-size: 26px; font-weight: 700; margin-bottom: 8px; position: relative; z-index:1; }
+  .hero .subtitle { font-size: 14px; opacity: 0.85; margin-bottom: 28px; position: relative; z-index:1; }
+  .hero-stats {
+    display: flex; justify-content: center; gap: 32px;
+    flex-wrap: wrap; position: relative; z-index:1;
+  }
+  .hero-stat { text-align: center; }
+  .hero-stat .val { font-size: 28px; font-weight: 800; }
+  .hero-stat .lab { font-size: 12px; opacity: 0.75; margin-top: 2px; }
+
+  .container { max-width: 800px; margin: 0 auto; padding: 20px 16px 40px; }
+
+  .section-title {
+    font-size: 18px; font-weight: 700;
+    margin: 28px 0 14px;
+    display: flex; align-items: center; gap: 8px;
+    color: #1a237e;
+  }
+  .section-title::after {
+    content: ''; flex: 1; height: 2px;
+    background: linear-gradient(90deg, #1565c0, transparent);
+    border-radius: 2px;
+  }
+
+  /* 概览卡片 */
+  .overview-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 8px; }
+  .overview-card {
+    background: white; border-radius: 12px;
+    padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    border-left: 4px solid;
+  }
+  .overview-card .oc-label { font-size: 12px; color: #718096; margin-bottom: 4px; }
+  .overview-card .oc-value { font-size: 20px; font-weight: 700; }
+  .overview-card .oc-sub { font-size: 11px; color: #a0aec0; margin-top: 3px; }
+  .oc-blue { border-color: #1565c0; } .oc-blue .oc-value { color: #1565c0; }
+  .oc-green { border-color: #2e7d32; } .oc-green .oc-value { color: #2e7d32; }
+  .oc-orange { border-color: #e65100; } .oc-orange .oc-value { color: #e65100; }
+  .oc-purple { border-color: #6a1b9a; } .oc-purple .oc-value { color: #6a1b9a; }
+
+  /* 资产配置饼图区域 */
+  .alloc-section { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.07); margin-bottom: 16px; }
+  .alloc-bars { margin-top: 12px; }
+  .alloc-bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .alloc-bar-label { width: 80px; font-size: 13px; font-weight: 500; color: #2d3748; flex-shrink: 0; }
+  .alloc-bar-track { flex: 1; background: #edf2f7; border-radius: 8px; height: 22px; overflow: hidden; }
+  .alloc-bar-fill { height: 100%; border-radius: 8px; display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; font-size: 12px; font-weight: 600; color: white; transition: width 1s ease; }
+  .alloc-bar-amount { width: 70px; text-align: right; font-size: 13px; font-weight: 600; color: #4a5568; flex-shrink: 0; }
+
+  /* 层级卡片 */
+  .layer-card {
+    background: white; border-radius: 14px;
+    padding: 18px; margin-bottom: 14px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    border-top: 4px solid;
+    position: relative; overflow: hidden;
+  }
+  .layer-card::before {
+    content: ''; position: absolute; right: -20px; top: -20px;
+    width: 80px; height: 80px; border-radius: 50%;
+    opacity: 0.06;
+  }
+  .layer-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .layer-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+  .layer-title-block .ltb-name { font-size: 16px; font-weight: 700; }
+  .layer-title-block .ltb-sub { font-size: 12px; color: #718096; margin-top: 1px; }
+  .layer-amount-badge { margin-left: auto; background: #f7fafc; border-radius: 8px; padding: 4px 10px; text-align: right; }
+  .layer-amount-badge .lab-amount { font-size: 16px; font-weight: 800; }
+  .layer-amount-badge .lab-pct { font-size: 11px; color: #718096; }
+
+  .product-list { display: grid; gap: 8px; margin-top: 4px; }
+  .product-item {
+    background: #f8fafc; border-radius: 10px; padding: 12px 14px;
+    display: flex; align-items: flex-start; gap: 10px;
+    border: 1px solid #e2e8f0;
+  }
+  .product-item .pi-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+  .product-item .pi-main { flex: 1; }
+  .product-item .pi-name { font-size: 14px; font-weight: 600; color: #1a202c; }
+  .product-item .pi-code { font-size: 11px; color: #718096; margin-top: 1px; }
+  .product-item .pi-desc { font-size: 12px; color: #4a5568; margin-top: 4px; line-height: 1.5; }
+  .product-item .pi-amount { text-align: right; flex-shrink: 0; }
+  .product-item .pi-amount .pia-num { font-size: 14px; font-weight: 700; }
+  .product-item .pi-amount .pia-yield { font-size: 11px; margin-top: 2px; }
+
+  /* 颜色主题 */
+  .lc-blue { border-top-color: #1565c0; }
+  .lc-blue .layer-icon { background: #e3f2fd; }
+  .lc-blue .layer-amount-badge .lab-amount { color: #1565c0; }
+  .lc-blue::before { background: #1565c0; }
+
+  .lc-green { border-top-color: #2e7d32; }
+  .lc-green .layer-icon { background: #e8f5e9; }
+  .lc-green .layer-amount-badge .lab-amount { color: #2e7d32; }
+  .lc-green::before { background: #2e7d32; }
+
+  .lc-orange { border-top-color: #e65100; }
+  .lc-orange .layer-icon { background: #fff3e0; }
+  .lc-orange .layer-amount-badge .lab-amount { color: #e65100; }
+  .lc-orange::before { background: #e65100; }
+
+  .lc-purple { border-top-color: #6a1b9a; }
+  .lc-purple .layer-icon { background: #f3e5f5; }
+  .lc-purple .layer-amount-badge .lab-amount { color: #6a1b9a; }
+  .lc-purple::before { background: #6a1b9a; }
+
+  .lc-gold { border-top-color: #f57f17; }
+  .lc-gold .layer-icon { background: #fff8e1; }
+  .lc-gold .layer-amount-badge .lab-amount { color: #f57f17; }
+  .lc-gold::before { background: #f57f17; }
+
+  .lc-red { border-top-color: #c62828; }
+  .lc-red .layer-icon { background: #ffebee; }
+  .lc-red .layer-amount-badge .lab-amount { color: #c62828; }
+  .lc-red::before { background: #c62828; }
+
+  /* 金额颜色 */
+  .amt-blue { color: #1565c0; }
+  .amt-green { color: #2e7d32; }
+  .amt-orange { color: #e65100; }
+  .amt-purple { color: #6a1b9a; }
+  .amt-gold { color: #f57f17; }
+  .amt-red { color: #c62828; }
+  .yield-green { color: #2e7d32; font-size: 11px; }
+
+  /* 建仓策略 */
+  .strategy-card { background: white; border-radius: 14px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); margin-bottom: 14px; }
+  .strategy-steps { display: grid; gap: 10px; margin-top: 12px; }
+  .strategy-step { display: flex; gap: 12px; padding: 12px; background: #f8fafc; border-radius: 10px; border: 1px solid #e2e8f0; }
+  .step-num { width: 28px; height: 28px; background: linear-gradient(135deg, #1565c0, #0277bd); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+  .step-content .sc-title { font-size: 14px; font-weight: 600; color: #1a202c; }
+  .step-content .sc-desc { font-size: 12px; color: #4a5568; margin-top: 3px; line-height: 1.5; }
+
+  /* 预期收益表 */
+  .yield-table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+  .yield-table th { background: #1565c0; color: white; padding: 10px 12px; font-size: 13px; text-align: left; }
+  .yield-table th:first-child { border-radius: 8px 0 0 0; }
+  .yield-table th:last-child { border-radius: 0 8px 0 0; }
+  .yield-table td { padding: 10px 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }
+  .yield-table tr:nth-child(even) td { background: #f8fafc; }
+  .yield-table tr:last-child td { border-bottom: none; }
+  .yield-total td { background: #e3f2fd !important; font-weight: 700; color: #1565c0; }
+
+  /* 风险提示 */
+  .risk-card { background: linear-gradient(135deg, #fff8e1, #fff3e0); border-radius: 14px; padding: 18px; margin-bottom: 14px; border: 1px solid #ffe082; }
+  .risk-card h3 { color: #e65100; font-size: 15px; margin-bottom: 10px; }
+  .risk-items { display: grid; gap: 8px; }
+  .risk-item { display: flex; gap: 8px; font-size: 13px; color: #5d4037; line-height: 1.5; }
+  .risk-item::before { content: '⚠️'; flex-shrink: 0; }
+
+  /* 优化说明 */
+  .optimize-card { background: linear-gradient(135deg, #e8f5e9, #f1f8e9); border-radius: 14px; padding: 18px; margin-bottom: 14px; border: 1px solid #a5d6a7; }
+  .optimize-card h3 { color: #2e7d32; font-size: 15px; margin-bottom: 10px; }
+  .optimize-items { display: grid; gap: 6px; }
+  .optimize-item { display: flex; gap: 8px; font-size: 13px; color: #1b5e20; line-height: 1.5; }
+  .optimize-item::before { content: '✅'; flex-shrink: 0; }
+
+  /* 底部 */
+  .footer { text-align: center; padding: 24px 16px; color: #718096; font-size: 12px; }
+  .footer strong { color: #1565c0; }
+
+  @media (max-width: 480px) {
+    .overview-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+    .hero h1 { font-size: 21px; }
+    .hero-stats { gap: 20px; }
+    .hero-stat .val { font-size: 22px; }
+    .alloc-bar-label { width: 64px; font-size: 12px; }
+    .alloc-bar-amount { width: 58px; font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>💼 100万定制投资配置方案</h1>
+  <div class="subtitle">优化版 · 稳健进取型 · 投资期限5年以上 · 2026年4月</div>
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="val">¥100万</div>
+      <div class="lab">投资总额</div>
+    </div>
+    <div class="hero-stat">
+      <div class="val">5.8~6.5%</div>
+      <div class="lab">预期年化</div>
+    </div>
+    <div class="hero-stat">
+      <div class="val">5年+</div>
+      <div class="lab">建议周期</div>
+    </div>
+    <div class="hero-stat">
+      <div class="val">6类资产</div>
+      <div class="lab">分散配置</div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- 概览 -->
+  <div class="section-title">📊 方案概览</div>
+  <div class="overview-grid">
+    <div class="overview-card oc-blue">
+      <div class="oc-label">货币基金（流动层）</div>
+      <div class="oc-value">10万</div>
+      <div class="oc-sub">随时可取 · 占比10%</div>
+    </div>
+    <div class="overview-card oc-green">
+      <div class="oc-label">债券基金（稳健层）</div>
+      <div class="oc-value">50万</div>
+      <div class="oc-sub">四层架构 · 占比50%</div>
+    </div>
+    <div class="overview-card oc-orange">
+      <div class="oc-label">指数基金（增值层）</div>
+      <div class="oc-value">35万</div>
+      <div class="oc-sub">定投策略 · 占比35%</div>
+    </div>
+    <div class="overview-card oc-purple">
+      <div class="oc-label">黄金ETF（避险层）</div>
+      <div class="oc-value">15万</div>
+      <div class="oc-sub">分批建仓 · 占比15%</div>
+    </div>
+  </div>
+
+  <!-- 资产配置可视化 -->
+  <div class="alloc-section">
+    <div class="section-title" style="margin-top:0">🎯 资产配置比例</div>
+    <div class="alloc-bars">
+      <div class="alloc-bar-row">
+        <div class="alloc-bar-label">债券基金</div>
+        <div class="alloc-bar-track">
+          <div class="alloc-bar-fill" style="width:50%;background:linear-gradient(90deg,#2e7d32,#43a047)">50%</div>
+        </div>
+        <div class="alloc-bar-amount amt-green">¥50万</div>
+      </div>
+      <div class="alloc-bar-row">
+        <div class="alloc-bar-label">指数基金</div>
+        <div class="alloc-bar-track">
+          <div class="alloc-bar-fill" style="width:35%;background:linear-gradient(90deg,#e65100,#f4511e)">35%</div>
+        </div>
+        <div class="alloc-bar-amount amt-orange">¥35万</div>
+      </div>
+      <div class="alloc-bar-row">
+        <div class="alloc-bar-label">黄金ETF</div>
+        <div class="alloc-bar-track">
+          <div class="alloc-bar-fill" style="width:15%;background:linear-gradient(90deg,#f57f17,#ffa000)">15%</div>
+        </div>
+        <div class="alloc-bar-amount amt-gold">¥15万</div>
+      </div>
+      <div class="alloc-bar-row">
+        <div class="alloc-bar-label">货币基金</div>
+        <div class="alloc-bar-track">
+          <div class="alloc-bar-fill" style="width:10%;background:linear-gradient(90deg,#1565c0,#1976d2)">10%</div>
+        </div>
+        <div class="alloc-bar-amount amt-blue">¥10万</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== 第一层：货币基金 ====== -->
+  <div class="section-title">💰 第一层：货币基金（弹药池）</div>
+  <div class="layer-card lc-blue">
+    <div class="layer-header">
+      <div class="layer-icon">💵</div>
+      <div class="layer-title-block">
+        <div class="ltb-name">流动性储备层</div>
+        <div class="ltb-sub">随时可取 · 年化约1.5~2% · 作为应急金+机会仓</div>
+      </div>
+      <div class="layer-amount-badge">
+        <div class="lab-amount amt-blue">¥10万</div>
+        <div class="lab-pct">占比 10%</div>
+      </div>
+    </div>
+    <div class="product-list">
+      <div class="product-item">
+        <div class="pi-icon">🏦</div>
+        <div class="pi-main">
+          <div class="pi-name">易方达货币A</div>
+          <div class="pi-code">000509 · 货币市场基金</div>
+          <div class="pi-desc">全市场规模最大货币基金之一，流动性极佳，T+0快速赎回，7日年化约1.7%，安全可靠</div>
+        </div>
+        <div class="pi-amount">
+          <div class="pia-num amt-blue">¥6万</div>
+          <div class="pia-yield yield-green">≈1.7%/年</div>
+        </div>
+      </div>
+      <div class="product-item">
+        <div class="pi-icon">🏦</div>
+        <div class="pi-main">
+          <div class="pi-name">华夏财富宝</div>
+          <div class="pi-code">003816 · 货币市场基金</div>
+          <div class="pi-desc">华夏基金旗下精品货基，7日年化约1.75%，支持T+1到账，分散货基风险</div>
+        </div>
+        <div class="pi-amount">
+          <div class="pia-num amt-blue">¥4万</div>
+          <div class="pia-yield yield-green">≈1.75%/年</div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:12px;padding:10px 12px;background:#e3f2fd;border-radius:8px;font-size:12px;color:#1565c0;">
+      💡 <strong>弹药池规则</strong>：沪深300跌超15%时，从此处调5万加仓指数基金；美股跌超20%时调5万加仓标普/纳指；平时存放不动，享受活期+收益
+    </div>
+  </div>
+
+  <!-- ====== 第二层：债券基金（50万四层架构） ====== -->
+  <div class="section-title">📈 第二层：债券基金（四层递进架构）</div>
+
+  <!-- 流动层 -->
+  <div class="layer-card lc-blue">
+    <div class="layer-header">
+      <div class="layer-icon">🔵</div>
+      <div class="layer-title-block">
+        <div class="ltb-name">🔵 流动层（债基）</div>
+        <div class="ltb-sub">持有30天后随时赎回 · 低波动 · 类现金替代</div>
+      </div>
+      <div class="layer-amount-badge">
+        <div class="lab-amount amt-blue">¥10万</div>
+        <div class="lab-pct">占比 10%</div>
+      </div>
+    </div>
+    <div class="product-list">
+      <div class="product-item">
+        <div class="pi-icon">📊</div>
+        <div class="pi-main">
+          <div class="pi-name">易方达同业存单AAA指数7天持有C</div>
+          <div class="pi-code">009377 · 短债/同业存单</div>
+          <div class="pi-desc">7天持有期，全仓同业存单，信用风险极低，年化约2.2~2.5%，是货基的升级替代品</div>
+        </div>
+        <div class="pi-amount">
+          <div class="pia-num amt-blue">¥5万</div>
+          <div class="pia-yield yield-green">≈2.3%/年</div>
+        </div>
+      </div>
+      <div class="product-item">
+        <div class="pi-icon">📊</div>
+        <div class="pi-main">
+          <div class="pi-name">长城短债C</div>
+          <div class="pi-code">003957 · 短债基金</div>
+          <div class="pi-desc">持有30天免赎回费，久期短波动小，近1年收益约3.2%，适合1~3个月资金停泊</div>
+        </div>
+        <div class="pi-amount">
+          <div class="pia-num amt-blue">¥5万</div>
+          <div class="pia-yield yield-green">≈3.2%/年</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 核心层 -->
+  <div class="layer-card lc-green">
+    <div class="layer-header">
+      <div class="layer-icon">🟢</div>
+      <div class="layer-title-block">
+        <div class="ltb-name">🟢 核心层（纯债）</div>
+        <div class="ltb-sub">3~6个月持有 · 稳定收益 · 回撤控制优先</div>
+      </div>
+      <div class="layer-amount-badge">
+        <div class="lab-amount amt-green">¥15万</div>
+        <div class="lab-pct">占比 15%</div>
+      </div>
+    </div>
+    <div class="product-list">
+      <div class="product-item">
+        <div class="pi-icon">📈</div>
+        <div class="pi-main">
+          <div class="pi-name">格林泓鑫纯债C</div>
+          <div class="pi-code">007462 · 中长期纯债</div>
+          <div class="pi-desc">近3年累计收益12%+，年化约4%，最大回撤仅-1.2%，风控出色，核心底仓首选</div>
+        </div>
+        <div class="pi-amount">
+          <div class="pia-num amt-green">¥12万</div>
+          <div class="pia-yield yield-green">≈4.0%/年</div>
+        </div>
+      </div>
+      <div class="product-item">
+        <div class="pi-icon">📈</div>
+        <div class="pi-main">
+          <div class="pi-name">景顺长城景泰盈利纯债C</div>
+          <div class="pi-code">010918 · 中长期纯债</div>
+          <div class="pi-desc">近3年累计12.33%，优选国债+政策性金融债，波动低，适合3~5年定期配置</div>
+        </div>
+        <div class="pi-amount">
+          <div class="pia-num amt-green">¥3万</div>
+          <div class="pia-yield yield-green">≈4.1%/年</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 增收层 -->
+  <div class="layer-card lc-orange">
+    <div class="layer-header">
+      <div class="layer-icon">🟡</div>
+      <div class="layer-title-block">
+        <div class="ltb-name">🟡 增收层（混债）</div>
+        <div class="ltb-sub">持有6个月以上 · 信用债增厚 · 核心收益来源</div>
+      </div>
+      <div class="layer-amount-badge">
+        <div class="lab-amount amt-orange">¥20万</div>
+        <div class="lab-pct">占比 20%</div>
+      </div>
+    </div>
+    <div class="product-list">
+      <div class="product-item">
+        <div class="pi-icon">💎</div>
+        <div class="pi-main">
+          <div class="pi-name">易方达裕丰回报债券C</div>
+          <div class="pi-code">110028 · 偏债混合</div>
+          <div class="pi-desc">近1年收益8.61%，近3年累计20%+，配置优质信用债+部分权益，弹性好，重仓核心</div>
+        </div>
+        <div class="pi-amount">
+          <div class="pia-num amt-orange">¥8万</div>
+          <div class="pia-yield yield-green">≈8.6%/年</div>
+        </div>
+      </div>
+      <div class="product-item">
+        <div class="pi-icon">💎</div>
+        <div class="pi-main">
+          <div class="pi-name">中银国有企业债C</div>
+          <div class="pi-code">004265 · 信用债</div>
+          <div class="pi-desc">以国有企业信用债为主，信用等级高，年化约3.8%，分散信用风险，稳定输出</div>
+        </div>
+        <div class="pi-amount">
+          <div class="pia-num amt-orange">¥7万</div>
+          <div class="pia-yield yield-green">≈3.8%/年</div>
+        </div>
+      </div>
+      <div class="product-item">
+        <div class="pi-icon">💎</div>
+        <div class="pi-main">
+          <div class="pi-name">兴证全球可转债基金</div>
+          <div class="pi-code">340001 · 可转债基金</div>
+          <div class="pi-desc">【新增】下有债底保护，上不封顶，长期年化7~9%，熊市回撤可控，牛市弹性突出</div>
+        </div>
+        <div class="pi-amount">
+          <div class="pia-num amt-orange">¥5万</div>
+          <div class="pia-yield yield-green">≈7~9%/年</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 进攻层 -->
+  <div class="layer-card lc-red">
+    <div class="layer-header">
+      <div class="layer-icon">🔴</div>
+      <div class="layer-title-block">
+        <div class="ltb-name">🔴 进攻层（偏股混合）</div>
+        <div class="ltb-sub">持有1年以上 · 可转债/权益增强 · 弹性资产</div>
+      </div>
+      <div class="layer-amount-badge">
+        <div class="lab-amount amt-red">¥5万</div>
+        <div class="lab-pct">占比 5%</div>
+      </div>
+    </div>
+    <div class="product-list">
+      <div class="product-item">
+        <div class="pi-icon">🚀</div>
+        <div class="pi-main">
+          <div class="pi-name">招商安本增利债券C</div>
+          <div class="pi-code">218301 · 偏债混合</div>
+          <div class="pi-desc">含可转债+权益仓位，今年以来表现突出，牛市弹性好，达到目标收益可止盈</div>
+        </div>
+        <div class="pi-amount">
+          <div class="pia-num amt-red">¥3万</div>
+          <div class="pia-yield yield-green">≈6~10%/年</div>
+        </div>
+      </div>
+      <div class="product-item">
+        <div class="pi-icon">🚀</div>
+        <div class="pi-main">
+          <div class="pi-name">大成民稳增长混合C</div>
+          <div class="pi-code">008847 · 偏债混合</div>
+          <div class="pi-desc">今年以来5.09%（同类前3.2%），近1年10.08%，可作为进攻补充，上涨弹性明显</div>
+        </div>
+        <div class="pi-amount">
+          <div class="pia-num amt-red">¥2万</div>
+          <div class="pia-yield yield-green">≈8~10%/年</div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:12px;padding:10px 12px;background:#ffebee;border-radius:8px;font-size:12px;color:#c62828;">
+      ⚠️ 进攻层仅占5%，主要提升组合弹性。招商安本增利建议设置止盈线：达到+15%止盈，跌超-8%止损
+    </div>
+  </div>
+
+  <!-- ====== 第三层：指数基金 ====== -->
+  <div class="section-title">📊 第三层：指数基金（全球分散定投）</div>
+  <div class="layer-card lc-orange">
+    <div class="layer-header">
+      <div class="layer-icon">🌏</div>
+      <div class="layer-title-block">
+        <div class="ltb-name">全球指数基金组合</div>
+        <div class="ltb-sub">A股+美股+港股 · 月定投 · 长期3~5年</div>
+      </div>
+      <div class="layer-amount-badge">
+        <div class="lab-amount amt-orange">¥35万</div>
+        <div class="lab-pct">占比 35%</div>
+      </div>
+    </div>
+    <div class="product-list">
+      <div class="product-item">
+        <div class="pi-icon">🇨🇳</div>
+        <div class="pi-main">
+          <div class="pi-name">华泰柏瑞沪深300ETF联接C</div>
+          <div class="pi-code">006279 · A股核心宽基</div>
+          <div class="pi-desc">跟踪沪深300，A股大盘核心资产，长期持有首选，低估值时代表价值洼地</div>
+        </div>
+        <div class="pi-amount">
+          <div class="pia-num amt-orange">¥8万</div>
+          <div class="pia-yield yield-green">长期≈8~12%</div>
+        </div>
+      </div>
+      <div class="product-item">
+        <div class="pi-icon">🇨🇳</div>
+        <div class="pi-main">
+          <div class="pi-name">南方中证500ETF联接C</div>
+          <div class="pi-code">007191 · A股中盘成长</div>
+          <div class="pi-desc">覆盖A股中盘成长股，弹性高于沪深300，行业分散，适合长期定投</div>
+        </div>
+        <div class="pi-amount">
+          <div class="pia-num amt-orange">¥5万</div>
+          <div class="pia-yield yield-green">长期≈9~13%</div>
+        </div>
+      </div>
+      <div class="product-item">
+        <div class="pi-icon">🎯</div>
+        <div class="pi-main">
+          <div class="pi-name">招商中证红利ETF联接C</div>
+          <div class="pi-code">012643 · A股高股息红利</div>
+          <div class="pi-desc">【加仓至7万】高股息策略，抗跌性强，当前性价比高，年化股息率约5%+，熊市守护资产</div>
+        </div>
+        <div class="pi-amount">
+          <div class="pia-num amt-orange">¥7万</div>
+          <div class="pia-yield yield-green">≈5%股息+价差</div>
+        </div>
+      </div>
+      <div class="product-item">
+        <div class="pi-icon">🇺🇸</div>
+        <div class="pi-main">
+          <div class="pi-name">华夏标普500ETF联接C</div>
+          <div class="pi-code">013133 · 美股核心宽基</div>
+          <div class="pi-desc">跟踪标普500，美股核心配置，长期年化约10~12%，全球资产分散核心仓位</div>
+        </div>
+        <div class="pi-amount">
+          <div class="pia-num amt-orange">¥7万</div>
+          <div class="pia-yield yield-green">长期≈10~12%</div>
+        </div>
+      </div>
+      <div class="product-item">
+        <div class="pi-icon">🇺🇸</div>
+        <div class="pi-main">
+          <div class="pi-name">广发纳斯达克100ETF联接C</div>
+          <div class="pi-code">007873 · 美股科技成长</div>
+          <div class="pi-desc">【减仓至3万】纳指与标普重叠度高（科技权重≈70%），适当减仓，保留科技弹性即可</div>
+        </div>
+        <div class="pi-amount">
+          <div class="pia-num amt-orange">¥3万</div>
+          <div class="pia-yield yield-green">高弹性·高风险</div>
+        </div>
+      </div>
+      <div class="product-item">
+        <div class="pi-icon">🇭🇰</div>
+        <div class="pi-main">
+          <div class="pi-name">华夏恒生互联网ETF联接C</div>
+          <div class="pi-code">013156 · 港股科技【新增】</div>
+          <div class="pi-desc">【新增5万】港股科技低估值+AI概念，腾讯/阿里/美团等龙头，补充A股+美股的组合缺口</div>
+        </div>
+        <div class="pi-amount">
+          <div class="pia-num amt-orange">¥5万</div>
+          <div class="pia-yield yield-green">低估值·高弹性</div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:12px;padding:10px 12px;background:#fff3e0;border-radius:8px;font-size:12px;color:#e65100;">
+      💡 <strong>定投策略</strong>：指数基金建议3~6个月分批买入，每月定投约5~7万。支付宝开启智能定投（估值分档）：跌10%以上买入3倍金额，涨5%以上暂停定投
+    </div>
+  </div>
+
+  <!-- ====== 第四层：黄金ETF ====== -->
+  <div class="section-title">🥇 第四层：黄金ETF（避险增配）</div>
+  <div class="layer-card lc-gold">
+    <div class="layer-header">
+      <div class="layer-icon">🥇</div>
+      <div class="layer-title-block">
+        <div class="ltb-name">黄金ETF组合</div>
+        <div class="ltb-sub">【增配至15万】分批建仓 · 抗通胀 · 避险对冲</div>
+      </div>
+      <div class="layer-amount-badge">
+        <div class="lab-amount amt-gold">¥15万</div>
+        <div class="lab-pct">占比 15%</div>
+      </div>
+    </div>
+    <div class="product-list">
+      <div class="product-item">
+        <div class="pi-icon">⭐</div>
+        <div class="pi-main">
+          <div class="pi-name">华安黄金ETF联接C</div>
+          <div class="pi-code">000217 · 黄金ETF联接</div>
+          <div class="pi-desc">规模最大黄金ETF之一，流动性好，紧密跟踪上海金价，是黄金配置首选标的</div>
+        </div>
+        <div class="pi-amount">
+          <div class="pia-num amt-gold">¥9万</div>
+          <div class="pia-yield yield-green">跟踪金价</div>
+        </div>
+      </div>
+      <div class="product-item">
+        <div class="pi-icon">⭐</div>
+        <div class="pi-main">
+          <div class="pi-name">博时黄金ETF联接C</div>
+          <div class="pi-code">002230 · 黄金ETF联接</div>
+          <div class="pi-desc">博时旗下黄金基金，与华安形成双黄金组合分散单基金风险，稳健配置</div>
+        </div>
+        <div class="pi-amount">
+          <div class="pia-num amt-gold">¥6万</div>
+          <div class="pia-yield yield-green">跟踪金价</div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:12px;padding:10px 12px;background:#fff8e1;border-radius:8px;font-size:12px;color:#f57f17;">
+      ⚠️ <strong>黄金分批建仓计划</strong>（当前处于历史高位震荡区间）<br>
+      第1月：买入7万（底仓）→ 第2~4月：每月买入2.67万（剩余8万均摊）→ 触发条件：若金价跌超5%，提前追加剩余仓位
+    </div>
+  </div>
+
+  <!-- 预期收益分析 -->
+  <div class="section-title">💹 预期年收益测算</div>
+  <div class="strategy-card">
+    <table class="yield-table">
+      <tr>
+        <th>资产类别</th>
+        <th>金额</th>
+        <th>预期年化</th>
+        <th>年收益估算</th>
+      </tr>
+      <tr>
+        <td>货币基金</td>
+        <td>¥10万</td>
+        <td>1.7%</td>
+        <td>¥1,700</td>
+      </tr>
+      <tr>
+        <td>债基-流动层</td>
+        <td>¥10万</td>
+        <td>2.7%</td>
+        <td>¥2,700</td>
+      </tr>
+      <tr>
+        <td>债基-核心层</td>
+        <td>¥15万</td>
+        <td>4.0%</td>
+        <td>¥6,000</td>
+      </tr>
+      <tr>
+        <td>债基-增收层</td>
+        <td>¥20万</td>
+        <td>6.5%（含可转债）</td>
+        <td>¥13,000</td>
+      </tr>
+      <tr>
+        <td>债基-进攻层</td>
+        <td>¥5万</td>
+        <td>8.0%</td>
+        <td>¥4,000</td>
+      </tr>
+      <tr>
+        <td>指数基金（定投）</td>
+        <td>¥35万</td>
+        <td>8~12%（长期均值）</td>
+        <td>¥28,000~42,000</td>
+      </tr>
+      <tr>
+        <td>黄金ETF</td>
+        <td>¥15万</td>
+        <td>5~8%（均值回归）</td>
+        <td>¥7,500~12,000</td>
+      </tr>
+      <tr class="yield-total">
+        <td>📊 合计</td>
+        <td>¥100万</td>
+        <td>5.8~7.4%</td>
+        <td>¥62,900~81,400</td>
+      </tr>
+    </table>
+    <div style="margin-top:12px;padding:10px 12px;background:#e8f5e9;border-radius:8px;font-size:12px;color:#2e7d32;">
+      📌 以上收益为合理预期区间（中性假设）。指数基金长期持有3年以上大概率实现8~12%年化，短期波动正常，切勿因短期亏损赎回
+    </div>
+  </div>
+
+  <!-- 建仓策略 -->
+  <div class="section-title">🗓️ 建仓执行计划</div>
+  <div class="strategy-card">
+    <div class="strategy-steps">
+      <div class="strategy-step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <div class="sc-title">立即执行（第1周）：货币基金 + 债基全仓买入</div>
+          <div class="sc-desc">10万货币基金 + 50万债基（全部C类，持有满30天免赎回费）可以一次性买入。8只债基全部无限购，执行无障碍。建议工作日交易时间买入，15点前当日计息</div>
+        </div>
+      </div>
+      <div class="strategy-step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <div class="sc-title">分批建仓（第1~4个月）：黄金ETF分批入场</div>
+          <div class="sc-desc">第1月买入7万黄金ETF底仓，后3个月每月各买入约2.7万。若金价下跌5%以上，可提前追加剩余仓位。黄金当前处于历史高位，避免一次性全买</div>
+        </div>
+      </div>
+      <div class="strategy-step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <div class="sc-title">月度定投（第1~6个月）：指数基金逐步建仓</div>
+          <div class="sc-desc">35万指数基金建议3~6个月内完成建仓。第1个月可先买入15万（沪深300+红利+标普各5万），剩余20万后续每月定投约4~5万。开启支付宝智能定投（估值分档模式）提升效率</div>
+        </div>
+      </div>
+      <div class="strategy-step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <div class="sc-title">持续管理（每季度）：复盘再平衡</div>
+          <div class="sc-desc">每3个月检查各类资产实际占比，若某类偏离目标超5%则调整。指数基金长期持有不要频繁操作。债基收益达预期则继续持有，进攻层达+15%考虑止盈</div>
+        </div>
+      </div>
+      <div class="strategy-step">
+        <div class="step-num">5</div>
+        <div class="step-content">
+          <div class="sc-title">机会加仓（随时触发）：利用弹药池抄底</div>
+          <div class="sc-desc">货币基金10万作为永久弹药池。规则：A股沪深300跌15%以上 → 调5万加仓A股指数基金；标普/纳指跌20%以上 → 调5万加仓美股基金。机会加仓后再用闲余资金补充货基</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 优化亮点 -->
+  <div class="optimize-card">
+    <h3>✅ 本方案优化要点（对比原始方案）</h3>
+    <div class="optimize-items">
+      <div class="optimize-item">黄金ETF从5万增配至15万（占比5%→15%），增强抗通胀和避险能力</div>
+      <div class="optimize-item">债基增收层新增兴证全球可转债5万，补充"下有保底、上不封顶"弹性仓</div>
+      <div class="optimize-item">债基进攻层新增大成民稳增长C（今年+5.09%，近1年+10.08%），提升弹性</div>
+      <div class="optimize-item">指数基金新增港股科技ETF 5万（腾讯/阿里/美团），补充A股+美股之外的第三极</div>
+      <div class="optimize-item">纳指100从5万减至3万（与标普重叠度高），中证红利从6万增至7万（高股息抗跌）</div>
+      <div class="optimize-item">债基中长债用易方达裕丰回报（近1年+8.61%）替换东吴鼎泰，大幅提升收益</div>
+      <div class="optimize-item">全球分散度从"A股+美股"提升至"A股+美股+港股"三市场配置</div>
+      <div class="optimize-item">黄金分批建仓策略（规避高位风险），指数基金分3~6月定投（降低择时风险）</div>
+    </div>
+  </div>
+
+  <!-- 风险提示 -->
+  <div class="risk-card">
+    <h3>⚠️ 重要风险提示</h3>
+    <div class="risk-items">
+      <div class="risk-item">市场风险：指数基金权益暴露35%，熊市可能短期回撤10~15%，需长期持有3年以上平滑风险</div>
+      <div class="risk-item">利率风险：债基核心层/增收层对利率敏感，若未来利率上行，中长债净值会短期下跌</div>
+      <div class="risk-item">汇率风险：标普500、纳指100等QDII基金受人民币/美元汇率影响，汇率升值会侵蚀收益</div>
+      <div class="risk-item">黄金风险：当前黄金处于历史高位，短期回撤风险较大，务必分批建仓，切勿一次性重仓</div>
+      <div class="risk-item">流动性风险：债基持有不足30天赎回有费用，进攻层基金波动较大，勿作为短期资金使用</div>
+      <div class="risk-item">本方案为参考建议，非专业理财顾问意见，具体操作请结合个人实际财务状况决策</div>
+    </div>
+  </div>
+
+  <!-- 资产明细汇总 -->
+  <div class="section-title">📋 完整配置明细汇总</div>
+  <div class="strategy-card">
+    <table class="yield-table">
+      <tr>
+        <th>基金名称</th>
+        <th>代码</th>
+        <th>金额</th>
+        <th>层级</th>
+      </tr>
+      <tr><td>易方达货币A</td><td>000509</td><td>¥6万</td><td>货币基金</td></tr>
+      <tr><td>华夏财富宝</td><td>003816</td><td>¥4万</td><td>货币基金</td></tr>
+      <tr><td>易方达同业存单AAA C</td><td>009377</td><td>¥5万</td><td>债基·流动层</td></tr>
+      <tr><td>长城短债C</td><td>003957</td><td>¥5万</td><td>债基·流动层</td></tr>
+      <tr><td>格林泓鑫纯债C</td><td>007462</td><td>¥12万</td><td>债基·核心层</td></tr>
+      <tr><td>景顺长城景泰盈利纯债C</td><td>010918</td><td>¥3万</td><td>债基·核心层</td></tr>
+      <tr><td>易方达裕丰回报债券C</td><td>110028</td><td>¥8万</td><td>债基·增收层</td></tr>
+      <tr><td>中银国有企业债C</td><td>004265</td><td>¥7万</td><td>债基·增收层</td></tr>
+      <tr><td>兴证全球可转债</td><td>340001</td><td>¥5万</td><td>债基·增收层</td></tr>
+      <tr><td>招商安本增利债券C</td><td>218301</td><td>¥3万</td><td>债基·进攻层</td></tr>
+      <tr><td>大成民稳增长混合C</td><td>008847</td><td>¥2万</td><td>债基·进攻层</td></tr>
+      <tr><td>华泰柏瑞沪深300ETF联接C</td><td>006279</td><td>¥8万</td><td>指数基金</td></tr>
+      <tr><td>南方中证500ETF联接C</td><td>007191</td><td>¥5万</td><td>指数基金</td></tr>
+      <tr><td>招商中证红利ETF联接C</td><td>012643</td><td>¥7万</td><td>指数基金</td></tr>
+      <tr><td>华夏标普500ETF联接C</td><td>013133</td><td>¥7万</td><td>指数基金</td></tr>
+      <tr><td>广发纳斯达克100ETF联接C</td><td>007873</td><td>¥3万</td><td>指数基金</td></tr>
+      <tr><td>华夏恒生互联网ETF联接C</td><td>013156</td><td>¥5万</td><td>指数基金·港股</td></tr>
+      <tr><td>华安黄金ETF联接C</td><td>000217</td><td>¥9万</td><td>黄金ETF</td></tr>
+      <tr><td>博时黄金ETF联接C</td><td>002230</td><td>¥6万</td><td>黄金ETF</td></tr>
+      <tr style="background:#e3f2fd;font-weight:700;">
+        <td colspan="2">合计 19只基金</td>
+        <td>¥100万</td>
+        <td>6大类资产</td>
+      </tr>
+    </table>
+  </div>
+
+</div>
+
+<div class="footer">
+  <p>📅 方案生成时间：2026年4月20日 &nbsp;|&nbsp; <strong>本方案为参考建议，不构成投资要约</strong></p>
+  <p style="margin-top:4px;">投资有风险，入市需谨慎。建议结合个人实际情况理性决策 🌟</p>
+</div>
+
+</body>
+</html>
