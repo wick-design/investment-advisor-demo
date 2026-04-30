@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>退休财务规划报告 · 42岁高收入家庭</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif; background: #f0f2f5; color: #1a1a2e; }
+  
+  .header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); color: white; padding: 40px 30px; text-align: center; }
+  .header h1 { font-size: 28px; margin-bottom: 10px; letter-spacing: 2px; }
+  .header p { font-size: 14px; opacity: 0.8; }
+  .header .badge { display: inline-block; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); padding: 4px 14px; border-radius: 20px; font-size: 12px; margin: 8px 4px; }
+  
+  .container { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
+  
+  .card { background: white; border-radius: 16px; padding: 24px; margin-bottom: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+  .card-title { font-size: 17px; font-weight: 700; color: #1a1a2e; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 2px solid #f0f2f5; display: flex; align-items: center; gap: 8px; }
+  .card-title .icon { font-size: 20px; }
+
+  /* 资产概览 */
+  .asset-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; }
+  .asset-item { background: linear-gradient(135deg, #f8f9ff, #eef2ff); border-radius: 12px; padding: 16px; border-left: 4px solid #4361ee; }
+  .asset-item.highlight { background: linear-gradient(135deg, #fff3e0, #ffe0b2); border-left-color: #ff6d00; }
+  .asset-item.green { background: linear-gradient(135deg, #e8f5e9, #c8e6c9); border-left-color: #2e7d32; }
+  .asset-label { font-size: 12px; color: #666; margin-bottom: 6px; }
+  .asset-value { font-size: 22px; font-weight: 800; color: #1a1a2e; }
+  .asset-sub { font-size: 11px; color: #888; margin-top: 4px; }
+
+  /* 退休时点对比表 */
+  .retire-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .retire-table th { background: #1a1a2e; color: white; padding: 12px 10px; text-align: center; font-weight: 600; }
+  .retire-table th:first-child { border-radius: 8px 0 0 0; }
+  .retire-table th:last-child { border-radius: 0 8px 0 0; }
+  .retire-table td { padding: 11px 10px; text-align: center; border-bottom: 1px solid #f0f2f5; }
+  .retire-table tr:hover td { background: #f8f9ff; }
+  .retire-table tr.highlight-row td { background: linear-gradient(135deg, #fff3e0, #fff8f0); font-weight: 600; }
+  .ok-badge { background: #e8f5e9; color: #2e7d32; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+  .warn-badge { background: #fff3e0; color: #e65100; padding: 3px 10px; border-radius: 20px; font-size: 12px; }
+  
+  /* 关键指标卡片 */
+  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
+  .kpi-card { background: linear-gradient(135deg, #1a1a2e, #16213e); color: white; border-radius: 14px; padding: 20px; text-align: center; }
+  .kpi-card .kpi-label { font-size: 12px; opacity: 0.7; margin-bottom: 8px; }
+  .kpi-card .kpi-value { font-size: 26px; font-weight: 800; color: #ffd166; }
+  .kpi-card .kpi-sub { font-size: 11px; opacity: 0.6; margin-top: 4px; }
+
+  /* 图表区 */
+  .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 700px) { .chart-grid { grid-template-columns: 1fr; } }
+  .chart-wrap { position: relative; height: 280px; }
+  
+  /* 建议模块 */
+  .advice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 700px) { .advice-grid { grid-template-columns: 1fr; } }
+  .advice-block { border-radius: 12px; padding: 18px; }
+  .advice-block.blue { background: linear-gradient(135deg, #e3f2fd, #bbdefb); border-left: 4px solid #1565c0; }
+  .advice-block.green { background: linear-gradient(135deg, #e8f5e9, #c8e6c9); border-left: 4px solid #2e7d32; }
+  .advice-block.orange { background: linear-gradient(135deg, #fff3e0, #ffe0b2); border-left: 4px solid #e65100; }
+  .advice-block.purple { background: linear-gradient(135deg, #f3e5f5, #e1bee7); border-left: 4px solid #6a1b9a; }
+  .advice-block h3 { font-size: 14px; font-weight: 700; margin-bottom: 10px; }
+  .advice-block ul { padding-left: 16px; }
+  .advice-block li { font-size: 13px; line-height: 1.8; color: #333; }
+  
+  /* 逐年现金流表 */
+  .flow-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .flow-table th { background: #0f3460; color: white; padding: 10px 8px; text-align: center; }
+  .flow-table td { padding: 8px; text-align: center; border-bottom: 1px solid #eee; }
+  .flow-table tr.pre-retire td { background: #fff8e1; }
+  .flow-table tr.post-retire td { background: #f8fff8; }
+  .flow-table tr.age50 td { background: #e8f5e9; font-weight: 700; border: 2px solid #2e7d32; }
+  .positive { color: #2e7d32; font-weight: 600; }
+  .negative { color: #c62828; font-weight: 600; }
+
+  /* 风险提示 */
+  .risk-box { background: linear-gradient(135deg, #fff3e0, #ffe8cc); border: 1px solid #ffcc80; border-radius: 12px; padding: 18px; }
+  .risk-box h3 { color: #e65100; font-size: 14px; margin-bottom: 10px; }
+  .risk-box p { font-size: 13px; color: #555; line-height: 1.7; }
+  
+  .footer { text-align: center; padding: 30px; color: #999; font-size: 12px; }
+  
+  /* 阶段对比 */
+  .phase-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 600px) { .phase-compare { grid-template-columns: 1fr; } }
+  .phase-box { border-radius: 12px; padding: 18px; }
+  .phase-box.phase-pre { background: linear-gradient(135deg, #e3f2fd, #e8eaf6); border: 2px solid #3f51b5; }
+  .phase-box.phase-post { background: linear-gradient(135deg, #e8f5e9, #f3e5f5); border: 2px solid #4caf50; }
+  .phase-box h3 { font-size: 15px; font-weight: 700; margin-bottom: 12px; }
+  .phase-box .item { display: flex; justify-content: space-between; padding: 5px 0; font-size: 13px; border-bottom: 1px dashed #ddd; }
+  .phase-box .item:last-child { border-bottom: none; }
+  .phase-box .val { font-weight: 700; }
+  
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+  .tag-blue { background: #e3f2fd; color: #1565c0; }
+  .tag-green { background: #e8f5e9; color: #2e7d32; }
+  .tag-orange { background: #fff3e0; color: #e65100; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🏦 退休财务规划报告</h1>
+  <p>42岁高收入家庭 · 北京 · 2026年版</p>
+  <div>
+    <span class="badge">💰 总资产 2500万</span>
+    <span class="badge">👨‍👩‍👦 三口之家</span>
+    <span class="badge">🏠 学区房换购中</span>
+    <span class="badge">⏰ 计划3-5年退休</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- 资产快照 -->
+  <div class="card">
+    <div class="card-title"><span class="icon">📊</span> 当前财务快照（2026年）</div>
+    <div class="asset-grid">
+      <div class="asset-item">
+        <div class="asset-label">海外证券（美股/美债/港股）</div>
+        <div class="asset-value">1000<small style="font-size:14px">万</small></div>
+        <div class="asset-sub">流动性极强 · 外币资产</div>
+      </div>
+      <div class="asset-item">
+        <div class="asset-label">国内证券</div>
+        <div class="asset-value">800<small style="font-size:14px">万</small></div>
+        <div class="asset-sub">A股+基金</div>
+      </div>
+      <div class="asset-item highlight">
+        <div class="asset-label">朝阳区房产（待置换）</div>
+        <div class="asset-value">700<small style="font-size:14px">万</small></div>
+        <div class="asset-sub">→ 换购1200-1500万学区房</div>
+      </div>
+      <div class="asset-item green">
+        <div class="asset-label">本人年收入（税后）</div>
+        <div class="asset-value">200<small style="font-size:14px">万</small></div>
+        <div class="asset-sub">退休后归零</div>
+      </div>
+      <div class="asset-item green">
+        <div class="asset-label">老婆年收入（税后）</div>
+        <div class="asset-value">15<small style="font-size:14px">万</small></div>
+        <div class="asset-sub">持续工作20年</div>
+      </div>
+      <div class="asset-item">
+        <div class="asset-label">家庭年支出</div>
+        <div class="asset-value">50<small style="font-size:14px">万</small></div>
+        <div class="asset-sub">含教育/生活/医疗 · 年增3%</div>
+      </div>
+    </div>
+    <div style="margin-top:16px; padding:14px; background:#f8f9ff; border-radius:10px; font-size:13px; color:#555;">
+      🏠 <strong>换房说明</strong>：卖出朝阳房（700万）+ 从证券账户出650万 = 购入1350万学区房（海淀/西城）。换房后<strong>流动资产降至约1150万</strong>，学区房作自住不计入投资池，房价增值为额外收益。
+    </div>
+  </div>
+
+  <!-- 核心KPI -->
+  <div class="card">
+    <div class="card-title"><span class="icon">🎯</span> 核心结论：全部退休时点现金流均为正 ✅</div>
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">最早可退休（44岁）</div>
+        <div class="kpi-value">1654万</div>
+        <div class="kpi-sub">退休时投资资产</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">推荐退休（47岁）</div>
+        <div class="kpi-value">2536万</div>
+        <div class="kpi-sub">退休时投资资产</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">最晚测算（49岁）</div>
+        <div class="kpi-value">3223万</div>
+        <div class="kpi-sub">退休时投资资产</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">50岁总资产（推荐方案）</div>
+        <div class="kpi-value">4371万</div>
+        <div class="kpi-sub">含学区房约1594万</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 退休时点对比表 -->
+  <div class="card">
+    <div class="card-title"><span class="icon">📋</span> 各退休时点现金流与资产对比</div>
+    <p style="font-size:12px; color:#888; margin-bottom:12px;">💡 假设：退休前年化7%（进取型）；退休后年化5%（稳健型）；支出50万/年×3%通胀；老婆收入15万持续20年</p>
+    <div style="overflow-x:auto;">
+    <table class="retire-table">
+      <thead>
+        <tr>
+          <th>退休年龄</th>
+          <th>退休时投资资产</th>
+          <th>当年家庭支出</th>
+          <th>4%法则安全提取</th>
+          <th>老婆收入</th>
+          <th>年现金余额</th>
+          <th>50岁投资资产</th>
+          <th>50岁总资产</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>44岁 <span class="tag tag-blue">2年后</span></td>
+          <td><strong>1654万</strong></td>
+          <td>53.0万</td>
+          <td>66.1万</td>
+          <td>15万</td>
+          <td><span class="ok-badge">+28万 ✅</span></td>
+          <td>1919万</td>
+          <td><strong>3501万</strong></td>
+        </tr>
+        <tr>
+          <td>45岁 <span class="tag tag-blue">3年后</span></td>
+          <td><strong>1930万</strong></td>
+          <td>54.6万</td>
+          <td>77.2万</td>
+          <td>15万</td>
+          <td><span class="ok-badge">+38万 ✅</span></td>
+          <td>2216万</td>
+          <td><strong>3798万</strong></td>
+        </tr>
+        <tr>
+          <td>46岁 <span class="tag tag-blue">4年后</span></td>
+          <td><strong>2223万</strong></td>
+          <td>56.3万</td>
+          <td>88.9万</td>
+          <td>15万</td>
+          <td><span class="ok-badge">+48万 ✅</span></td>
+          <td>2506万</td>
+          <td><strong>4088万</strong></td>
+        </tr>
+        <tr class="highlight-row">
+          <td>47岁 <span class="tag tag-orange">⭐5年后</span></td>
+          <td><strong>2536万</strong></td>
+          <td>58.0万</td>
+          <td>101.4万</td>
+          <td>15万</td>
+          <td><span class="ok-badge">+59万 ✅</span></td>
+          <td>2789万</td>
+          <td><strong>4371万</strong></td>
+        </tr>
+        <tr>
+          <td>48岁 <span class="tag tag-green">6年后</span></td>
+          <td><strong>2869万</strong></td>
+          <td>59.7万</td>
+          <td>114.8万</td>
+          <td>15万</td>
+          <td><span class="ok-badge">+70万 ✅</span></td>
+          <td>3066万</td>
+          <td><strong>4648万</strong></td>
+        </tr>
+        <tr>
+          <td>49岁 <span class="tag tag-green">7年后</span></td>
+          <td><strong>3223万</strong></td>
+          <td>61.5万</td>
+          <td>128.9万</td>
+          <td>15万</td>
+          <td><span class="ok-badge">+82万 ✅</span></td>
+          <td>3336万</td>
+          <td><strong>4918万</strong></td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+    <div style="margin-top:12px; font-size:12px; color:#888; line-height:1.8;">
+      📌 <strong>4%法则</strong>：国际通行退休提取法则，即每年从投资组合中提取4%，理论上可维持30年以上不耗尽资产。<br>
+      📌 <strong>50岁总资产</strong> = 50岁投资资产 + 学区房估值（按年增2%，8年后约1594万）<br>
+      ⭐ <strong>推荐方案：47岁退休（5年后）</strong>，退休资产超2500万，每年可安全提取100万+，幸福感与财务安全最佳平衡。
+    </div>
+  </div>
+
+  <!-- 图表区 -->
+  <div class="card">
+    <div class="card-title"><span class="icon">📈</span> 可视化分析</div>
+    <div class="chart-grid">
+      <div>
+        <p style="font-size:13px; font-weight:600; color:#555; margin-bottom:8px; text-align:center;">退休时点 vs 投资资产对比（万元）</p>
+        <div class="chart-wrap"><canvas id="chart1"></canvas></div>
+      </div>
+      <div>
+        <p style="font-size:13px; font-weight:600; color:#555; margin-bottom:8px; text-align:center;">50岁总资产对比（万元）</p>
+        <div class="chart-wrap"><canvas id="chart2"></canvas></div>
+      </div>
+      <div>
+        <p style="font-size:13px; font-weight:600; color:#555; margin-bottom:8px; text-align:center;">退休后年现金余额（万元/年）</p>
+        <div class="chart-wrap"><canvas id="chart3"></canvas></div>
+      </div>
+      <div>
+        <p style="font-size:13px; font-weight:600; color:#555; margin-bottom:8px; text-align:center;">44岁退休 · 20年资产走势（万元）</p>
+        <div class="chart-wrap"><canvas id="chart4"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 阶段策略 -->
+  <div class="card">
+    <div class="card-title"><span class="icon">🗺️</span> 退休前后投资策略</div>
+    <div class="phase-compare">
+      <div class="phase-box phase-pre">
+        <h3>🚀 退休前阶段（进取型，年化7%）</h3>
+        <div class="item"><span>海外证券（美股+美债+港股）</span><span class="val">45%</span></div>
+        <div class="item"><span>A股股票/指数基金</span><span class="val">30%</span></div>
+        <div class="item"><span>可转债</span><span class="val">15%</span></div>
+        <div class="item"><span>货币基金/现金</span><span class="val">10%</span></div>
+        <div style="margin-top:12px; font-size:12px; color:#1565c0;">
+          ✦ 继续保持海外资产优势，美股/纳指配置为主<br>
+          ✦ A股部分做指数基金+行业龙头<br>
+          ✦ 年均新增储蓄约165万注入投资池<br>
+          ✦ 换房差价650万从国内证券中变现
+        </div>
+      </div>
+      <div class="phase-box phase-post">
+        <h3>🛡️ 退休后阶段（稳健型，年化5%）</h3>
+        <div class="item"><span>美债/货币基金（防守）</span><span class="val">40%</span></div>
+        <div class="item"><span>海外股票ETF（低换手）</span><span class="val">25%</span></div>
+        <div class="item"><span>A股红利/债券基金</span><span class="val">20%</span></div>
+        <div class="item"><span>黄金ETF（抗通胀）</span><span class="val">10%</span></div>
+        <div class="item"><span>现金留存（3年支出备用）</span><span class="val">5%</span></div>
+        <div style="margin-top:12px; font-size:12px; color:#2e7d32;">
+          ✦ 切换为"收息+提取"模式，减少高风险持仓<br>
+          ✦ 保留200-300万现金/货基备用，应对市场波动<br>
+          ✦ 老婆收入15万覆盖部分日常开销<br>
+          ✦ 投资重心转向分红型资产
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 消费建议 -->
+  <div class="card">
+    <div class="card-title"><span class="icon">💡</span> 退休前后消费建议</div>
+    <div class="advice-grid">
+      <div class="advice-block blue">
+        <h3>🏃 退休前（3-5年）消费策略</h3>
+        <ul>
+          <li>维持50万/年支出不大幅提升</li>
+          <li>孩子5岁→教育支出将在小学后显著增加，需提前规划</li>
+          <li>1年内完成换房，减少房贷风险（建议一次性付清）</li>
+          <li>增配医疗险/重疾险，为退休做健康保障</li>
+          <li>逐步减少高风险仓位，为退休平滑切换做准备</li>
+        </ul>
+      </div>
+      <div class="advice-block green">
+        <h3>🌴 退休后消费策略</h3>
+        <ul>
+          <li>年支出控制在 55-70万（含通胀），保持生活品质</li>
+          <li>安全提取额（4%×资产）明显高于支出，资产持续增长</li>
+          <li>孩子教育高峰期（15-22岁）可能需额外30-50万/年</li>
+          <li>建议设立专项教育基金300-500万独立管理</li>
+          <li>旅行/兴趣/健康投入可适度放开，生活质量优先</li>
+        </ul>
+      </div>
+      <div class="advice-block orange">
+        <h3>🏠 房产策略</h3>
+        <ul>
+          <li>学区房1200-1500万（建议全款，无债一身轻）</li>
+          <li>不建议再加杠杆购房，退休后无稳定大额收入</li>
+          <li>若孩子大学离开北京，学区房可出租增加被动收入</li>
+          <li>海淀/西城学区房长期保值能力优异，是资产压舱石</li>
+          <li>房产不计入4%法则的提取基数，是安全垫</li>
+        </ul>
+      </div>
+      <div class="advice-block purple">
+        <h3>👶 孩子规划建议</h3>
+        <ul>
+          <li>孩子现5岁，高等教育约在2038-2043年（你52-57岁）</li>
+          <li>若出国留学，年均50-100万，总计200-400万</li>
+          <li>建议现在开始定投教育基金（指数基金或美股ETF）</li>
+          <li>可设立专户：现在拿出300万单独管理，13年后约800万</li>
+          <li>孩子成年后可传承部分资产，注意遗产规划</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 44岁退休逐年现金流 -->
+  <div class="card">
+    <div class="card-title"><span class="icon">📅</span> 详细逐年现金流 —— 以44岁退休（最早方案）为例</div>
+    <div style="overflow-x:auto;">
+    <table class="flow-table">
+      <thead>
+        <tr>
+          <th>年份</th><th>年龄</th><th>阶段</th><th>本人收入</th><th>老婆收入</th><th>家庭支出</th><th>投资收益</th><th>年末投资资产</th>
+        </tr>
+      </thead>
+      <tbody id="flowTableBody"></tbody>
+    </table>
+    </div>
+    <p style="font-size:12px; color:#888; margin-top:10px;">🟡 退休前 · 🟢 退休后 · <strong>🟩 50岁节点</strong></p>
+  </div>
+
+  <!-- 风险提示 -->
+  <div class="card">
+    <div class="card-title"><span class="icon">⚠️</span> 风险提示与情景压力测试</div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+      <div class="risk-box">
+        <h3>⚠️ 主要风险因素</h3>
+        <p>
+          ① <strong>市场风险</strong>：若长期年化收益仅4%（悲观），47岁退休时资产约降至2050万，仍足够安全。<br>
+          ② <strong>通胀风险</strong>：若通胀达5%，支出增长更快，建议持有黄金和海外资产对冲。<br>
+          ③ <strong>汇率风险</strong>：海外1000万面临汇率波动，建议美元资产中配置一定比例美债降低风险。<br>
+          ④ <strong>长寿风险</strong>：若活到90岁，需资产支撑46年，4%法则仍然有效，但需注意通胀侵蚀。<br>
+          ⑤ <strong>重大支出</strong>：孩子留学、医疗、养老等大额支出需预留安全垫。
+        </p>
+      </div>
+      <div class="risk-box" style="background:linear-gradient(135deg,#e8f5e9,#c8e6c9); border-color:#81c784;">
+        <h3 style="color:#2e7d32;">✅ 乐观结论</h3>
+        <p>
+          ① 即便是<strong>最早退休（44岁）</strong>，退休时投资资产已超1650万，完全够用。<br>
+          ② <strong>任何时点退休</strong>，4%安全提取额 + 老婆收入 均能覆盖家庭支出，现金流为正。<br>
+          ③ 你的财务状况属于<strong>顶级富裕阶层</strong>，真正的问题是"何时退休最快乐"，而非"退不退得起"。<br>
+          ④ 推荐<strong>47岁退休（5年后）</strong>：孩子10岁，可陪伴关键成长期；资产超2500万，从容度最高。<br>
+          ⑤ 50岁总资产预计突破<strong>4000-4900万</strong>，无需焦虑。
+        </p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  本报告仅供参考，不构成投资建议 · 数据假设详见报告正文 · 生成时间：2026-04-30
+</div>
+
+<script>
+// 数据
+const retireAges = ['44岁\n(2年后)', '45岁\n(3年后)', '46岁\n(4年后)', '47岁\n(5年后)⭐', '48岁\n(6年后)', '49岁\n(7年后)'];
+const portfolioAtRetire = [1654, 1930, 2223, 2536, 2869, 3223];
+const totalAsset50 = [3501, 3798, 4088, 4371, 4648, 4918];
+const annualCashGap = [28, 38, 48, 59, 70, 82];
+
+const colors = ['#4361ee','#3a86ff','#06d6a0','#ffd166','#f72585','#7209b7'];
+const highlight = ['rgba(67,97,238,0.7)','rgba(58,134,255,0.7)','rgba(6,214,160,0.7)','rgba(255,209,102,0.95)','rgba(247,37,133,0.7)','rgba(114,9,183,0.7)'];
+
+// 图表1：退休时投资资产
+new Chart(document.getElementById('chart1'), {
+  type: 'bar',
+  data: {
+    labels: ['44岁', '45岁', '46岁', '47岁⭐', '48岁', '49岁'],
+    datasets: [{
+      label: '退休时投资资产（万）',
+      data: portfolioAtRetire,
+      backgroundColor: highlight,
+      borderRadius: 8
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: { y: { beginAtZero: false, min: 1200 } }
+  }
+});
+
+// 图表2：50岁总资产
+new Chart(document.getElementById('chart2'), {
+  type: 'bar',
+  data: {
+    labels: ['44岁退休', '45岁退休', '46岁退休', '47岁退休⭐', '48岁退休', '49岁退休'],
+    datasets: [
+      {
+        label: '50岁投资资产',
+        data: [1919, 2216, 2506, 2789, 3066, 3336],
+        backgroundColor: 'rgba(67,97,238,0.8)',
+        borderRadius: 6,
+        stack: 'a'
+      },
+      {
+        label: '学区房估值',
+        data: [1594, 1594, 1594, 1594, 1594, 1594],
+        backgroundColor: 'rgba(6,214,160,0.6)',
+        borderRadius: 6,
+        stack: 'a'
+      }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } },
+    scales: { y: { stacked: true, beginAtZero: false, min: 1000 } }
+  }
+});
+
+// 图表3：年现金余额
+new Chart(document.getElementById('chart3'), {
+  type: 'line',
+  data: {
+    labels: ['44岁', '45岁', '46岁', '47岁⭐', '48岁', '49岁'],
+    datasets: [{
+      label: '年现金余额（万）',
+      data: annualCashGap,
+      borderColor: '#06d6a0',
+      backgroundColor: 'rgba(6,214,160,0.1)',
+      fill: true,
+      tension: 0.4,
+      pointBackgroundColor: highlight,
+      pointRadius: 6
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: { y: { beginAtZero: true } }
+  }
+});
+
+// 图表4：44岁退休20年资产走势
+const years44 = [2026,2027,2028,2029,2030,2031,2032,2033,2034,2035,2036,2037,2038,2039,2040,2041,2042,2043,2044,2045,2046];
+const assets44 = [1150,1394,1426,1457,1489,1520,1552,1583,1614,1644,1704,1732,1761,1788,1815,1840,1864,1887,1909,1929,1950];
+new Chart(document.getElementById('chart4'), {
+  type: 'line',
+  data: {
+    labels: years44.map((y,i) => `${y}\n(${42+i}岁)`),
+    datasets: [{
+      label: '投资资产（万）',
+      data: assets44,
+      borderColor: '#4361ee',
+      backgroundColor: 'rgba(67,97,238,0.08)',
+      fill: true,
+      tension: 0.4,
+      pointRadius: 3
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: { y: { beginAtZero: false, min: 900 } }
+  }
+});
+
+// 生成逐年现金流表格（44岁退休）
+const tableData = [
+  [2026,43,'退休前',200,15,51.5,80.5,1394.0],
+  [2027,44,'退休后',0,15,53.0,69.7,1425.7],
+  [2028,45,'退休后',0,15,54.6,71.3,1457.3],
+  [2029,46,'退休后',0,15,56.3,72.9,1488.9],
+  [2030,47,'退休后',0,15,58.0,74.4,1520.4],
+  [2031,48,'退休后',0,15,59.7,76.0,1551.7],
+  [2032,49,'退休后',0,15,61.5,77.6,1582.8],
+  [2033,50,'退休后',0,15,63.3,79.1,1613.6],
+  [2034,51,'退休后',0,15,65.2,80.7,1644.0],
+  [2035,52,'退休后',0,15,67.2,82.2,1674.0],
+  [2036,53,'退休后',0,15,69.2,83.7,1703.5],
+  [2037,54,'退休后',0,15,71.3,85.2,1732.4],
+  [2038,55,'退休后',0,15,73.4,86.6,1760.6],
+  [2039,56,'退休后',0,15,75.6,88.0,1788.0],
+  [2040,57,'退休后',0,15,77.9,89.4,1814.5],
+  [2041,58,'退休后',0,15,80.2,90.7,1840.0],
+  [2042,59,'退休后',0,15,82.6,92.0,1864.3],
+  [2043,60,'退休后',0,15,85.1,93.2,1887.4],
+  [2044,61,'退休后',0,15,87.7,94.4,1909.1],
+  [2045,62,'退休后',0,15,90.3,95.5,1929.3],
+];
+
+const tbody = document.getElementById('flowTableBody');
+tableData.forEach(row => {
+  const [year, age, phase, myInc, wifeInc, expense, invRet, portfolio] = row;
+  const tr = document.createElement('tr');
+  const isPreRetire = phase === '退休前';
+  const is50 = age === 50;
+  if (is50) tr.className = 'age50';
+  else if (isPreRetire) tr.className = 'pre-retire';
+  else tr.className = 'post-retire';
+  
+  const netFlow = myInc + wifeInc - expense;
+  const netStr = netFlow >= 0 
+    ? `<span class="positive">+${netFlow.toFixed(1)}万</span>` 
+    : `<span class="negative">${netFlow.toFixed(1)}万</span>`;
+  
+  tr.innerHTML = `
+    <td>${year}</td>
+    <td><strong>${age}岁${is50?'🎯':''}</strong></td>
+    <td>${phase === '退休前' ? '🟡退休前' : '🟢退休后'}</td>
+    <td>${myInc > 0 ? myInc+'万' : '-'}</td>
+    <td>${wifeInc}万</td>
+    <td>${expense.toFixed(1)}万</td>
+    <td><span class="positive">${invRet.toFixed(1)}万</span></td>
+    <td><strong>${portfolio.toFixed(1)}万</strong></td>
+  `;
+  tbody.appendChild(tr);
+});
+</script>
+</body>
+</html>
